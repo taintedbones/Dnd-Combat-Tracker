@@ -28,7 +28,7 @@ jobs:
     
     # ls
     - name: ls
-      run: ls
+      run: cd Dnd-Combat-Tracker
      
     # Run qmake
     - name: run qmake
