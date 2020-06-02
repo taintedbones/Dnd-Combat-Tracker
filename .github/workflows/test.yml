@@ -26,9 +26,13 @@ jobs:
     - name : Checkout
       uses: actions/checkout@v2
     
+    # Navigate to project files
+    - name: Navigate to project files
+      run: cd Dnd-Combat-Tracker
+      
     # ls
     - name: ls
-      run: cd Dnd-Combat-Tracker
+      run: ls
      
     # Run qmake
     - name: run qmake
