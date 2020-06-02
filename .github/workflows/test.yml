@@ -31,7 +31,7 @@ jobs:
       run: echo Hello, world!
     
     - name: build project
-      run: qmake Dnd-Combat-Tracker.pro
+      run: make
 
     # Confirm if it passed/failed
     - name: it worked
