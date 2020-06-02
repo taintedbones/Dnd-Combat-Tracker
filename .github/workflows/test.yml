@@ -21,10 +21,7 @@ jobs:
     
     # Install Qt
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2.6.3
-      with:
-        # Whether or not to actually download Qt
-        cached: true    
+      uses: jurplel/install-qt-action@v2.6.3    
 
     # Runs a single command using the runners shell
     - name: Run a one-line script
