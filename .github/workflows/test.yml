@@ -31,8 +31,4 @@ jobs:
     
     # Navigate to project files and compile program
     - name: Run make
-      run: cd Dnd-Combat-Tracker && make 
-
-    # Confirm if it passed/failed
-    - name: it worked
-      run: testscript
+      run: cd Dnd-Combat-Tracker && make
