@@ -25,21 +25,13 @@ jobs:
     - name : Checkout
       uses: actions/checkout@v2
     
-    # Navigate to project files
-    - name: Navigate to project files
+    # Navigate to project files and create makefile
+    - name: Run qmake
       run: cd Dnd-Combat-Tracker && qmake
-  
-    # ls
-    - name: ls
-      run: ls
-     
-    # Run qmake
-    - name: run qmake
-      run: qmake Dnd-Combat-Tracker.pro
     
-    # Build Project
-    - name: build project
-      run: make
+    # Navigate to project files and compile program
+    - name: Run make
+      run: cd Dnd-Combat-Tracker && make 
 
     # Confirm if it passed/failed
     - name: it worked
