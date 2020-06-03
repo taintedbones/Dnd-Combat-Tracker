@@ -26,6 +26,9 @@ jobs:
     - name : Checkout
       uses: actions/checkout@v2
     
+    - name : ls
+      run: ls
+    
     # Navigate to project files
     - name: Navigate to project files
       run: cd Dnd-Combat-Tracker/Dnd-Combat-Tracker
