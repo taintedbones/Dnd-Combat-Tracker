@@ -17,22 +17,18 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     
-    
     # Install Qt
-    #- name: Install Qt
-    #  uses: jurplel/install-qt-action@v2.6.3    
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2.6.3    
 
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name : Checkout
       uses: actions/checkout@v2
     
-    - name : ls
-      run: ls
-    
     # Navigate to project files
     - name: Navigate to project files
-      run: cd Dnd-Combat-Tracker
-      
+      run: cd Dnd-Combat-Tracker && qmake
+  
     # ls
     - name: ls
       run: ls
