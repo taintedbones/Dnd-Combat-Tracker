@@ -37,7 +37,6 @@ public:
     // Column Names
     QStringList AssignInitColNames = { "Name", "HP", "AC", "DC", "Init", "Notes" };
 
-
     // Model used for 'combat_page' (Conduct Combat) Page
     void InitializeCombatModel(int &CombatColCount, QStringList &CombatColNames);
 
