@@ -28,7 +28,7 @@ jobs:
     
     # Navigate to project files
     - name: Navigate to project files
-      run: cd Dnd-Combat-Tracker
+      run: cd Dnd-Combat-Tracker/Dnd-Combat-Tracker
       
     # ls
     - name: ls
