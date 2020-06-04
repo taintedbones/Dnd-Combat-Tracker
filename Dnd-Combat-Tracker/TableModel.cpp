@@ -1,24 +1,27 @@
 #include "TableModel.h"
 
 // Model used for 'combat_page' (Conduct Combat) Page
-void TableModel::InitializeCombatModel(int &CombatColCount, QStringList &CombatColNames)
+void TableModel::InitializeCombatModel(QTableWidget &combatTable)
 {
-    this->setColumnCount(CombatColCount);
-    this->setVerticalHeaderLabels(CombatColNames);
+    combatTable.clearContents();
+    combatTable.setColumnCount(CombatColCount);
+    combatTable.setVerticalHeaderLabels(CombatColNames);
 }
 
 // Model used for 'edit_page' (Add Actors) Page
-void TableModel::InitializeActorListModel(int &ActorListColCount, QStringList &ActorListColNames)
+void TableModel::InitializeActorListModel(QTableWidget &addActors)
 {
-    this->setColumnCount(ActorListColCount);
-    this->setVerticalHeaderLabels(ActorListColNames);
+    addActors.clearContents();
+    addActors.setColumnCount(ActorListColCount);
+    addActors.setVerticalHeaderLabels(ActorListColNames);
 }
 
 // Model used for 'assignInit_page' (Assign Initiative) Page
-void TableModel::InitializeInitiativeModel(int &AssignInitColCount, QStringList &AssignInitColNames)
+void TableModel::InitializeInitiativeModel(QTableWidget &assignInit)
 {
-    this->setColumnCount(AssignInitColCount);
-    this->setVerticalHeaderLabels(AssignInitColNames);
+    assignInit.clearContents();
+    assignInit.setColumnCount(AssignInitColCount);
+    assignInit.setVerticalHeaderLabels(AssignInitColNames);
 }
 
 // Constructor
