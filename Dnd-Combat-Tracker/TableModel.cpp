@@ -25,7 +25,4 @@ void TableModel::InitializeInitiativeModel(QTableWidget &assignInit)
 }
 
 // Constructor
-TableModel::TableModel()
-{
-    QTableWidget();
-}
+TableModel::TableModel() {}
