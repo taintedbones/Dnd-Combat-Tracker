@@ -3,10 +3,9 @@
 
 #include <QTableWidget>
 
-class TableModel : public QTableWidget
+class TableModel
 {
 public:
-
         // Combat Model
     // Column Count
     const int CombatColCount = 7;
@@ -16,7 +15,6 @@ public:
 
     // Column Names
     QStringList CombatColNames = { "Name", "HP: Cur", "Max", "AC", "DC", "Init", "Notes" };
-
         // Actor List Model
     // Column Count
     const int ActorListColCount = 5;
@@ -38,13 +36,13 @@ public:
     QStringList AssignInitColNames = { "Name", "HP", "AC", "DC", "Init", "Notes" };
 
     // Model used for 'combat_page' (Conduct Combat) Page
-    void InitializeCombatModel(int &CombatColCount, QStringList &CombatColNames);
+    void InitializeCombatModel(QTableWidget &combatTable);
 
     // Model used for 'edit_page' (Add Actors) Page
-    void InitializeActorListModel(int &ActorListColCount, QStringList &ActorListColNames);
+    void InitializeActorListModel(QTableWidget &addActors);
 
     // Model used for 'assignInit_page' (Assign Initiative) Page
-    void InitializeInitiativeModel(int &AssignInitColCount, QStringList &AssignInitColNames);
+    void InitializeInitiativeModel(QTableWidget &assignInit);
 
     // Constructor
     TableModel();
