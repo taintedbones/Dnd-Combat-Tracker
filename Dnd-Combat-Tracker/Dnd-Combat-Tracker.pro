@@ -23,6 +23,7 @@ HEADERS += \
     mainwindow.h
 
 FORMS += \
+    addactorform.ui \
     mainwindow.ui
 
 TRANSLATIONS += \
