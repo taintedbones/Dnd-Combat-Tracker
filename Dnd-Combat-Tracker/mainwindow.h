@@ -12,8 +12,27 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    enum  pages {WELCOME, EDIT, ASSIGN, COMBAT};
+
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+private slots:
+    //************ Welcome Page *********************
+    void on_welcomeStart_pushButton_clicked();
+
+    //************ Edit Page *********************
+    void on_back_editPage_pushButton_clicked();
+
+    void on_next_editPage_pushButton_clicked();
+
+    //************ Assign Page *********************
+    void on_back_assignInit_pushButton_clicked();
+
+    void on_fight_assignInit_pushButton_clicked();
+
+    //************ Combat Page *********************
+    void on_endCombat_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;
