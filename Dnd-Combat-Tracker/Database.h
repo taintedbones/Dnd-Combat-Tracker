@@ -14,10 +14,6 @@ class Database : public QSqlDatabase
 public:
     Database(QString path, QString driver);
     ~Database() {}
-
-    void AddActor();
-
-
 };
 
 #endif // DATABASE_H
