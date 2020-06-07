@@ -44,3 +44,23 @@ void MainWindow::on_endCombat_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(WELCOME);
 }
+
+void MainWindow::on_dbOpt_welcome_pushButton_clicked()
+{
+    ui->main_stackedWidget->setCurrentIndex(DB_EDIT);
+}
+
+void MainWindow::on_dbOpt_editPage_pushButton_clicked()
+{
+    ui->main_stackedWidget->setCurrentIndex(DB_EDIT);
+}
+
+void MainWindow::on_mainMenu_pushButton_clicked()
+{
+    ui->main_stackedWidget->setCurrentIndex(WELCOME);
+}
+
+void MainWindow::on_combatEditor_pushButton_clicked()
+{
+    ui->main_stackedWidget->setCurrentIndex(EDIT);
+}
