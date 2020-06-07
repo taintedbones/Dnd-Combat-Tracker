@@ -1,4 +1,5 @@
 QT       += core gui
+QT += sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,11 +18,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     Actor.cpp \
+    Database.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     Actor.h \
+    Database.h \
     mainwindow.h
 
 FORMS += \
