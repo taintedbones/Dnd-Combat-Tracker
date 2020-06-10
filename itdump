@@ -1,0 +1,63 @@
+PRAGMA foreign_keys=ON;
+BEGIN TRANSACTION;
+CREATE TABLE actors
+(
+actorID INTEGER PRIMARY KEY AUTOINCREMENT,
+name text,
+health int,
+armorClass int,
+spellSaveDC int,
+notes text,
+type text
+);
+
+INSERT INTO actors VALUES(1,'Santo',90,18,14,'Absolutely lawful psychotic murderer','partymember');
+INSERT INTO actors VALUES(2,'Chloe',8,12,0,'Beautiful angel, the absolute best','partymember');
+INSERT INTO actors VALUES(3,'Jahan',54,12,16,'Buff wiz (possibly evil)','partymember');
+INSERT INTO actors VALUES(4,'Wan Bolo',15,11,13,'"What girls?" -Wan','partymember');
+INSERT INTO actors VALUES(5,'Murak',108,19,16,'Heroic Commander of the Silver Talons','partymember');
+INSERT INTO actors VALUES(6,'Mork',107,20,0,'ZzzzzZZZzzz','partymember');
+
+INSERT INTO actors VALUES(7,'Goblin',7,15,0,'Nimble Escape: Can disengage/dodge as bonus action','creature');
+INSERT INTO actors VALUES(8,'Skeleton',13,13,0,'Cannot speak','creature');
+INSERT INTO actors VALUES(9,'Orc',15,13,0,'Move up to speed as bonus action','creature');
+INSERT INTO actors VALUES(10,'Vampire Spawn',82,15,13,'Regeneration, Spider Climb, Vampire Weakness, Multiattack','creature');
+
+INSERT INTO actors VALUES(11,'Guard',11,16,0,'','companion');
+INSERT INTO actors VALUES(12,'Priest',27,13,13,'Divine Eminence, Spellcasting','companion');
+INSERT INTO actors VALUES(13,'Bogart',96,17,14,'The Wanderer','companion');
+INSERT INTO actors VALUES(14,'Viggo',42,15,12,'They call him "The Flightless" for some reason','companion');
+
+INSERT INTO actors VALUES(15,'Fog Cloud',0,0,0,'20 ft. radius. Disperse with moderate wind','effect');
+INSERT INTO actors VALUES(16,'Faerie Fire',0,0,0,'20 ft. cube. Dex save or disadv. on attacks','effect');
+INSERT INTO actors VALUES(17,'Fire Storm',0,0,0,'10 ft. cube. Dex save or 7d10 fire dmg. Half dmg on save','effect');
+INSERT INTO actors VALUES(18,'Earthquake (Custom)',0,0,15,'Str save or prone','effect');
+
+CREATE TABLE scenarios
+(
+actorID int,
+scenarioName text,
+FOREIGN KEY(actorID) REFERENCES actors(actorID) ON DELETE CASCADE
+);
+
+INSERT INTO scenarios VALUES(1,'vampire');
+INSERT INTO scenarios VALUES(2,'goblin');
+INSERT INTO scenarios VALUES(3,'skeleton');
+INSERT INTO scenarios VALUES(4,'goblin');
+INSERT INTO scenarios VALUES(5,'vampire');
+INSERT INTO scenarios VALUES(6,'orc');
+
+INSERT INTO scenarios VALUES(7,'goblin');
+INSERT INTO scenarios VALUES(8,'skeleton');
+INSERT INTO scenarios VALUES(9,'orc');
+INSERT INTO scenarios VALUES(10,'vampire');
+
+INSERT INTO scenarios VALUES(11,'orc');
+INSERT INTO scenarios VALUES(12,'vampire');
+INSERT INTO scenarios VALUES(13,'goblin');
+INSERT INTO scenarios VALUES(14,'skeleton');
+COMMIT;
+
+
+
+
