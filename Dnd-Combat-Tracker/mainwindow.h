@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "Database.h"
+#include "DbEditTableModel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -42,5 +43,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     Database *db;
+    DbEditTableModel *model;
 };
 #endif // MAINWINDOW_H

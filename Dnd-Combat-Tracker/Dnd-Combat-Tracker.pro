@@ -19,12 +19,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     Actor.cpp \
     Database.cpp \
+    DbEditTableModel.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     Actor.h \
     Database.h \
+    DbEditTableModel.h \
     mainwindow.h
 
 FORMS += \

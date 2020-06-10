@@ -10,7 +10,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->main_stackedWidget->setCurrentIndex(WELCOME);
 
     db = new Database("../itdb.db", "QSQLITE");
+    model = new DbEditTableModel(this, db);
+    ui->dbEdit_tableView->setModel(model);
 
+    ui->dbEdit_tableView->setColumnHidden(0, true);
+    ui->dbEdit_tableView->setColumnWidth(5, 400);
+    ui->dbEdit_tableView->verticalHeader()->setVisible(false);
 }
 
 MainWindow::~MainWindow()
