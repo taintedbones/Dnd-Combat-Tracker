@@ -10,12 +10,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->main_stackedWidget->setCurrentIndex(WELCOME);
 
     db = new Database("../itdb.db", "QSQLITE");
-    model = new DbEditTableModel(this, db);
-    ui->dbEdit_tableView->setModel(model);
 
-    ui->dbEdit_tableView->setColumnHidden(0, true);
-    ui->dbEdit_tableView->setColumnWidth(5, 400);
-    ui->dbEdit_tableView->verticalHeader()->setVisible(false);
+    format_dbEdit_tableView();
 }
 
 MainWindow::~MainWindow()
@@ -81,4 +77,15 @@ void MainWindow::on_mainMenu_pushButton_clicked()
 void MainWindow::on_combatEditor_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(EDIT);
+}
+
+// Formats db edit table view
+void MainWindow::format_dbEdit_tableView()
+{
+    model = new DbEditTableModel(this, db);
+
+    ui->dbEdit_tableView->setModel(model);
+    ui->dbEdit_tableView->setColumnHidden(0, true);
+    ui->dbEdit_tableView->setColumnWidth(5, 400);
+    ui->dbEdit_tableView->setColumnWidth(1, 200);
 }

@@ -39,6 +39,7 @@ private slots:
     //************ DB Edit Page *********************
     void on_mainMenu_pushButton_clicked();
     void on_combatEditor_pushButton_clicked();
+    void format_dbEdit_tableView();
 
 private:
     Ui::MainWindow *ui;
