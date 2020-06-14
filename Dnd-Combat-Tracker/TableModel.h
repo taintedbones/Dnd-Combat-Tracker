@@ -36,13 +36,13 @@ public:
     QStringList AssignInitColNames = { "Name", "HP", "AC", "DC", "Init", "Notes" };
 
     // Model used for 'combat_page' (Conduct Combat) Page
-    void InitializeCombatModel(QTableWidget &combatTable);
+    void InitializeCombatModel(QTableWidget *combatTable);
 
     // Model used for 'edit_page' (Add Actors) Page
-    void InitializeActorListModel(QTableWidget &addActors);
+    void InitializeActorListModel(QTableWidget *addActors);
 
     // Model used for 'assignInit_page' (Assign Initiative) Page
-    void InitializeInitiativeModel(QTableWidget &assignInit);
+    void InitializeInitiativeModel(QTableWidget *assignInit);
 
     // Constructor
     TableModel();
