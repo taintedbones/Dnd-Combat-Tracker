@@ -10,7 +10,7 @@ public:
 
     // Setters
     void SetName(QString &name);
-    void SetHealth(int &health);
+    void SetHitPoints(int &hitpoints);
     void SetArmorClass(int &armorClass);
     void SetSpellSaveDC(int &spellSaveDC);
     void SetInitiative(int &initiative);
@@ -18,7 +18,7 @@ public:
 
     // Getters
     QString GetName() const;
-    int GetHealth() const;
+    int GetHitPoints() const;
     int GetArmorClass() const;
     int GetSpellSaveDC() const;
     int GetInitiative() const;
@@ -29,11 +29,11 @@ public:
     Actor();
 
         // Parameterized Constructor
-    Actor(QString name, int health, int armorClass, int spellSaveDC, int initiative, QString notes);
+    Actor(QString name, int hitpoints, int armorClass, int spellSaveDC, int initiative, QString notes);
 
 private:
     QString _name;
-    int _health;
+    int _hitpoints;
     int _armorClass;
     int _spellSaveDC;
     int _initiative;

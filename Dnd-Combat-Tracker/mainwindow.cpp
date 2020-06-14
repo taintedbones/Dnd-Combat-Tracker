@@ -12,6 +12,15 @@ MainWindow::MainWindow(QWidget *parent)
     db = new Database("../itdb.db", "QSQLITE");
 
     format_dbEdit_tableView();
+
+    tableManager = new TableModel;
+
+    // Create tablewidgets
+    combatTable = new QTableWidget;
+    addActors = new QTableWidget;
+    assignInit = new QTableWidget;
+
+    db->CreateActorList();
 }
 
 MainWindow::~MainWindow()
@@ -23,6 +32,38 @@ MainWindow::~MainWindow()
 void MainWindow::on_welcomeStart_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(EDIT);
+
+    // Populate "Actors" TableWidget
+        // Initialize/Clear TableWidget
+        tableManager->InitializeActorListModel(addActors);
+
+        // Get list of all actors from db, store in vector of type actor
+        // START --- Database Method: QVector* GetActors(QVector *actorList); ---
+
+
+
+        // END -- db.GetActors(QVector *actorList); ---
+
+
+        // START
+        // Loop through data and add to table
+            // while(query.next());
+                // Add row
+                // For num of columns:
+                    // Insert name into name col, qdebug name \n
+                    // Insert hp into hp col, qdebug hp \n
+                    // Insert ac into ac col, qdebug ac \n
+                    // Insert spell save dc into dc col, qdebug dc \n
+                    // Insert notes into notes col, qdebug notes \n
+
+
+
+
+
+
+    // Initialize "combatList" TableWidget
+        // Clear existing contents (combatList from CombatManager)
+
 }
 
 // Navigates user to welcome page from combat edit page

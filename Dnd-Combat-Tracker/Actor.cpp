@@ -6,7 +6,7 @@
 void Actor::SetName(QString &name) { _name = name; }
 
 // Set actor health
-void Actor::SetHealth(int &health) { _health = health; }
+void Actor::SetHitPoints(int &hitpoints) { _hitpoints = hitpoints; }
 
 // Set actor armor class
 void Actor::SetArmorClass(int &armorClass) { _armorClass = armorClass; }
@@ -26,7 +26,7 @@ void Actor::SetNotes(QString &notes) { _notes = notes; }
 QString Actor::GetName() const { return _name; }
 
 // Get actor health value
-int Actor::GetHealth() const { return _health; }
+int Actor::GetHitPoints() const { return _hitpoints; }
 
 // Get actor armor class
 int Actor::GetArmorClass() const { return _armorClass; }
@@ -46,7 +46,7 @@ QString Actor::GetNotes() const { return _notes; }
 Actor::Actor()
 {
     _name = "";
-    _health = 0;
+    _hitpoints = 0;
     _armorClass = 0;
     _spellSaveDC = 0;
     _initiative = 0;
@@ -54,10 +54,10 @@ Actor::Actor()
 }
 
 // Parameterized Constructor
-Actor::Actor(QString name, int health, int armorClass, int spellSaveDC, int initiative, QString notes)
+Actor::Actor(QString name, int hitpoints, int armorClass, int spellSaveDC, int initiative, QString notes)
 {
     _name = name;
-    _health = health;
+    _hitpoints = hitpoints;
     _armorClass = armorClass;
     _spellSaveDC = spellSaveDC;
     _initiative = initiative;

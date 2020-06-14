@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "Database.h"
 #include "DbEditTableModel.h"
+#include "TableModel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -45,5 +46,16 @@ private:
     Ui::MainWindow *ui;
     Database *db;
     DbEditTableModel *model;
+    TableModel *tableManager;
+
+    // TableWidgets
+    QTableWidget *combatTable;
+    QTableWidget *addActors;
+    QTableWidget *assignInit;
+
+    // Lists
+    QVector<Actor> *combatList;
+
+    // Temp variables
 };
 #endif // MAINWINDOW_H
