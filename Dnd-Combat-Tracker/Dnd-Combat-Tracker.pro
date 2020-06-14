@@ -1,4 +1,5 @@
 QT       += core gui
+QT += sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,14 +18,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     CombatManager.cpp \
+    TableModel.cpp \
+    Actor.cpp \
+    Database.cpp \
+    DbEditTableModel.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     CombatManager.h \
+    TableModel.h \
+    Actor.h \
+    Database.h \
+    DbEditTableModel.h \
     mainwindow.h
 
 FORMS += \
+    addactorform.ui \
     mainwindow.ui
 
 TRANSLATIONS += \
