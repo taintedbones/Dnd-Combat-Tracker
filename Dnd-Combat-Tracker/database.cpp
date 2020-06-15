@@ -1,4 +1,5 @@
 #include "Database.h"
+#include <algorithm>
 
 Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driver))
 {
@@ -14,6 +15,9 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
 
     // Create Actor List
     actorList = new QVector<Actor>;
+
+    // Create party list
+    combatList = new QVector<Actor>;
 }
 
 // Load database of actors into program
@@ -27,6 +31,7 @@ void Database::CreateActorList()
     int armorClass;
     int spellDC;
     QString notes;
+    QString type;
 
     Actor actor; // temp object for loading actorList
 
@@ -53,25 +58,12 @@ void Database::CreateActorList()
             notes = query.value(NOTES).toString();
             actor.SetNotes(notes);
 
-            // Create object
+                // Type
+            type = query.value(TYPE).toString();
+            actor.SetType(type);
 
             // Add Actor to List
             actorList->push_back(actor);
-
-            // DEBUG ONLY - Print Listing from Database
-            qDebug() << "Printing Database Listing";
-            for(int index = 1; index < 6; index++)
-            {
-                qDebug() << query.value(index);
-            }
-
-            qDebug() << "Printing Memory Listing";
-            // DEBUG ONLY - Print Object Attributes
-            qDebug() << "Name: " << actor.GetName();
-            qDebug() << "HP: " << actor.GetHitPoints();
-            qDebug() << "AC: " << actor.GetArmorClass();
-            qDebug() << "DC: " << actor.GetSpellSaveDC();
-            qDebug() << "Notes: " << actor.GetNotes();
         }
     }
     else // Print error if query is unsuccessful
@@ -80,7 +72,36 @@ void Database::CreateActorList()
     }
 }
 
+// Pull party from actor list
+void Database::CreatePartyList()
+{
+    // Cycle actorlist, pulling partymembers onto partylist
+    for(int index = 0; index < actorList->length(); index++)
+    {
+        // If type 'partymember' found, place on partylist
+        if(actorList->at(index).GetType() == "partymember")
+        {
+            // Add actor to partyList
+            combatList->push_back(actorList->at(index));
+            // Remove actor from actorList
+            actorList->remove(index);
+            // Go back a space since there's a gap now
+            index--;
+        }
+    }
+}
+
+// Accessor to return list of all actors currently on list
 QVector<Actor>* Database::GetActorList() const
 {
     return actorList;
 }
+
+// Accessor to return list of partymembers
+QVector<Actor>* Database::GetPartyList() const
+{
+    return combatList;
+}
+
+
+

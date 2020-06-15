@@ -19,7 +19,11 @@ MainWindow::MainWindow(QWidget *parent)
     combatTable = new QTableWidget;
     assignInit = new QTableWidget;
 
+    // Pull actor list from database
     db->CreateActorList();
+
+    // Populate list of partymembers
+    db->CreatePartyList();
 }
 
 MainWindow::~MainWindow()
@@ -34,13 +38,17 @@ void MainWindow::on_welcomeStart_pushButton_clicked()
 
     // Populate "Actors" TableWidget
         // Initialize/Clear TableWidget
-    tableManager->InitializeActorListModel(ui->actorTable_tableWidget);
+    tableManager->InitializeAddActorTable(ui->actorTable_tableWidget);
 
         // Get list of all actors from db, store in vector of type actor
-    tableManager->PopulateActorListings(ui->actorTable_tableWidget, db->GetActorList());
+    tableManager->PopulateAddActorTable(ui->actorTable_tableWidget, db->GetActorList());
 
-    // Initialize "combatList" TableWidget
-    tableManager->InitializeCombatModel(ui->combatTable_tableWidget);
+    // Populate "Combat" TableWidget
+        // Initialize "combatList" TableWidget
+    tableManager->InitializeAddActorTable(ui->combatTable_tableWidget);
+
+        // Populate prepCombatTable tableWidget
+    tableManager->PopulateAddActorTable(ui->combatTable_tableWidget, db->GetPartyList());
 }
 
 // Navigates user to welcome page from combat edit page
@@ -71,6 +79,11 @@ void MainWindow::on_fight_assignInit_pushButton_clicked()
 void MainWindow::on_endCombat_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(WELCOME);
+
+    // This needs to call CreateActorList from db class because the
+    // existing one has been altered.
+
+    // And CreatePartyList probably since those have been mixed up
 }
 
 // Navigates user to database editor page from welcome page

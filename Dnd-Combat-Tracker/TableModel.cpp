@@ -1,5 +1,6 @@
 #include "TableModel.h"
 #include "Actor.h"
+#include <QtDebug>
 
 // Model used for 'combat_page' (Conduct Combat) Page
 void TableModel::InitializeCombatModel(QTableWidget *combatTable)
@@ -10,17 +11,15 @@ void TableModel::InitializeCombatModel(QTableWidget *combatTable)
 }
 
 // Model used for 'edit_page' (Add Actors) Page
-void TableModel::InitializeActorListModel(QTableWidget *addActors)
+void TableModel::InitializeAddActorTable(QTableWidget *addActors)
 {
     addActors->clearContents();
     addActors->setColumnCount(ActorListColCount);
     addActors->setHorizontalHeaderLabels(ActorListColNames);
 }
 
-void TableModel::PopulateActorListings(QTableWidget *addActors, QVector<Actor>* actorList)
+void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* actorList)
 {
-    // START --- void PopulateActorTable(QTableWidget *actorTable_tableWidget)
-
     // Prep hp list
     QVector<QTableWidgetItem*> hpItemList;
     QTableWidgetItem* hpItem;
@@ -56,7 +55,6 @@ void TableModel::PopulateActorListings(QTableWidget *addActors, QVector<Actor>* 
         dcItem->setData(0,actorList->at(index).GetSpellSaveDC());
         dcItemList.push_back(dcItem);
         addActors->setItem(index, A_DC, dcItemList.at(index));
-
             // Notes
         addActors->setItem(index, A_NOTES, new QTableWidgetItem(actorList->at(index).GetNotes()));
     }

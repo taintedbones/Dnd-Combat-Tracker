@@ -42,9 +42,9 @@ public:
     void InitializeCombatModel(QTableWidget *combatTable);
 
     // Model used for 'edit_page' (Add Actors) Page
-    void InitializeActorListModel(QTableWidget *addActors);
+    void InitializeAddActorTable(QTableWidget *addActors);
 
-    void PopulateActorListings(QTableWidget *addActors, QVector<Actor>* actorList);
+    void PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* actorList);
 
     // Model used for 'assignInit_page' (Assign Initiative) Page
     void InitializeInitiativeModel(QTableWidget *assignInit);

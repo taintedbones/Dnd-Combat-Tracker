@@ -20,6 +20,9 @@ void Actor::SetInitiative(int &initiative) { _initiative = initiative; }
 // Set notes on actor
 void Actor::SetNotes(QString &notes) { _notes = notes; }
 
+// Set type of actor
+void Actor::SetType(QString &type) { _type = type; }
+
     // Getters //
 
 // Get actor name
@@ -39,6 +42,9 @@ int Actor::GetInitiative() const { return _initiative; }
 
 // Get notes on actor
 QString Actor::GetNotes() const { return _notes; }
+
+// Get type of actor
+QString Actor::GetType() const { return _type; }
 
     // Constructors
 

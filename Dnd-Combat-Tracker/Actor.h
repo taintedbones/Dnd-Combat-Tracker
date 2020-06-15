@@ -15,6 +15,7 @@ public:
     void SetSpellSaveDC(int &spellSaveDC);
     void SetInitiative(int &initiative);
     void SetNotes(QString &notes);
+    void SetType(QString &type);
 
     // Getters
     QString GetName() const;
@@ -23,6 +24,7 @@ public:
     int GetSpellSaveDC() const;
     int GetInitiative() const;
     QString GetNotes() const;
+    QString GetType() const;
 
     // Constructors
         // Default Constructor
@@ -38,6 +40,7 @@ private:
     int _spellSaveDC;
     int _initiative;
     QString _notes;
+    QString _type;
 };
 
 #endif // ACTOR_H
