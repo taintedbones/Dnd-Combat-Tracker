@@ -42,6 +42,10 @@ private slots:
     void on_combatEditor_pushButton_clicked();
     void format_dbEdit_tableView();
 
+    void on_addActor_pushButton_clicked();
+
+    void on_deleteActor_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     Database *db;

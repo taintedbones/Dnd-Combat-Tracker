@@ -68,5 +68,48 @@ void TableModel::InitializeInitiativeModel(QTableWidget *assignInit)
     assignInit->setHorizontalHeaderLabels(AssignInitColNames);
 }
 
+// Move actor from one table to the other
+void TableModel::MoveActorToTable(QTableWidget* origin, QTableWidget* destination)
+{
+    QVector<QTableWidgetItem*> actorListing;
+    QTableWidgetItem* actorAttribute = nullptr;
+    QTableWidgetItem* tempListing = nullptr;
+
+    // Get selected row index
+    int selectedRow = origin->currentItem()->row();
+
+
+    // Load the data into the attribute, then load it into the listing
+    for(int index = 0; index < ActorListColCount; index++)
+    {
+        // Populate temporary item
+        tempListing = origin->item(selectedRow, index);
+
+        // Create new item
+        actorAttribute = new QTableWidgetItem;
+
+        // Assign temp listing value to new item
+        actorAttribute->setData(0,tempListing->text());
+
+        // Add item to listing
+        actorListing.append(actorAttribute);
+    }
+
+    // Create new row
+    destination->insertRow(destination->rowCount());
+
+    // Load actor into other table
+    for(int index = 0; index < ActorListColCount; index++)
+    {
+        // Insert attributes
+        destination->setItem(destination->rowCount() - 1, index, new QTableWidgetItem(actorListing.at(index)->data(0).toString()));
+    }
+
+    // Delete old table's listing
+    origin->removeRow(selectedRow);
+
+    // END void MoveActorToTable(QTableWidget* origin, QTableWidget* destination); //
+}
+
 // Constructor
 TableModel::TableModel() {}

@@ -49,6 +49,9 @@ public:
     // Model used for 'assignInit_page' (Assign Initiative) Page
     void InitializeInitiativeModel(QTableWidget *assignInit);
 
+    // Move actor from one table to the other
+    void MoveActorToTable(QTableWidget* origin, QTableWidget* destination);
+
     // Constructor
     TableModel();
 };

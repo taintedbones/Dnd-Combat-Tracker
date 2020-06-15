@@ -120,3 +120,16 @@ void MainWindow::format_dbEdit_tableView()
     ui->dbEdit_tableView->setColumnWidth(5, 400);
     ui->dbEdit_tableView->setColumnWidth(1, 200);
 }
+
+// 'Adds' character to combat by moving actor listing from actor list to combat list
+void MainWindow::on_addActor_pushButton_clicked()
+{
+    // Move selected actor from "Add Actor" table to "Combat" Table
+    tableManager->MoveActorToTable(ui->actorTable_tableWidget, ui->combatTable_tableWidget);
+}
+
+void MainWindow::on_deleteActor_pushButton_clicked()
+{
+    // Move selected actor from "Add Actor" table to "Combat" Table
+    tableManager->MoveActorToTable(ui->combatTable_tableWidget, ui->actorTable_tableWidget);
+}
