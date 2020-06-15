@@ -3,6 +3,9 @@
 
 #include <QTableWidget>
 
+// Forward Declaration of Actor Class
+class Actor;
+
 class TableModel
 {
 public:
@@ -40,6 +43,8 @@ public:
 
     // Model used for 'edit_page' (Add Actors) Page
     void InitializeActorListModel(QTableWidget *addActors);
+
+    void PopulateActorListings(QTableWidget *addActors, QVector<Actor>* actorList);
 
     // Model used for 'assignInit_page' (Assign Initiative) Page
     void InitializeInitiativeModel(QTableWidget *assignInit);

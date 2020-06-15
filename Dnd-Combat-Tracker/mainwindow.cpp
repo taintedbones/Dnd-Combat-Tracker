@@ -17,7 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Create tablewidgets
     combatTable = new QTableWidget;
-    addActors = new QTableWidget;
     assignInit = new QTableWidget;
 
     db->CreateActorList();
@@ -35,35 +34,56 @@ void MainWindow::on_welcomeStart_pushButton_clicked()
 
     // Populate "Actors" TableWidget
         // Initialize/Clear TableWidget
-        tableManager->InitializeActorListModel(addActors);
+    tableManager->InitializeActorListModel(ui->actorTable_tableWidget);
 
-        // Get list of all actors from db, store in vector of type actor
-        // START --- Database Method: QVector* GetActors(QVector *actorList); ---
+    // Get list of all actors from db, store in vector of type actor
+    tableManager->PopulateActorListings(ui->actorTable_tableWidget, db->GetActorList());
 
+//    // START --- void PopulateActorTable(QTableWidget *actorTable_tableWidget)
 
+//    // Prep hp list
+//    QVector<QTableWidgetItem*> hpItemList;
+//    QTableWidgetItem* hpItem;
 
-        // END -- db.GetActors(QVector *actorList); ---
+//    // Prep ac list
+//    QVector<QTableWidgetItem*> acItemList;
+//    QTableWidgetItem* acItem;
 
-
-        // START
-        // Loop through data and add to table
-            // while(query.next());
-                // Add row
-                // For num of columns:
-                    // Insert name into name col, qdebug name \n
-                    // Insert hp into hp col, qdebug hp \n
-                    // Insert ac into ac col, qdebug ac \n
-                    // Insert spell save dc into dc col, qdebug dc \n
-                    // Insert notes into notes col, qdebug notes \n
+//    // Prep dc list
+//    QVector<QTableWidgetItem*> dcItemList;
+//    QTableWidgetItem* dcItem;
 
 
+//    for(int index = 0; index < db->GetActorList()->length(); index++)
+//    {
+//        // Create new row
+//        ui->actorTable_tableWidget->insertRow(index);
+//        // Insert attributes
+//            // Name
+//        ui->actorTable_tableWidget->setItem(index, tableManager->A_NAME, new QTableWidgetItem(db->GetActorList()->at(index).GetName()));
+//            // HP
+//        hpItem = new QTableWidgetItem;
+//        hpItem->setData(0,db->GetActorList()->at(index).GetHitPoints());
+//        hpItemList.push_back(hpItem);
+//        ui->actorTable_tableWidget->setItem(index, tableManager->A_HP, hpItemList.at(index));
+//            // AC
+//        acItem = new QTableWidgetItem;
+//        acItem->setData(0,db->GetActorList()->at(index).GetArmorClass());
+//        acItemList.push_back(acItem);
+//        ui->actorTable_tableWidget->setItem(index, tableManager->A_AC, acItemList.at(index));
+//            // DC
+//        dcItem = new QTableWidgetItem;
+//        dcItem->setData(0,db->GetActorList()->at(index).GetSpellSaveDC());
+//        dcItemList.push_back(dcItem);
+//        ui->actorTable_tableWidget->setItem(index, tableManager->A_DC, dcItemList.at(index));
 
-
-
+//            // Notes
+//        ui->actorTable_tableWidget->setItem(index, tableManager->A_NOTES, new QTableWidgetItem(db->GetActorList()->at(index).GetNotes()));
+//    }
+//    // END --- void PopulateActorTable(QTableWidget *actorTable_tableWidget); ---
 
     // Initialize "combatList" TableWidget
-        // Clear existing contents (combatList from CombatManager)
-
+    tableManager->InitializeCombatModel(ui->combatTable_tableWidget);
 }
 
 // Navigates user to welcome page from combat edit page
