@@ -16,6 +16,7 @@ void TableModel::InitializeAddActorTable(QTableWidget *addActors)
     addActors->clearContents();
     addActors->setColumnCount(ActorListColCount);
     addActors->setHorizontalHeaderLabels(ActorListColNames);
+    addActors->hideColumn(A_TYPE);
 }
 
 void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* actorList)
@@ -57,6 +58,8 @@ void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* 
         addActors->setItem(index, A_DC, dcItemList.at(index));
             // Notes
         addActors->setItem(index, A_NOTES, new QTableWidgetItem(actorList->at(index).GetNotes()));
+            // Type
+        addActors->setItem(index, A_TYPE, new QTableWidgetItem(actorList->at(index).GetType()));
     }
 }
 
@@ -77,7 +80,6 @@ void TableModel::MoveActorToTable(QTableWidget* origin, QTableWidget* destinatio
 
     // Get selected row index
     int selectedRow = origin->currentItem()->row();
-
 
     // Load the data into the attribute, then load it into the listing
     for(int index = 0; index < ActorListColCount; index++)
@@ -107,8 +109,31 @@ void TableModel::MoveActorToTable(QTableWidget* origin, QTableWidget* destinatio
 
     // Delete old table's listing
     origin->removeRow(selectedRow);
+}
 
-    // END void MoveActorToTable(QTableWidget* origin, QTableWidget* destination); //
+// Add Actors - Show selected actor type in actor list
+void TableModel::ShowActorType(QTableWidget* addActors, const QString &type)
+{
+    bool match = false;
+
+    // Show all rows (initialize)
+    for(int index = 0; index < addActors->rowCount(); index++)
+    {
+        addActors->showRow(index);
+    }
+
+    // Hide actors not found
+    for(int index = 0; index < addActors->rowCount(); index++)
+    {
+        // Set match to false
+        match = false;
+
+        // Check to see if listing matches type
+        match = addActors->item(index, 5)->data(0).toString() == type;
+
+        // If not, hide it
+        if(!match) { addActors->hideRow(index); }
+    }
 }
 
 // Constructor
