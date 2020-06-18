@@ -5,17 +5,31 @@
 // Model used for 'combat_page' (Conduct Combat) Page
 void TableModel::InitializeCombatModel(QTableWidget *combatTable)
 {
+    const int ROW_COUNT = combatTable->rowCount();
+
     combatTable->clearContents();
     combatTable->setColumnCount(CombatColCount);
     combatTable->setHorizontalHeaderLabels(CombatColNames);
+
+    for(int index = 0; index < ROW_COUNT; index++)
+    {
+        combatTable->removeRow(0);
+    }
 }
 
 // Model used for 'edit_page' (Add Actors) Page
 void TableModel::InitializeAddActorTable(QTableWidget *addActors)
 {
+    const int ROW_COUNT = addActors->rowCount();
+
     addActors->clearContents();
     addActors->setColumnCount(ActorListColCount);
     addActors->setHorizontalHeaderLabels(ActorListColNames);
+
+    for(int index = 0; index < ROW_COUNT; index++)
+    {
+        addActors->removeRow(0);
+    }
 }
 
 void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* actorList)
