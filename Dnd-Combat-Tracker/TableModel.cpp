@@ -88,41 +88,42 @@ void TableModel::MoveActorToTable(QTableWidget* origin, QTableWidget* destinatio
     QVector<QTableWidgetItem*> actorListing;
     QTableWidgetItem* actorAttribute = nullptr;
     QTableWidgetItem* tempListing = nullptr;
+    bool empty = origin->rowCount() == 0;
 
-    // Get selected row index
-    int selectedRow = origin->currentItem()->row();
-
-
-    // Load the data into the attribute, then load it into the listing
-    for(int index = 0; index < ActorListColCount; index++)
+    if(!empty)
     {
-        // Populate temporary item
-        tempListing = origin->item(selectedRow, index);
+        // Get selected row index
+        int selectedRow = origin->currentItem()->row();
 
-        // Create new item
-        actorAttribute = new QTableWidgetItem;
+        // Load the data into the attribute, then load it into the listing
+        for(int index = 0; index < ActorListColCount; index++)
+        {
+            // Populate temporary item
+            tempListing = origin->item(selectedRow, index);
 
-        // Assign temp listing value to new item
-        actorAttribute->setData(0,tempListing->text());
+            // Create new item
+            actorAttribute = new QTableWidgetItem;
 
-        // Add item to listing
-        actorListing.append(actorAttribute);
-    }
+            // Assign temp listing value to new item
+            actorAttribute->setData(0,tempListing->text());
 
-    // Create new row
-    destination->insertRow(destination->rowCount());
+            // Add item to listing
+            actorListing.append(actorAttribute);
+        }
 
-    // Load actor into other table
-    for(int index = 0; index < ActorListColCount; index++)
-    {
-        // Insert attributes
-        destination->setItem(destination->rowCount() - 1, index, new QTableWidgetItem(actorListing.at(index)->data(0).toString()));
-    }
+        // Create new row
+        destination->insertRow(destination->rowCount());
 
-    // Delete old table's listing
-    origin->removeRow(selectedRow);
+        // Load actor into other table
+        for(int index = 0; index < ActorListColCount; index++)
+        {
+            // Insert attributes
+            destination->setItem(destination->rowCount() - 1, index, new QTableWidgetItem(actorListing.at(index)->data(0).toString()));
+        }
 
-    // END void MoveActorToTable(QTableWidget* origin, QTableWidget* destination); //
+        // Delete old table's listing
+        origin->removeRow(selectedRow);
+    } // END if(!empty)
 }
 
 // Constructor
