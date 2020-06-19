@@ -18,6 +18,8 @@ void TableModel::InitializeAddActorTable(QTableWidget *addActors)
     addActors->setHorizontalHeaderLabels(ActorListColNames);
 }
 
+
+
 void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* actorList)
 {
     // Prep hp list
@@ -109,6 +111,35 @@ void TableModel::MoveActorToTable(QTableWidget* origin, QTableWidget* destinatio
     origin->removeRow(selectedRow);
 
     // END void MoveActorToTable(QTableWidget* origin, QTableWidget* destination); //
+}
+
+void TableModel::CopyTable(QTableWidget *origin, QTableWidget *destination)
+{
+    int totalRows = origin->rowCount();
+    int totalCols  = origin->columnCount();
+
+    // Initiate destination table with same row & col count as origin table
+    destination->setRowCount(totalRows);
+    destination->setColumnCount(totalCols);
+
+    // Move through each row & copy contents of each col to destination table
+    for(int row = 0; row < totalRows; row++)
+    {
+        for(int col = 0; col < totalCols; col++)
+        {
+            destination->setItem(row, col, origin->takeItem(row, col));
+        }
+    }
+}
+
+void TableModel::InsertInitCol(QTableWidget *table)
+{
+    QString initVal = "0";
+
+    for(int row = 0; row < table->rowCount(); row++)
+    {
+        table->setItem(row, I_INIT, new QTableWidgetItem(initVal, 0));
+    }
 }
 
 // Constructor

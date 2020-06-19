@@ -52,6 +52,10 @@ public:
     // Move actor from one table to the other
     void MoveActorToTable(QTableWidget* origin, QTableWidget* destination);
 
+    void CopyTable(QTableWidget *origin, QTableWidget *destination);
+
+    void InsertInitCol(QTableWidget *table);
+
     // Constructor
     TableModel();
 };
