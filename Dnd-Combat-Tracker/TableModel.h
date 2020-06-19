@@ -20,10 +20,10 @@ public:
     QStringList CombatColNames = { "Name", "HP: Cur", "Max", "AC", "DC", "Init", "Notes" };
         // Actor List Model
     // Column Count
-    const int ActorListColCount = 5;
+    const int ActorListColCount = 6;
 
     // Column Positions
-    enum ActorListColPositions { A_NAME, A_HP, A_AC, A_DC, A_NOTES };
+    enum ActorListColPositions { A_NAME, A_HP, A_AC, A_DC, A_NOTES, A_TYPE };
 
     // Column Names
     QStringList ActorListColNames = { "Name", "HP", "AC", "DC", "Notes" };
@@ -55,6 +55,9 @@ public:
     void CopyTable(QTableWidget *origin, QTableWidget *destination);
 
     void InsertInitCol(QTableWidget *table);
+
+    // Add Actors - Show selected actor type in actor list
+    void ShowActorType(QTableWidget* addActors, const QString &type);
 
     // Constructor
     TableModel();
