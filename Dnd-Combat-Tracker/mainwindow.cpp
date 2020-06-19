@@ -24,6 +24,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Populate list of partymembers
     db->CreatePartyList();
+
+    // START COMBOBOX INITIALIZATION
+
+    // Populate Combobox
+    ui->showActors_comboBox->addItems(addActorsComboBoxLabels);
+
+    // END COMBOBOX INITIALIZATION
+
 }
 
 MainWindow::~MainWindow()
@@ -35,6 +43,9 @@ MainWindow::~MainWindow()
 void MainWindow::on_welcomeStart_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(EDIT);
+
+    // Ensure combobox displays proper index
+    ui->showActors_comboBox->setCurrentIndex(0);
 
     // Populate "Actors" TableWidget
         // Initialize/Clear TableWidget
@@ -67,6 +78,9 @@ void MainWindow::on_next_editPage_pushButton_clicked()
 void MainWindow::on_back_assignInit_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(EDIT);
+
+    // Ensure combobox displays proper index
+    ui->showActors_comboBox->setCurrentIndex(0);
 }
 
 // Navigates user to combat page from assign initiative page
@@ -121,15 +135,35 @@ void MainWindow::format_dbEdit_tableView()
     ui->dbEdit_tableView->setColumnWidth(1, 200);
 }
 
-// 'Adds' character to combat by moving actor listing from actor list to combat list
+// 'Adds' actor to combat list by moving actor listing from actor list to combat list
 void MainWindow::on_addActor_pushButton_clicked()
 {
     // Move selected actor from "Add Actor" table to "Combat" Table
     tableManager->MoveActorToTable(ui->actorTable_tableWidget, ui->combatTable_tableWidget);
 }
 
+// 'Removes' actor from combat list by moving actor listing from combat list to actor list
 void MainWindow::on_deleteActor_pushButton_clicked()
 {
     // Move selected actor from "Add Actor" table to "Combat" Table
     tableManager->MoveActorToTable(ui->combatTable_tableWidget, ui->actorTable_tableWidget);
+}
+
+// Filters displayed actors by type
+void MainWindow::on_showActors_comboBox_activated(int index)
+{
+    switch(index)
+    {
+        case ALL: for(int index = 0; index < ui->actorTable_tableWidget->rowCount(); index++) { ui->actorTable_tableWidget->showRow(index); }
+            break;
+        case PARTY: tableManager->ShowActorType(ui->actorTable_tableWidget, "partymember");
+            break;
+        case CREATURES: tableManager->ShowActorType(ui->actorTable_tableWidget, "creature");
+            break;
+        case COMPANIONS: tableManager->ShowActorType(ui->actorTable_tableWidget, "companion");
+            break;
+        case EFFECTS: tableManager->ShowActorType(ui->actorTable_tableWidget, "effect");
+            break;
+        default: break;
+    }
 }
