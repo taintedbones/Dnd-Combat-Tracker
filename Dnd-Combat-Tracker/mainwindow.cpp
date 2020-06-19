@@ -61,12 +61,23 @@ void MainWindow::on_back_editPage_pushButton_clicked()
 void MainWindow::on_next_editPage_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(ASSIGN);
+
+     tableManager->InitializeInitiativeModel(ui->assignInit_tableWidget);
+
+     ui->combatTable_tableWidget->insertColumn(4);
+
+    // Copy combat table to assignInit table
+    tableManager->CopyTable(ui->combatTable_tableWidget, ui->assignInit_tableWidget);
+    tableManager->InsertInitCol(ui->assignInit_tableWidget);
 }
 
 // Navigates user to combat edit page from assign initiative page
 void MainWindow::on_back_assignInit_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(EDIT);
+
+    tableManager->CopyTable(ui->assignInit_tableWidget, ui->combatTable_tableWidget);
+    ui->combatTable_tableWidget->removeColumn(4);
 }
 
 // Navigates user to combat page from assign initiative page
