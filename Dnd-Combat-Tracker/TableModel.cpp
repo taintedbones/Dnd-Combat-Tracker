@@ -91,10 +91,6 @@ void TableModel::MoveActorToTable(QTableWidget* origin, QTableWidget* destinatio
     QVector<QTableWidgetItem*> actorListing;
     QTableWidgetItem* actorAttribute = nullptr;
     QTableWidgetItem* tempListing = nullptr;
-    bool empty = origin->rowCount() == 0;
-
-    // Get selected row index
-    int selectedRow = origin->currentItem()->row();
 
     // Load the data into the attribute, then load it into the listing
     for(int index = 0; index < ActorListColCount; index++)
@@ -131,6 +127,7 @@ void TableModel::MoveActorToTable(QTableWidget* origin, QTableWidget* destinatio
         // Delete old table's listing
         origin->removeRow(selectedRow);
     } // END if(!empty)
+}
 
 // Add Actors - Show selected actor type in actor list
 void TableModel::ShowActorType(QTableWidget* addActors, const QString &type)
