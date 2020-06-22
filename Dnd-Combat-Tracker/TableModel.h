@@ -27,6 +27,8 @@ public:
     // Column Positions
     enum ActorListColPositions { A_NAME, A_HP, A_AC, A_DC, A_NOTES, A_TYPE };
 
+    enum DbEditColPositions { D_ID, D_NAME, D_HP, D_AC, D_DC, D_NOTES, D_TYPE};
+
     // Column Names
     QStringList ActorListColNames = { "Name", "HP", "AC", "DC", "Notes" };
 

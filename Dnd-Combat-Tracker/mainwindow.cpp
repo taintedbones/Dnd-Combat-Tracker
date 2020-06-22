@@ -75,7 +75,8 @@ void MainWindow::on_next_editPage_pushButton_clicked()
 
      tableManager->InitializeInitiativeModel(ui->assignInit_tableWidget);
 
-     ui->combatTable_tableWidget->insertColumn(4);
+     // Inserts initiative column to ensure table copies to assign init page correctly
+     ui->combatTable_tableWidget->insertColumn(tableManager->I_INIT);
 
     // Copy combat table to assignInit table
     tableManager->CopyTable(ui->combatTable_tableWidget, ui->assignInit_tableWidget, false);
@@ -87,7 +88,9 @@ void MainWindow::on_back_assignInit_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(EDIT);
     tableManager->CopyTable(ui->assignInit_tableWidget, ui->combatTable_tableWidget, false);
-    ui->combatTable_tableWidget->removeColumn(4);
+
+    // Removes initiative column to ensure table copies to combat editor page correctly
+    ui->combatTable_tableWidget->removeColumn(tableManager->I_INIT);
     
     // Ensure combobox displays proper index
     ui->showActors_comboBox->setCurrentIndex(0);
@@ -142,9 +145,9 @@ void MainWindow::format_dbEdit_tableView()
     model = new DbEditTableModel(this, db);
 
     ui->dbEdit_tableView->setModel(model);
-    ui->dbEdit_tableView->setColumnHidden(0, true);
-    ui->dbEdit_tableView->setColumnWidth(5, 400);
-    ui->dbEdit_tableView->setColumnWidth(1, 200);
+    ui->dbEdit_tableView->setColumnHidden(tableManager->D_ID, true);
+    ui->dbEdit_tableView->setColumnWidth(tableManager->D_NOTES, 400);
+    ui->dbEdit_tableView->setColumnWidth(tableManager->D_NAME, 200);
 }
 
 // 'Adds' actor to combat list by moving actor listing from actor list to combat list
