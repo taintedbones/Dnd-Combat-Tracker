@@ -34,10 +34,14 @@ private slots:
     void on_back_editPage_pushButton_clicked();
     void on_next_editPage_pushButton_clicked();
     void on_dbOpt_editPage_pushButton_clicked();
+    void on_addActor_pushButton_clicked();
+    void on_deleteActor_pushButton_clicked();
+    void on_showActors_comboBox_activated(int index);
 
     //************ Assign Page *********************
     void on_back_assignInit_pushButton_clicked();
     void on_fight_assignInit_pushButton_clicked();
+    void on_assignInit_tableWidget_itemSelectionChanged();
 
     //************ Combat Page *********************
     void on_endCombat_pushButton_clicked();
@@ -46,12 +50,6 @@ private slots:
     void on_mainMenu_pushButton_clicked();
     void on_combatEditor_pushButton_clicked();
     void format_dbEdit_tableView();
-
-    void on_addActor_pushButton_clicked();
-
-    void on_deleteActor_pushButton_clicked();
-
-    void on_showActors_comboBox_activated(int index);
 
 private:
     Ui::MainWindow *ui;
