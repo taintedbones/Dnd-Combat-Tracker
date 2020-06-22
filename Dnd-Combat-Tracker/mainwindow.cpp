@@ -81,6 +81,9 @@ void MainWindow::on_next_editPage_pushButton_clicked()
     // Copy combat table to assignInit table
     tableManager->CopyTable(ui->combatTable_tableWidget, ui->assignInit_tableWidget, false);
     tableManager->InsertInitCol(ui->assignInit_tableWidget);
+
+    // Removes actor type column
+    ui->assignInit_tableWidget->removeColumn(tableManager->AssignInitColCount);
 }
 
 // Navigates user to combat edit page from assign initiative page

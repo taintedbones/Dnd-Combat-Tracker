@@ -85,8 +85,7 @@ void TableModel::InitializeInitiativeModel(QTableWidget *assignInit)
     assignInit->setColumnCount(AssignInitColCount);
     assignInit->setHorizontalHeaderLabels(AssignInitColNames);
 
-    assignInit->setEditTriggers(QTableView::NoEditTriggers);/*
-    assignInit->setSelectionMode(QAbstractItemView::NoSelection);*/
+    assignInit->setEditTriggers(QTableView::NoEditTriggers);
 }
 
 // Move actor from one table to the other
