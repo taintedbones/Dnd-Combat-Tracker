@@ -78,7 +78,7 @@ void MainWindow::on_next_editPage_pushButton_clicked()
      ui->combatTable_tableWidget->insertColumn(4);
 
     // Copy combat table to assignInit table
-    tableManager->CopyTable(ui->combatTable_tableWidget, ui->assignInit_tableWidget);
+    tableManager->CopyTable(ui->combatTable_tableWidget, ui->assignInit_tableWidget, false);
     tableManager->InsertInitCol(ui->assignInit_tableWidget);
 }
 
@@ -86,7 +86,7 @@ void MainWindow::on_next_editPage_pushButton_clicked()
 void MainWindow::on_back_assignInit_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(EDIT);
-    tableManager->CopyTable(ui->assignInit_tableWidget, ui->combatTable_tableWidget);
+    tableManager->CopyTable(ui->assignInit_tableWidget, ui->combatTable_tableWidget, false);
     ui->combatTable_tableWidget->removeColumn(4);
     
     // Ensure combobox displays proper index
@@ -97,6 +97,8 @@ void MainWindow::on_back_assignInit_pushButton_clicked()
 void MainWindow::on_fight_assignInit_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(COMBAT);
+
+    tableManager->CopyTable(ui->assignInit_tableWidget, ui->activeCombatTable_tableWidget, true);
 }
 
 // Navigates user to welcome page from combat page
@@ -176,4 +178,9 @@ void MainWindow::on_showActors_comboBox_activated(int index)
             break;
         default: break;
     }
+}
+
+void MainWindow::on_assignInit_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
+{
+
 }
