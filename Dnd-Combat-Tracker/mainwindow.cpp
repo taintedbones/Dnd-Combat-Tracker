@@ -179,8 +179,3 @@ void MainWindow::on_showActors_comboBox_activated(int index)
         default: break;
     }
 }
-
-void MainWindow::on_assignInit_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
-{
-
-}

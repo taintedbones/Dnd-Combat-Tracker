@@ -53,8 +53,6 @@ private slots:
 
     void on_showActors_comboBox_activated(int index);
 
-    void on_assignInit_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
-
 private:
     Ui::MainWindow *ui;
     Database *db;

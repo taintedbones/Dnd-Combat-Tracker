@@ -2,6 +2,8 @@
 #define TABLEMODEL_H
 
 #include <QTableWidget>
+#include <QSpinBox>
+#include <QVariant>
 
 // Forward Declaration of Actor Class
 class Actor;
@@ -52,8 +54,10 @@ public:
     // Move actor from one table to the other
     void MoveActorToTable(QTableWidget* origin, QTableWidget* destination);
 
-    void CopyTable(QTableWidget *origin, QTableWidget *destination);
+    // Copies entire contents of one tablewidget to another
+    void CopyTable(QTableWidget *origin, QTableWidget *destination, bool hasInit);
 
+    // Inserts initiative column to the passed in table
     void InsertInitCol(QTableWidget *table);
 
     // Add Actors - Show selected actor type in actor list

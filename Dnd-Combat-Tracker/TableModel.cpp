@@ -11,6 +11,7 @@ void TableModel::InitializeCombatModel(QTableWidget *combatTable)
     combatTable->setColumnCount(CombatColCount);
     combatTable->setHorizontalHeaderLabels(CombatColNames);
 
+
     for(int index = 0; index < ROW_COUNT; index++)
     {
         combatTable->removeRow(0);
@@ -32,8 +33,6 @@ void TableModel::InitializeAddActorTable(QTableWidget *addActors)
         addActors->removeRow(0);
     }
 }
-
-
 
 void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* actorList)
 {
@@ -85,6 +84,9 @@ void TableModel::InitializeInitiativeModel(QTableWidget *assignInit)
     assignInit->clearContents();
     assignInit->setColumnCount(AssignInitColCount);
     assignInit->setHorizontalHeaderLabels(AssignInitColNames);
+
+    assignInit->setEditTriggers(QTableView::NoEditTriggers);/*
+    assignInit->setSelectionMode(QAbstractItemView::NoSelection);*/
 }
 
 // Move actor from one table to the other
@@ -156,10 +158,14 @@ void TableModel::ShowActorType(QTableWidget* addActors, const QString &type)
     }
 }
 
-void TableModel::CopyTable(QTableWidget *origin, QTableWidget *destination)
+// Copies entire contents of one tablewidget to another
+void TableModel::CopyTable(QTableWidget *origin, QTableWidget *destination, bool hasInit)
 {
     int totalRows = origin->rowCount();
     int totalCols  = origin->columnCount();
+
+    QTableWidgetItem *initCell;
+    QSpinBox *initBox;
 
     // Initiate destination table with same row & col count as origin table
     destination->setRowCount(totalRows);
@@ -171,17 +177,29 @@ void TableModel::CopyTable(QTableWidget *origin, QTableWidget *destination)
         for(int col = 0; col < totalCols; col++)
         {
             destination->setItem(row, col, origin->takeItem(row, col));
-        }
-    }
+
+             // assign init page - Copies value in spinbox to next table
+            if(hasInit && col == I_INIT)
+            {
+                initBox = qobject_cast<QSpinBox*>(origin->cellWidget(row, I_INIT));
+                initCell = new QTableWidgetItem(initBox->cleanText());
+
+                destination->setItem(row, I_INIT, initCell);
+            } // END -if
+        } // END - for (col)
+    } // END - for (row)
 }
 
+// Inserts initiative column to the passed in table
 void TableModel::InsertInitCol(QTableWidget *table)
 {
-    QString initVal = "0";
+    QSpinBox *initBox;
 
     for(int row = 0; row < table->rowCount(); row++)
     {
-        table->setItem(row, I_INIT, new QTableWidgetItem(initVal, 0));
+        initBox = new QSpinBox(table);
+        initBox->setRange(0, 20);
+        table->setCellWidget(row, I_INIT, initBox);
     }
 }
 
