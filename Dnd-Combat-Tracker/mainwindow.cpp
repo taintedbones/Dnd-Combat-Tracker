@@ -185,3 +185,16 @@ void MainWindow::on_showActors_comboBox_activated(int index)
         default: break;
     }
 }
+
+//  Focuses on initiative spinbox whenever user changes selection on table
+void MainWindow::on_assignInit_tableWidget_itemSelectionChanged()
+{
+    int currentRow;
+    QSpinBox* initBox;
+
+    currentRow = ui->assignInit_tableWidget->currentRow();
+    initBox = qobject_cast<QSpinBox*>(ui->assignInit_tableWidget->cellWidget(currentRow, tableManager->I_INIT));
+
+    initBox->setFocus();
+    initBox->selectAll();
+}
