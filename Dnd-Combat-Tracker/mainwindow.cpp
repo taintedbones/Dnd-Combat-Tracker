@@ -49,17 +49,18 @@ void MainWindow::on_welcomeStart_pushButton_clicked()
 
     // Populate "Actors" TableWidget
         // Initialize/Clear TableWidget
-    tableManager->InitializeAddActorTable(ui->actorTable_tableWidget);
+    tableManager->InitializeAddActorTable(ui->actorTable_tableWidget, tableManager->ActorListColCount, tableManager->ActorListColNames);
 
         // Get list of all actors from db, store in vector of type actor
     tableManager->PopulateAddActorTable(ui->actorTable_tableWidget, db->GetActorList());
 
     // Populate "Combat" TableWidget
         // Initialize "combatList" TableWidget
-    tableManager->InitializeAddActorTable(ui->combatTable_tableWidget);
+    tableManager->InitializeAddActorTable(ui->combatTable_tableWidget, tableManager->SelectedListColCount, tableManager->SelectedListColNames);
 
         // Populate prepCombatTable tableWidget
     tableManager->PopulateAddActorTable(ui->combatTable_tableWidget, db->GetPartyList());
+    tableManager->InsertSpinBoxCol(ui->combatTable_tableWidget, 1, 1, tableManager->S_QTY);
 }
 
 // Navigates user to welcome page from combat edit page
@@ -80,7 +81,7 @@ void MainWindow::on_next_editPage_pushButton_clicked()
 
     // Copy combat table to assignInit table
     tableManager->CopyTable(ui->combatTable_tableWidget, ui->assignInit_tableWidget, false);
-    tableManager->InsertInitCol(ui->assignInit_tableWidget);
+    tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 20, tableManager->I_INIT);
 
     // Removes actor type column
     ui->assignInit_tableWidget->removeColumn(tableManager->AssignInitColCount);
@@ -157,14 +158,14 @@ void MainWindow::format_dbEdit_tableView()
 void MainWindow::on_addActor_pushButton_clicked()
 {
     // Move selected actor from "Add Actor" table to "Combat" Table
-    tableManager->MoveActorToTable(ui->actorTable_tableWidget, ui->combatTable_tableWidget);
+    tableManager->AddActorToTable(ui->actorTable_tableWidget, ui->combatTable_tableWidget);
 }
 
 // 'Removes' actor from combat list by moving actor listing from combat list to actor list
 void MainWindow::on_deleteActor_pushButton_clicked()
 {
     // Move selected actor from "Add Actor" table to "Combat" Table
-    tableManager->MoveActorToTable(ui->combatTable_tableWidget, ui->actorTable_tableWidget);
+    tableManager->RemoveActorFromTable(ui->combatTable_tableWidget, ui->actorTable_tableWidget);
 }
 
 // Filters displayed actors by type
