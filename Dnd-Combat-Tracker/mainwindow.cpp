@@ -105,7 +105,12 @@ void MainWindow::on_fight_assignInit_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(COMBAT);
 
+    tableManager->InitializeCombatModel(ui->activeCombatTable_tableWidget);
     tableManager->CopyTable(ui->assignInit_tableWidget, ui->activeCombatTable_tableWidget, true);
+    tableManager->SetupHealthCol(ui->activeCombatTable_tableWidget);
+
+    ui->activeCombatTable_tableWidget->removeColumn(6);
+    ui->activeCombatTable_tableWidget->sortItems(tableManager->C_INIT, Qt::DescendingOrder);
 }
 
 // Navigates user to welcome page from combat page

@@ -5,7 +5,6 @@
 // Model used for 'combat_page' (Conduct Combat) Page
 void TableModel::InitializeCombatModel(QTableWidget *combatTable)
 {
-    combatTable->clearContents();
     combatTable->setColumnCount(CombatColCount);
     combatTable->setHorizontalHeaderLabels(CombatColNames);
     combatTable->setEditTriggers(QTableView::NoEditTriggers);
@@ -135,7 +134,7 @@ void TableModel::ShowActorType(QTableWidget* addActors, const QString &type)
 }
 
 // Copies entire contents of one tablewidget to another
-void TableModel::CopyTable(QTableWidget *origin, QTableWidget *destination, bool hasInit)
+void TableModel::CopyTable(QTableWidget *origin, QTableWidget *destination, bool activeCombat)
 {
     int totalRows = origin->rowCount();
     int totalCols  = origin->columnCount();
@@ -145,7 +144,7 @@ void TableModel::CopyTable(QTableWidget *origin, QTableWidget *destination, bool
 
     // Initiate destination table with same row & col count as origin table
     destination->setRowCount(totalRows);
-    destination->setColumnCount(totalCols);
+
 
     // Move through each row & copy contents of each col to destination table
     for(int row = 0; row < totalRows; row++)
@@ -155,7 +154,7 @@ void TableModel::CopyTable(QTableWidget *origin, QTableWidget *destination, bool
             destination->setItem(row, col, origin->takeItem(row, col));
 
              // assign init page - Copies value in spinbox to next table
-            if(hasInit && col == I_INIT)
+            if(activeCombat && col == I_INIT)
             {
                 initBox = qobject_cast<QSpinBox*>(origin->cellWidget(row, I_INIT));
                 initCell = new QTableWidgetItem(initBox->cleanText());
@@ -233,6 +232,24 @@ void TableModel::AddActorToTable(QTableWidget *origin, QTableWidget *destination
         // Delete old table's listing
         origin->removeRow(selectedRow);
     } // END if(!empty)
+}
+
+void TableModel::SetupHealthCol(QTableWidget *table)
+{
+    QSpinBox *healthBox;
+    int maxHealth;
+
+    for(int row = 0; row < table->rowCount(); row++)
+    {
+        maxHealth = table->item(row, C_HP)->text().toInt();
+
+        healthBox = new QSpinBox(table);
+        healthBox->setRange(0, maxHealth);
+        healthBox->setValue(maxHealth);
+        healthBox->setSuffix(" / " + QString::number(maxHealth));
+
+        table->setCellWidget(row, C_HP, healthBox);
+    }
 }
 
 // Constructor

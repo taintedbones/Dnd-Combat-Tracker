@@ -14,9 +14,9 @@ public:
      // ********************************** Combat Model **********************************
     const int CombatColCount = 7;
 
-    enum CombatColPositions { C_NAME, C_HP_CUR, C_HP_MAX, C_AC, C_DC, C_INIT, C_NOTES };
+    enum CombatColPositions { C_NAME, C_HP, C_AC, C_DC, C_INIT, C_NOTES };
 
-    QStringList CombatColNames = { "Name", "HP: Cur", "Max", "AC", "DC", "Init", "Notes" };
+    QStringList CombatColNames = { "Name", "HP", "AC", "DC", "Init", "Notes" };
 
     // ********************************** Actor List Model **********************************
     const int ActorListColCount = 6;
@@ -63,7 +63,7 @@ public:
     void RemoveActorFromTable(QTableWidget* origin, QTableWidget* destination);
 
     // Copies entire contents of one tablewidget to another
-    void CopyTable(QTableWidget *origin, QTableWidget *destination, bool hasInit);
+    void CopyTable(QTableWidget *origin, QTableWidget *destination, bool activeCombat);
 
     // Inserts initiative column to the passed in table
     void InsertSpinBoxCol(QTableWidget *table, int min, int max, int col);
@@ -76,6 +76,8 @@ public:
 
     // Adds actor to new table from origin with quantity spin boxes
     void AddActorToTable(QTableWidget *origin, QTableWidget *destination);
+
+    void SetupHealthCol(QTableWidget *table);
 
     // Constructor
     TableModel();
