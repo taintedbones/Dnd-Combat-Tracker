@@ -8,6 +8,10 @@ void TableModel::InitializeCombatModel(QTableWidget *combatTable)
     combatTable->setColumnCount(CombatColCount);
     combatTable->setHorizontalHeaderLabels(CombatColNames);
     combatTable->setEditTriggers(QTableView::NoEditTriggers);
+    combatTable->setColumnWidth(C_HP, 80);
+    combatTable->setColumnWidth(C_AC, 80);
+    combatTable->setColumnWidth(C_DC, 80);
+    combatTable->setColumnWidth(C_INIT, 80);
 
     DeleteAllTableRows(combatTable);
 }
@@ -18,8 +22,9 @@ void TableModel::InitializeAddActorTable(QTableWidget *addActors, int cols, QStr
     addActors->clearContents();
     addActors->setColumnCount(cols);
     addActors->setHorizontalHeaderLabels(headers);
-//    addActors->hideColumn(A_TYPE);
+    addActors->hideColumn(A_TYPE);
     addActors->setColumnWidth(A_NAME, 150);
+    addActors->setColumnWidth(A_NOTES, 530);
     addActors->setEditTriggers(QTableView::NoEditTriggers);
 
     DeleteAllTableRows(addActors);
@@ -78,7 +83,7 @@ void TableModel::InitializeInitiativeModel(QTableWidget *assignInit)
     assignInit->clearContents();
     assignInit->setColumnCount(AssignInitColCount);
     assignInit->setHorizontalHeaderLabels(AssignInitColNames);
-
+    assignInit->setColumnWidth(I_NAME, 150);
     assignInit->setEditTriggers(QTableView::NoEditTriggers);
 }
 
@@ -234,6 +239,7 @@ void TableModel::AddActorToTable(QTableWidget *origin, QTableWidget *destination
     } // END if(!empty)
 }
 
+// Formats health spin boxes for each actor and inserts them into combat table
 void TableModel::SetupHealthCol(QTableWidget *table)
 {
     QSpinBox *healthBox;
@@ -244,11 +250,30 @@ void TableModel::SetupHealthCol(QTableWidget *table)
         maxHealth = table->item(row, C_HP)->text().toInt();
 
         healthBox = new QSpinBox(table);
-        healthBox->setRange(0, maxHealth);
+        healthBox->setRange(0, maxHealth + 20);
         healthBox->setValue(maxHealth);
         healthBox->setSuffix(" / " + QString::number(maxHealth));
 
         table->setCellWidget(row, C_HP, healthBox);
+    }
+}
+
+// Formats AC spin bozes for each actor and inserts them into combat table
+void TableModel::SetupACCol(QTableWidget *table)
+{
+    QSpinBox *acBox;
+    int maxAC;
+
+    for(int row = 0; row < table->rowCount(); row++)
+    {
+        maxAC = table->item(row, C_AC)->text().toInt();
+
+        acBox = new QSpinBox(table);
+        acBox->setRange(0, maxAC);
+        acBox->setValue(maxAC);
+        acBox->setSuffix(" / " + QString::number(maxAC));
+
+        table->setCellWidget(row, C_AC, acBox);
     }
 }
 

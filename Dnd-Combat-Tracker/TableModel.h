@@ -79,6 +79,8 @@ public:
 
     void SetupHealthCol(QTableWidget *table);
 
+    void SetupACCol(QTableWidget *table);
+
     // Constructor
     TableModel();
 };
