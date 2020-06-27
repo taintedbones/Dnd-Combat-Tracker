@@ -30,6 +30,7 @@ void TableModel::InitializeAddActorTable(QTableWidget *addActors, int cols, QStr
     DeleteAllTableRows(addActors);
 }
 
+// Fills Add Actor Table with actors in database
 void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* actorList)
 {
     // Prep hp list
@@ -43,10 +44,6 @@ void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* 
     // Prep dc list
     QVector<QTableWidgetItem*> dcItemList;
     QTableWidgetItem* dcItem;
-
-//    QTableWidgetItem *qtyItem;
-//    QSpinBox *qtyBox;
-
 
     for(int index = 0; index < actorList->length(); index++)
     {
@@ -85,6 +82,7 @@ void TableModel::InitializeInitiativeModel(QTableWidget *assignInit)
     assignInit->setHorizontalHeaderLabels(AssignInitColNames);
     assignInit->setColumnWidth(I_NAME, 150);
     assignInit->setEditTriggers(QTableView::NoEditTriggers);
+    DeleteAllTableRows(assignInit);
 }
 
 // Remove actor from one table and back to its origin
@@ -139,33 +137,109 @@ void TableModel::ShowActorType(QTableWidget* addActors, const QString &type)
 }
 
 // Copies entire contents of one tablewidget to another
-void TableModel::CopyTable(QTableWidget *origin, QTableWidget *destination, bool activeCombat)
-{
-    int totalRows = origin->rowCount();
-    int totalCols  = origin->columnCount();
+void TableModel::CopyTableToInitPage(QTableWidget *origin, QTableWidget *destination)
+{ 
+    QTableWidgetItem *newCell;
+    QSpinBox *qtyBox;
+    QString name;
+    QString num;
 
-    QTableWidgetItem *initCell;
-    QSpinBox *initBox;
-
-    // Initiate destination table with same row & col count as origin table
-    destination->setRowCount(totalRows);
-
+    int destRow = 0;
+    int qty = 0;
+    int firstOcc = 0;
+    bool isFirstOccurence = false;
 
     // Move through each row & copy contents of each col to destination table
-    for(int row = 0; row < totalRows; row++)
+    for(int originRow = 0; originRow < origin->rowCount(); originRow++)
     {
-        for(int col = 0; col < totalCols; col++)
-        {
-            destination->setItem(row, col, origin->takeItem(row, col));
+        // Get quantity of current actor in origin table
+        qtyBox = qobject_cast<QSpinBox*>(origin->cellWidget(originRow, 7));
+        qty = qtyBox->value();
 
-             // assign init page - Copies value in spinbox to next table
-            if(activeCombat && col == I_INIT)
+        // Determines how many times actor will be copied to next table
+        for(int i = 0; i < qty; i++)
+        {
+            destRow = destination->rowCount();
+
+            // insert new row to destination table
+            destination->insertRow(destination->rowCount());
+
+            // Access each column in origin at current row to copy to destination
+            for(int col = 0; col < origin->columnCount(); col++)
+            {
+                isFirstOccurence = i == 0;
+
+                if(col < AssignInitColCount && col != I_INIT)
+                {
+                    if(isFirstOccurence)
+                    {
+                        newCell = new QTableWidgetItem(origin->item(originRow, col)->text());
+                        destination->setItem(destRow, col, newCell);
+
+                        if(qty > 1)
+                        {
+                            firstOcc = destRow;
+                        }
+                    }
+                    else
+                    {
+                        // Copies text of current column for first occurence & stores in new item
+                        newCell = new QTableWidgetItem(destination->item(firstOcc, col)->text());
+
+                        // sets item in destination table
+                        destination->setItem(destRow, col, newCell);
+
+                        if (col == S_NAME)
+                        {
+                            // get name & qrt number
+                            name = destination->item(destRow,col)->text();
+                            num = QString::number(i + 1);
+
+                            // reset actor name to include qty number
+                            destination->item(destRow, col)->setText(name  + " " + num);
+
+                            isFirstOccurence = i == (qty - 1);
+
+                            if(isFirstOccurence)
+                            {
+                                name = destination->item(firstOcc, col)->text();
+                                num = QString::number(1);
+
+                                // reset actor name to include qty number
+                                destination->item(firstOcc, col)->setText(name  + " " + num);
+                            }
+                        }
+                    } // END - if (isFirstOccurence)
+                } // END - if ( col)
+            } // END - for (col)
+        } // END - for (i)
+    } // END - for (originRow)
+}
+
+// Copies contents of  assign init table widget's contents to combat page
+void TableModel::CopyTableToCombatPage(QTableWidget *origin, QTableWidget *destination)
+{
+    QSpinBox *initBox;
+    QTableWidgetItem *initCell;
+
+    // Move through each row & copy contents of each col to destination table
+    for(int row = 0; row < origin->rowCount(); row++)
+    {
+        destination->insertRow(destination->rowCount());
+
+        for(int col = 0; col < origin->columnCount(); col++)
+        {
+            if(col == I_INIT)
             {
                 initBox = qobject_cast<QSpinBox*>(origin->cellWidget(row, I_INIT));
                 initCell = new QTableWidgetItem(initBox->cleanText());
 
                 destination->setItem(row, I_INIT, initCell);
-            } // END -if
+            }
+            else
+            {
+                destination->setItem(row, col, origin->takeItem(row, col));
+            }
         } // END - for (col)
     } // END - for (row)
 }
@@ -239,41 +313,22 @@ void TableModel::AddActorToTable(QTableWidget *origin, QTableWidget *destination
     } // END if(!empty)
 }
 
-// Formats health spin boxes for each actor and inserts them into combat table
-void TableModel::SetupHealthCol(QTableWidget *table)
+// Converts all items in a column into a stats spinbox
+void TableModel::SetupCombatStatsCol(QTableWidget *table, int overflow, int col)
 {
-    QSpinBox *healthBox;
-    int maxHealth;
+    QSpinBox *sBox;
+    int max;
 
     for(int row = 0; row < table->rowCount(); row++)
     {
-        maxHealth = table->item(row, C_HP)->text().toInt();
+        max = table->item(row, col)->text().toInt();
 
-        healthBox = new QSpinBox(table);
-        healthBox->setRange(0, maxHealth + 20);
-        healthBox->setValue(maxHealth);
-        healthBox->setSuffix(" / " + QString::number(maxHealth));
+        sBox = new QSpinBox(table);
+        sBox->setRange(0, max + overflow);
+        sBox->setValue(max);
+        sBox->setSuffix(" / " + QString::number(max));
 
-        table->setCellWidget(row, C_HP, healthBox);
-    }
-}
-
-// Formats AC spin bozes for each actor and inserts them into combat table
-void TableModel::SetupACCol(QTableWidget *table)
-{
-    QSpinBox *acBox;
-    int maxAC;
-
-    for(int row = 0; row < table->rowCount(); row++)
-    {
-        maxAC = table->item(row, C_AC)->text().toInt();
-
-        acBox = new QSpinBox(table);
-        acBox->setRange(0, maxAC);
-        acBox->setValue(maxAC);
-        acBox->setSuffix(" / " + QString::number(maxAC));
-
-        table->setCellWidget(row, C_AC, acBox);
+        table->setCellWidget(row, col, sBox);
     }
 }
 

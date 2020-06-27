@@ -80,7 +80,7 @@ void MainWindow::on_next_editPage_pushButton_clicked()
      ui->combatTable_tableWidget->insertColumn(tableManager->I_INIT);
 
     // Copy combat table to assignInit table
-    tableManager->CopyTable(ui->combatTable_tableWidget, ui->assignInit_tableWidget, false);
+    tableManager->CopyTableToInitPage(ui->combatTable_tableWidget, ui->assignInit_tableWidget);
     tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 20, tableManager->I_INIT);
 
     // Removes actor type column
@@ -91,11 +91,10 @@ void MainWindow::on_next_editPage_pushButton_clicked()
 void MainWindow::on_back_assignInit_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(EDIT);
-    tableManager->CopyTable(ui->assignInit_tableWidget, ui->combatTable_tableWidget, false);
 
     // Removes initiative column to ensure table copies to combat editor page correctly
     ui->combatTable_tableWidget->removeColumn(tableManager->I_INIT);
-    
+
     // Ensure combobox displays proper index
     ui->showActors_comboBox->setCurrentIndex(0);
 }
@@ -106,9 +105,9 @@ void MainWindow::on_fight_assignInit_pushButton_clicked()
     ui->main_stackedWidget->setCurrentIndex(COMBAT);
 
     tableManager->InitializeCombatModel(ui->activeCombatTable_tableWidget);
-    tableManager->CopyTable(ui->assignInit_tableWidget, ui->activeCombatTable_tableWidget, true);
-    tableManager->SetupHealthCol(ui->activeCombatTable_tableWidget);
-    tableManager->SetupACCol(ui->activeCombatTable_tableWidget);
+    tableManager->CopyTableToCombatPage(ui->assignInit_tableWidget, ui->activeCombatTable_tableWidget);
+    tableManager->SetupCombatStatsCol(ui->activeCombatTable_tableWidget, 20, tableManager->C_HP);
+    tableManager->SetupCombatStatsCol(ui->activeCombatTable_tableWidget, 0, tableManager->C_AC);
 
     ui->activeCombatTable_tableWidget->removeColumn(6);
     ui->activeCombatTable_tableWidget->sortItems(tableManager->C_INIT, Qt::DescendingOrder);

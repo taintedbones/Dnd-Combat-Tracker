@@ -54,6 +54,7 @@ public:
     // Model used for 'edit_page' (Add Actors) Page
     void InitializeAddActorTable(QTableWidget *addActors, int cols, QStringList headers);
 
+    // Fills Add Actor Table with actors in database
     void PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* actorList);
 
     // Model used for 'assignInit_page' (Assign Initiative) Page
@@ -63,7 +64,10 @@ public:
     void RemoveActorFromTable(QTableWidget* origin, QTableWidget* destination);
 
     // Copies entire contents of one tablewidget to another
-    void CopyTable(QTableWidget *origin, QTableWidget *destination, bool activeCombat);
+    void CopyTableToInitPage(QTableWidget *origin, QTableWidget *destination);
+
+    // Copies contents of  assign init table widget's contents to combat page
+    void CopyTableToCombatPage(QTableWidget *origin, QTableWidget *destination);
 
     // Inserts initiative column to the passed in table
     void InsertSpinBoxCol(QTableWidget *table, int min, int max, int col);
@@ -77,9 +81,8 @@ public:
     // Adds actor to new table from origin with quantity spin boxes
     void AddActorToTable(QTableWidget *origin, QTableWidget *destination);
 
-    void SetupHealthCol(QTableWidget *table);
-
-    void SetupACCol(QTableWidget *table);
+    // Converts all items in a column into a stats spinbox
+    void SetupCombatStatsCol(QTableWidget *table, int overflow, int col);
 
     // Constructor
     TableModel();
