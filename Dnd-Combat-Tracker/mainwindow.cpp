@@ -31,7 +31,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->showActors_comboBox->addItems(addActorsComboBoxLabels);
 
     // END COMBOBOX INITIALIZATION
+    addActorForm = new AddActorForm();
 
+    // For testing
+    addActorForm->show();
 }
 
 MainWindow::~MainWindow()
@@ -203,4 +206,9 @@ void MainWindow::on_assignInit_tableWidget_itemSelectionChanged()
 
     initBox->setFocus();
     initBox->selectAll();
+}
+
+void MainWindow::on_addActor_combat_pushButton_clicked()
+{
+    addActorForm->show();
 }

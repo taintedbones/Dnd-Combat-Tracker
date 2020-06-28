@@ -5,6 +5,7 @@
 #include "Database.h"
 #include "DbEditTableModel.h"
 #include "TableModel.h"
+#include "AddActorForm.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -51,6 +52,8 @@ private slots:
     void on_combatEditor_pushButton_clicked();
     void format_dbEdit_tableView();
 
+    void on_addActor_combat_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     Database *db;
@@ -64,7 +67,6 @@ private:
 
     // Lists
     QVector<Actor> *combatList;
-
-    // Temp variables
+    AddActorForm *addActorForm;
 };
 #endif // MAINWINDOW_H
