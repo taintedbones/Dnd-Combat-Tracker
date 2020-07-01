@@ -84,6 +84,10 @@ public:
     // Converts all items in a column into a stats spinbox
     void SetupCombatStatsCol(QTableWidget *table, int overflow, int col);
 
+    void InsertCombatStatsBox(QTableWidget *table, int value, int overflow, int row, int col);
+
+    bool IsActorInCombat(QString name, QTableWidget *table);
+
     // Constructor
     TableModel();
 };

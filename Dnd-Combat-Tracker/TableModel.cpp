@@ -332,5 +332,73 @@ void TableModel::SetupCombatStatsCol(QTableWidget *table, int overflow, int col)
     }
 }
 
+void TableModel::InsertCombatStatsBox(QTableWidget *table, int value, int overflow, int row, int col)
+{
+    QSpinBox *sBox;
+    QTableWidgetItem *item;
+    int max;
+
+    item = new QTableWidgetItem();
+    table->setItem(row, col, item);
+    max = value;
+
+    sBox = new QSpinBox(table);
+    sBox->setRange(0, max + overflow);
+    sBox->setValue(max);
+    sBox->setSuffix(" / " + QString::number(max));
+
+    table->setCellWidget(row, col, sBox);
+}
+
+// Determines if the passed in actor is already in the combat table
+bool TableModel::IsActorInCombat(QString name, QTableWidget *table)
+{
+    QString currentName;
+    QStringList nameParse;
+    int row = 0;
+    bool found = false;
+
+    while(!found && row < table->rowCount())
+    {
+        currentName = table->item(row, C_NAME)->text();
+
+        // Parse the current name in case it has a number after it
+        nameParse = currentName.split(" ");
+
+        qDebug() << nameParse;
+
+        if(nameParse.size() > 1)
+        {
+            nameParse.removeLast();
+
+            qDebug() << nameParse;
+            if(nameParse.size() > 1)
+            {
+                currentName = nameParse.join(" ");
+            }
+            else
+            {
+                currentName = nameParse.first();
+            }
+        }
+        else
+        {
+            currentName = nameParse.first();
+        }
+
+        qDebug() << currentName;
+
+
+        if(currentName == name)
+        {
+            found = true;
+        }
+
+        row++;
+    }
+
+    return found;
+}
+
 // Constructor
 TableModel::TableModel() {}
