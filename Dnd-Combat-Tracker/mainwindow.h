@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QObject>
 #include "Database.h"
 #include "DbEditTableModel.h"
 #include "TableModel.h"
@@ -25,6 +26,9 @@ public:
 
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+
+    void InsertCustomActor(Actor custom);
 
 private slots:
     //************ Welcome Page *********************
@@ -53,6 +57,7 @@ private slots:
     void format_dbEdit_tableView();
 
     void on_addActor_combat_pushButton_clicked();
+        void InsertPremadeActor(Actor premade);
 
 private:
     Ui::MainWindow *ui;

@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->main_stackedWidget->setCurrentIndex(WELCOME);
+    ui->main_stackedWidget->setCurrentIndex(MENU);
 
     db = new Database("../itdb.db", "QSQLITE");
 
@@ -31,10 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->showActors_comboBox->addItems(addActorsComboBoxLabels);
 
     // END COMBOBOX INITIALIZATION
-    addActorForm = new AddActorForm();
-
-    // For testing
-    addActorForm->show();
+    addActorForm = new AddActorForm(nullptr, db, ui->activeCombatTable_tableWidget);
 }
 
 MainWindow::~MainWindow()
@@ -208,7 +205,15 @@ void MainWindow::on_assignInit_tableWidget_itemSelectionChanged()
     initBox->selectAll();
 }
 
+// Opens & initializes add actor form whenever add actor button is clicked in combat page
 void MainWindow::on_addActor_combat_pushButton_clicked()
 {
     addActorForm->show();
+    addActorForm->Initialize();
+}
+
+void MainWindow::InsertPremadeActor(Actor premade)
+{
+    Actor temp = premade;
+    qDebug() << "SUCCESS!!";
 }
