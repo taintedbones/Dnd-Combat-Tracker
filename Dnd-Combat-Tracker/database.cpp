@@ -18,6 +18,7 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
 
     // Create party list
     combatList = new QVector<Actor>;
+    scenarioList.clear();
 }
 
 // Load database of actors into program
@@ -27,11 +28,13 @@ void Database::CreateActorList()
     // values of object Actor directly using the values of object query. Also,
     // I could just use two variables, but I created more for readability.
     QString name;
+    int id;
     int hitpoints;
     int armorClass;
     int spellDC;
     QString notes;
     QString type;
+    QString scenario;
 
     Actor actor; // temp object for loading actorList
 
@@ -42,6 +45,9 @@ void Database::CreateActorList()
         while(query.next())
         {
             // Populate attributes
+            id = query.value(ID).toInt();
+            actor.SetID(id);
+
                 // Name
             name = query.value(NAME).toString();
             actor.SetName(name);
@@ -91,9 +97,48 @@ void Database::CreatePartyList()
     }
 }
 
+void Database::CreateScenarioList()
+{
+     query.prepare("SELECT DISTINCT scenarioName FROM scenarios");
+
+     if(query.exec())
+     {
+         while(query.next())
+         {
+            scenarioList.append(query.value(0).toString());
+         }
+     }
+     else // Print error if query is unsuccessful
+     {
+         qDebug() << query.lastError().text();
+     }
+}
+
+QString Database::GetScenarioByID(int id)
+{
+    QString scenario;
+
+    query.prepare("SELECT scenarioName FROM scenarios WHERE actorID = :id");
+    query.bindValue(":id", id);
+
+    if(query.exec())
+    {
+        if(query.next())
+        {
+            scenario = query.value(0).toString();
+        }
+    }
+    else
+    {
+        qDebug() << query.lastError().text();
+    }
+
+    return scenario;
+}
+
 // Accessor to return list of all actors currently on list
 QVector<Actor>* Database::GetActorList() const
-{
+{   
     return actorList;
 }
 
@@ -104,4 +149,36 @@ QVector<Actor>* Database::GetPartyList() const
 }
 
 
+QStringList Database::GetScenarioList() const
+{
+    return scenarioList;
+}
 
+
+Actor Database::GetActor(QString name)
+{
+    Actor foundActor;
+
+    query.prepare("SELECT * FROM actors WHERE name = :name");
+    query.bindValue(":name", name);
+
+    if(query.exec())
+    {
+        if(query.next())
+        {
+            foundActor.SetID(query.value(ID).toInt());
+            foundActor.SetName(query.value(NAME).toString());
+            foundActor.SetHitPoints(query.value(HP).toInt());
+            foundActor.SetArmorClass(query.value(AC).toInt());
+            foundActor.SetSpellSaveDC(query.value(DC).toInt());
+            foundActor.SetNotes(query.value(NOTES).toString());
+            foundActor.SetScenario(GetScenarioByID(foundActor.GetID()));
+        }
+    }
+    else
+    {
+        qDebug() << query.lastError().text();
+    }
+
+    return foundActor;
+}
