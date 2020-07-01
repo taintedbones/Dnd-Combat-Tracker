@@ -400,5 +400,53 @@ bool TableModel::IsActorInCombat(QString name, QTableWidget *table)
     return found;
 }
 
+void TableModel::InsertActorToCombat(QTableWidget *combat, Actor actor, int init)
+{
+    QTableWidgetItem *item;
+    QString name;
+    int row = 0;
+
+    // Save actor name for renaming of actors to include number
+    name = actor.GetName();
+
+    //    qty = ui->qty_premade_spinBox->value();
+
+    combat->insertRow(combat->rowCount());
+    row = combat->rowCount() - 1;
+
+    // Handles which data will be placed on the table depending on the column
+    for(int col = 0; col < CombatColCount; col++)
+    {
+        switch(col)
+        {
+        case C_NAME:
+//            item = new QTableWidgetItem(name + " " + QString::number(i + 1));
+            item = new QTableWidgetItem(name);
+            break;
+        case C_HP:
+           InsertCombatStatsBox(combat, actor.GetHitPoints(), 10, row, col);
+            break;
+        case C_AC:
+            InsertCombatStatsBox(combat, actor.GetArmorClass(), 0, row, col);
+            break;
+        case C_DC:
+            item = new QTableWidgetItem(QString::number(actor.GetSpellSaveDC()));
+            break;
+        case C_INIT:
+            item = new QTableWidgetItem(QString::number(init));
+            break;
+        case C_NOTES:
+            item = new QTableWidgetItem(actor.GetNotes());
+            break;
+        }
+
+        // Inserts item to table if cell does not contain a spinbox
+        if(col != C_HP && col != C_AC)
+        {
+            combat->setItem(row, col, item);
+        }
+    } // END - for(col)
+}
+
 // Constructor
 TableModel::TableModel() {}

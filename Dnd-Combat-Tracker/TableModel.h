@@ -88,6 +88,8 @@ public:
 
     bool IsActorInCombat(QString name, QTableWidget *table);
 
+    void InsertActorToCombat(QTableWidget *combat, Actor actor, int init);
+
     // Constructor
     TableModel();
 };
