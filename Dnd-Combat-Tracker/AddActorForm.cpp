@@ -8,9 +8,6 @@ AddActorForm::AddActorForm(QWidget *parent, Database *data, QTableWidget *table)
     ui->setupUi(this);
     setWindowModality(Qt::WindowModality::WindowModal);
 
-    okButtonCustom = ui->ok_addActor_pushButton;
-    okButtonPremade = ui->ok_premade_pushButton;
-
     db = data;
     combat = table;
 
@@ -42,9 +39,11 @@ void AddActorForm::on_cancelAddActorMenu_pushButton_clicked()
     close();
 }
 
+// Adds custom actor to combat
 void AddActorForm::on_ok_addActor_pushButton_clicked()
 {
-
+    SubmitCustomActor();
+    close();
 }
 
 // Navigates user to Menu from Add Custom Actor Page
@@ -55,8 +54,13 @@ void AddActorForm::on_back_addActor_pushButton_clicked()
 
 // Initializes all forms in Add Custom Actor Page
 void AddActorForm::InitializeAddCustom()
-{
+{   
+    QStringList scenarioList = db->GetScenarioList();
 
+    // Clear dropdowns
+    ui->selectScenario_comboBox->clear();
+
+    ui->selectScenario_comboBox->addItems(scenarioList);
 }
 
 // Initializes all forms in Add Premade Actor Page
@@ -80,7 +84,7 @@ void AddActorForm::InitializeAddPremade()
 // Adds selected actor to combat table
 void AddActorForm::on_ok_premade_pushButton_clicked()
 {
-    submitPremadeActor();
+    SubmitPremadeActor();
     close();
 }
 
@@ -143,15 +147,11 @@ void AddActorForm::on_scenario_premade_comboBox_currentIndexChanged(const QStrin
 }
 
 // Inserts actor to combat table
-void AddActorForm::submitPremadeActor()
+void AddActorForm::SubmitPremadeActor()
 {
     TableModel manager;
-    QTableWidgetItem *item;
     Actor premade;
-    QString name;
-    int qty;
     int init;
-    int row;
 
     // Store data from form fields into actor object
     premade.SetName(ui->name_premade_comboBox->currentText());
@@ -160,55 +160,44 @@ void AddActorForm::submitPremadeActor()
     premade.SetSpellSaveDC(ui->dc_premade_lineEdit->text().toInt());
     premade.SetNotes(ui->notes_textBrowser->toPlainText());
 
-    // Save actor name for renaming of actors to include number
-    name = premade.GetName();
-
-    qty = ui->qty_premade_spinBox->value();
     init = ui->init_premade_spinBox->value();
 
-    // Inserts data into row for number of actor specified by user
-    for(int i = 0; i < qty; i++)
-    {
-        combat->insertRow(combat->rowCount());
-        row = combat->rowCount() - 1;
-
-        // Handles which data will be placed on the table depending on the column
-        for(int col = 0; col < manager.CombatColCount; col++)
-        {
-            switch(col)
-            {
-            case manager.C_NAME:
-                item = new QTableWidgetItem(name + " " + QString::number(i + 1));
-                break;
-            case manager.C_HP:
-                manager.InsertCombatStatsBox(combat, premade.GetHitPoints(), 10, row, col);
-                break;
-            case manager.C_AC:
-                manager.InsertCombatStatsBox(combat, premade.GetArmorClass(), 0, row, col);
-                break;
-            case manager.C_DC:
-                item = new QTableWidgetItem(QString::number(premade.GetSpellSaveDC()));
-                break;
-            case manager.C_INIT:
-                item = new QTableWidgetItem(QString::number(init));
-                break;
-            case manager.C_NOTES:
-                item = new QTableWidgetItem(premade.GetNotes());
-                break;
-            }
-
-            // Inserts item to table if cell does not contain a spinbox
-            if(col != manager.C_HP && col != manager.C_AC)
-            {
-                combat->setItem(row, col, item);
-            }
-        } // END - for(col)
-    } // END - for(i)
+    manager.InsertActorToCombat(combat, premade, init);
 }
 
+// Stores data from add custom fields in an actor & inserts actor to combat table
+void AddActorForm::SubmitCustomActor()
+{
+    TableModel manager;
+    Actor custom;
+    int init;
+
+    // Store data from form fields into actor object
+    custom.SetName(ui->name_lineEdit->text());
+    custom.SetHitPoints(ui->maxHP_spinBox->value());
+    custom.SetArmorClass(ui->ac_spinBox->value());
+    custom.SetSpellSaveDC(ui->dc_spinBox->value());
+    custom.SetNotes(ui->notes_textEdit->toPlainText());
+
+    init = ui->init_spinBox->value();
+
+    manager.InsertActorToCombat(combat, custom, init);
+}
+
+// Initializes modal window pages & sets current index to the menu
 void AddActorForm::Initialize()
 {
     ui->stackedWidget->setCurrentIndex(MENU);
     InitializeAddCustom();
     InitializeAddPremade();
+}
+
+// Reinitializes the add pages each time the user goes back to the menu
+void AddActorForm::on_stackedWidget_currentChanged(int arg1)
+{
+    if(arg1 == MENU)
+    {
+        InitializeAddCustom();
+        InitializeAddPremade();
+    }
 }
