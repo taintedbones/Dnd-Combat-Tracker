@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Create tablewidgets
     combatTable = new QTableWidget;
     assignInit = new QTableWidget;
+    combatManager = new CombatManager(ui->activeCombatTable_tableWidget);
 
     // Pull actor list from database
     db->CreateActorList();
@@ -121,6 +122,12 @@ void MainWindow::on_fight_assignInit_pushButton_clicked()
 
     ui->activeCombatTable_tableWidget->removeColumn(6);
     ui->activeCombatTable_tableWidget->sortItems(tableManager->C_INIT, Qt::DescendingOrder);
+
+    combatManager->InsertRoundDivider();
+    ui->activeCombatTable_tableWidget->selectRow(0);
+
+    ui->roundVal_label->setText(QString::number(combatManager->GetRound()));
+    ui->playerName_label->setText(ui->activeCombatTable_tableWidget->item(0, 0)->text());
 }
 
 // *************************************************************************************
@@ -242,4 +249,28 @@ void MainWindow::on_addActor_combat_pushButton_clicked()
 {
     addActorForm->show();
     addActorForm->Initialize();
+}
+
+// *************************************************************************************
+//
+// *************************************************************************************
+void MainWindow::on_activeCombatTable_tableWidget_itemSelectionChanged()
+{
+    int currentRow;
+    QString actorNotes;
+    QString name;
+
+    currentRow = ui->activeCombatTable_tableWidget->currentRow();
+    actorNotes = ui->activeCombatTable_tableWidget->item(currentRow, tableManager->C_NOTES)->text();
+    name = ui->activeCombatTable_tableWidget->item(currentRow, tableManager->C_NAME)->text();
+
+    ui->notes_textEdit->setText(actorNotes);
+    ui->notesName_label->setText(name);
+}
+
+void MainWindow::on_endTurn_pushButton_clicked()
+{
+    combatManager->NextTurn();
+    ui->roundVal_label->setText(QString::number(combatManager->GetRound()));
+    ui->playerName_label->setText(ui->activeCombatTable_tableWidget->item(0, 0)->text());
 }

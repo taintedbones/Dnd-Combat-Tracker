@@ -86,10 +86,6 @@ public:
 
     void InsertCombatStatsBox(QTableWidget *table, int value, int overflow, int row, int col);
 
-    bool IsActorInCombat(QString name, QTableWidget *table);
-
-    void InsertActorToCombat(QTableWidget *combat, Actor actor, int init);
-
     // Constructor
     TableModel();
 };

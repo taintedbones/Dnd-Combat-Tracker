@@ -1,5 +1,6 @@
 #include "TableModel.h"
 #include "Actor.h"
+#include "CombatManager.h"
 #include <QtDebug>
 
 // Model used for 'combat_page' (Conduct Combat) Page
@@ -348,104 +349,6 @@ void TableModel::InsertCombatStatsBox(QTableWidget *table, int value, int overfl
     sBox->setSuffix(" / " + QString::number(max));
 
     table->setCellWidget(row, col, sBox);
-}
-
-// Determines if the passed in actor is already in the combat table
-bool TableModel::IsActorInCombat(QString name, QTableWidget *table)
-{
-    QString currentName;
-    QStringList nameParse;
-    int row = 0;
-    bool found = false;
-
-    while(!found && row < table->rowCount())
-    {
-        currentName = table->item(row, C_NAME)->text();
-
-        // Parse the current name in case it has a number after it
-        nameParse = currentName.split(" ");
-
-        qDebug() << nameParse;
-
-        if(nameParse.size() > 1)
-        {
-            nameParse.removeLast();
-
-            qDebug() << nameParse;
-            if(nameParse.size() > 1)
-            {
-                currentName = nameParse.join(" ");
-            }
-            else
-            {
-                currentName = nameParse.first();
-            }
-        }
-        else
-        {
-            currentName = nameParse.first();
-        }
-
-        qDebug() << currentName;
-
-
-        if(currentName == name)
-        {
-            found = true;
-        }
-
-        row++;
-    }
-
-    return found;
-}
-
-void TableModel::InsertActorToCombat(QTableWidget *combat, Actor actor, int init)
-{
-    QTableWidgetItem *item;
-    QString name;
-    int row = 0;
-
-    // Save actor name for renaming of actors to include number
-    name = actor.GetName();
-
-    //    qty = ui->qty_premade_spinBox->value();
-
-    combat->insertRow(combat->rowCount());
-    row = combat->rowCount() - 1;
-
-    // Handles which data will be placed on the table depending on the column
-    for(int col = 0; col < CombatColCount; col++)
-    {
-        switch(col)
-        {
-        case C_NAME:
-//            item = new QTableWidgetItem(name + " " + QString::number(i + 1));
-            item = new QTableWidgetItem(name);
-            break;
-        case C_HP:
-           InsertCombatStatsBox(combat, actor.GetHitPoints(), 10, row, col);
-            break;
-        case C_AC:
-            InsertCombatStatsBox(combat, actor.GetArmorClass(), 0, row, col);
-            break;
-        case C_DC:
-            item = new QTableWidgetItem(QString::number(actor.GetSpellSaveDC()));
-            break;
-        case C_INIT:
-            item = new QTableWidgetItem(QString::number(init));
-            break;
-        case C_NOTES:
-            item = new QTableWidgetItem(actor.GetNotes());
-            break;
-        }
-
-        // Inserts item to table if cell does not contain a spinbox
-        if(col != C_HP && col != C_AC)
-        {
-            combat->setItem(row, col, item);
-        }
-    } // END - for(col)
 }
 
 // Constructor
