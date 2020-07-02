@@ -1,29 +1,37 @@
 #include "Actor.h"
 
     // Setters //
+// Set actor ID
+void Actor::SetID(int id) { _id = id; }
 
 // Set actor name
-void Actor::SetName(QString &name) { _name = name; }
+void Actor::SetName(QString name) { _name = name; }
 
 // Set actor health
-void Actor::SetHitPoints(int &hitpoints) { _hitpoints = hitpoints; }
+void Actor::SetHitPoints(int hitpoints) { _hitpoints = hitpoints; }
 
 // Set actor armor class
-void Actor::SetArmorClass(int &armorClass) { _armorClass = armorClass; }
+void Actor::SetArmorClass(int armorClass) { _armorClass = armorClass; }
 
 // Set actor spell save DC
-void Actor::SetSpellSaveDC(int &spellSaveDC) { _spellSaveDC = spellSaveDC; }
+void Actor::SetSpellSaveDC(int spellSaveDC) { _spellSaveDC = spellSaveDC; }
 
 // Set actor initiative score
-void Actor::SetInitiative(int &initiative) { _initiative = initiative; }
+void Actor::SetInitiative(int initiative) { _initiative = initiative; }
 
 // Set notes on actor
-void Actor::SetNotes(QString &notes) { _notes = notes; }
+void Actor::SetNotes(QString notes) { _notes = notes; }
 
 // Set type of actor
-void Actor::SetType(QString &type) { _type = type; }
+void Actor::SetType(QString type) { _type = type; }
+
+// Set scenario of actor
+void Actor::SetScenario(QString scenario) { _scenario = scenario; }
 
     // Getters //
+
+// Get actor ID
+int Actor::GetID() const { return _id; }
 
 // Get actor name
 QString Actor::GetName() const { return _name; }
@@ -46,6 +54,9 @@ QString Actor::GetNotes() const { return _notes; }
 // Get type of actor
 QString Actor::GetType() const { return _type; }
 
+//Get scenario of actor
+QString Actor::GetScenario() const { return _scenario; }
+
     // Constructors
 
 // Default Constructor
@@ -57,15 +68,18 @@ Actor::Actor()
     _spellSaveDC = 0;
     _initiative = 0;
     _notes = "";
+    _scenario = "";
 }
 
 // Parameterized Constructor
-Actor::Actor(QString name, int hitpoints, int armorClass, int spellSaveDC, int initiative, QString notes)
+Actor::Actor(int id, QString name, int hitpoints, int armorClass, int spellSaveDC, int initiative, QString notes, QString scenario)
 {
+    _id = id;
     _name = name;
     _hitpoints = hitpoints;
     _armorClass = armorClass;
     _spellSaveDC = spellSaveDC;
     _initiative = initiative;
     _notes = notes;
+    _scenario = scenario;
 }

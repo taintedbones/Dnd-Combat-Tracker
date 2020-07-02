@@ -2,22 +2,25 @@
 #define ACTOR_H
 
 #include <QString>
-
+#include <QTableWidget>
 
 class Actor
 {
 public:
 
     // Setters
-    void SetName(QString &name);
-    void SetHitPoints(int &hitpoints);
-    void SetArmorClass(int &armorClass);
-    void SetSpellSaveDC(int &spellSaveDC);
-    void SetInitiative(int &initiative);
-    void SetNotes(QString &notes);
-    void SetType(QString &type);
+    void SetID(int id);
+    void SetName(QString name);
+    void SetHitPoints(int hitpoints);
+    void SetArmorClass(int armorClass);
+    void SetSpellSaveDC(int spellSaveDC);
+    void SetInitiative(int initiative);
+    void SetNotes(QString notes);
+    void SetType(QString type);
+    void SetScenario(QString scenario);
 
     // Getters
+    int GetID() const;
     QString GetName() const;
     int GetHitPoints() const;
     int GetArmorClass() const;
@@ -25,15 +28,17 @@ public:
     int GetInitiative() const;
     QString GetNotes() const;
     QString GetType() const;
+    QString GetScenario() const;
 
     // Constructors
         // Default Constructor
     Actor();
 
         // Parameterized Constructor
-    Actor(QString name, int hitpoints, int armorClass, int spellSaveDC, int initiative, QString notes);
+    Actor(int id, QString name, int hitpoints, int armorClass, int spellSaveDC, int initiative, QString notes, QString scenario);
 
 private:
+    int _id;
     QString _name;
     int _hitpoints;
     int _armorClass;
@@ -41,6 +46,7 @@ private:
     int _initiative;
     QString _notes;
     QString _type;
+    QString _scenario;
 };
 
 #endif // ACTOR_H
