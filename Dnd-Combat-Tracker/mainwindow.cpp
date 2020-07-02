@@ -39,7 +39,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+// *************************************************************************************
 // Navigates user to combat edit page from welcome page
+// *************************************************************************************
 void MainWindow::on_welcomeStart_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(EDIT);
@@ -63,13 +65,17 @@ void MainWindow::on_welcomeStart_pushButton_clicked()
     tableManager->InsertSpinBoxCol(ui->combatTable_tableWidget, 1, 1, tableManager->S_QTY);
 }
 
+// *************************************************************************************
 // Navigates user to welcome page from combat edit page
+// *************************************************************************************
 void MainWindow::on_back_editPage_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(WELCOME);
 }
 
+// *************************************************************************************
 // Navigates user to assign initiative page from combat edit page
+// *************************************************************************************
 void MainWindow::on_next_editPage_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(ASSIGN);
@@ -87,7 +93,9 @@ void MainWindow::on_next_editPage_pushButton_clicked()
     ui->assignInit_tableWidget->removeColumn(tableManager->AssignInitColCount);
 }
 
+// *************************************************************************************
 // Navigates user to combat edit page from assign initiative page
+// *************************************************************************************
 void MainWindow::on_back_assignInit_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(EDIT);
@@ -99,7 +107,9 @@ void MainWindow::on_back_assignInit_pushButton_clicked()
     ui->showActors_comboBox->setCurrentIndex(0);
 }
 
+// *************************************************************************************
 // Navigates user to combat page from assign initiative page
+// *************************************************************************************
 void MainWindow::on_fight_assignInit_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(COMBAT);
@@ -113,7 +123,9 @@ void MainWindow::on_fight_assignInit_pushButton_clicked()
     ui->activeCombatTable_tableWidget->sortItems(tableManager->C_INIT, Qt::DescendingOrder);
 }
 
+// *************************************************************************************
 // Navigates user to welcome page from combat page
+// *************************************************************************************
 void MainWindow::on_endCombat_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(WELCOME);
@@ -124,31 +136,41 @@ void MainWindow::on_endCombat_pushButton_clicked()
     // And CreatePartyList probably since those have been mixed up
 }
 
+// *************************************************************************************
 // Navigates user to database editor page from welcome page
+// *************************************************************************************
 void MainWindow::on_dbOpt_welcome_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(DB_EDIT);
 }
 
+// *************************************************************************************
 // Navigates user to database editor page from combat edit page
+// *************************************************************************************
 void MainWindow::on_dbOpt_editPage_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(DB_EDIT);
 }
 
+// *************************************************************************************
 // Navigates user to welcome page from database editor page
+// *************************************************************************************
 void MainWindow::on_mainMenu_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(WELCOME);
 }
 
+// *************************************************************************************
 // Navigates user to combat edit page from database editor page
+// *************************************************************************************
 void MainWindow::on_combatEditor_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(EDIT);
 }
 
+// *************************************************************************************
 // Formats db edit table view
+// *************************************************************************************
 void MainWindow::format_dbEdit_tableView()
 {
     model = new DbEditTableModel(this, db);
@@ -159,21 +181,27 @@ void MainWindow::format_dbEdit_tableView()
     ui->dbEdit_tableView->setColumnWidth(tableManager->D_NAME, 200);
 }
 
+// *************************************************************************************
 // 'Adds' actor to combat list by moving actor listing from actor list to combat list
+// *************************************************************************************
 void MainWindow::on_addActor_pushButton_clicked()
 {
     // Move selected actor from "Add Actor" table to "Combat" Table
     tableManager->AddActorToTable(ui->actorTable_tableWidget, ui->combatTable_tableWidget);
 }
 
+// *************************************************************************************
 // 'Removes' actor from combat list by moving actor listing from combat list to actor list
+// *************************************************************************************
 void MainWindow::on_deleteActor_pushButton_clicked()
 {
     // Move selected actor from "Add Actor" table to "Combat" Table
     tableManager->RemoveActorFromTable(ui->combatTable_tableWidget, ui->actorTable_tableWidget);
 }
 
+// *************************************************************************************
 // Filters displayed actors by type
+// *************************************************************************************
 void MainWindow::on_showActors_comboBox_activated(int index)
 {
     switch(index)
@@ -192,7 +220,9 @@ void MainWindow::on_showActors_comboBox_activated(int index)
     }
 }
 
+// *************************************************************************************
 //  Focuses on initiative spinbox whenever user changes selection on table
+// *************************************************************************************
 void MainWindow::on_assignInit_tableWidget_itemSelectionChanged()
 {
     int currentRow;
@@ -205,15 +235,11 @@ void MainWindow::on_assignInit_tableWidget_itemSelectionChanged()
     initBox->selectAll();
 }
 
+// *************************************************************************************
 // Opens & initializes add actor form whenever add actor button is clicked in combat page
+// *************************************************************************************
 void MainWindow::on_addActor_combat_pushButton_clicked()
 {
     addActorForm->show();
     addActorForm->Initialize();
-}
-
-void MainWindow::InsertPremadeActor(Actor premade)
-{
-    Actor temp = premade;
-    qDebug() << "SUCCESS!!";
 }

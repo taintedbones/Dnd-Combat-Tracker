@@ -19,13 +19,17 @@ AddActorForm::~AddActorForm()
     delete ui;
 }
 
+// *************************************************************************************
 // Navigates user to Add Custom Actor page from Menu
+// *************************************************************************************
 void AddActorForm::on_addCustomActor_pushButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(CUSTOM);
 }
 
+// *************************************************************************************
 // Navigates user to Premade Actor Page from Menu
+// *************************************************************************************
 void AddActorForm::on_addPremadeActor_pushButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(PREMADE);
@@ -33,26 +37,34 @@ void AddActorForm::on_addPremadeActor_pushButton_clicked()
     InitializeAddPremade();
 }
 
+// *************************************************************************************
 // Closes modal window
+// *************************************************************************************
 void AddActorForm::on_cancelAddActorMenu_pushButton_clicked()
 {
     close();
 }
 
+// *************************************************************************************
 // Adds custom actor to combat
+// *************************************************************************************
 void AddActorForm::on_ok_addActor_pushButton_clicked()
 {
     SubmitCustomActor();
     close();
 }
 
+// *************************************************************************************
 // Navigates user to Menu from Add Custom Actor Page
+// *************************************************************************************
 void AddActorForm::on_back_addActor_pushButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(MENU);
 }
 
+// *************************************************************************************
 // Initializes all forms in Add Custom Actor Page
+// *************************************************************************************
 void AddActorForm::InitializeAddCustom()
 {   
     QStringList scenarioList = db->GetScenarioList();
@@ -63,7 +75,9 @@ void AddActorForm::InitializeAddCustom()
     ui->selectScenario_comboBox->addItems(scenarioList);
 }
 
+// *************************************************************************************
 // Initializes all forms in Add Premade Actor Page
+// *************************************************************************************
 void AddActorForm::InitializeAddPremade()
 {
     QString currentScenario;
@@ -81,20 +95,26 @@ void AddActorForm::InitializeAddPremade()
     ui->scenario_premade_comboBox->addItems(db->GetScenarioList());
 }
 
+// *************************************************************************************
 // Adds selected actor to combat table
+// *************************************************************************************
 void AddActorForm::on_ok_premade_pushButton_clicked()
 {
     SubmitPremadeActor();
     close();
 }
 
+// *************************************************************************************
 // Navigates user to Menu from Premade Actor Page
+// *************************************************************************************
 void AddActorForm::on_back_premade_pushButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(MENU);
 }
 
+// *************************************************************************************
 // Sets all the fields on premade page to data of passed in actor
+// *************************************************************************************
 void AddActorForm::SetPremadeFields(Actor currentActor)
 {
     ui->ac_premade_lineEdit->setText(QString::number(currentActor.GetArmorClass()));
@@ -104,7 +124,9 @@ void AddActorForm::SetPremadeFields(Actor currentActor)
     ui->qty_premade_spinBox->setRange(1, 20);
 }
 
+// *************************************************************************************
 // Auto fills the premade actor data fields for the current actor
+// *************************************************************************************
 void AddActorForm::on_name_premade_comboBox_currentIndexChanged(const QString &arg1)
 {
     Actor displayedActor = db->GetActor(arg1);
@@ -112,7 +134,9 @@ void AddActorForm::on_name_premade_comboBox_currentIndexChanged(const QString &a
     SetPremadeFields(displayedActor);
 }
 
+// *************************************************************************************
 // Changes displayed names in premade actor combo box to match the current scenario
+// *************************************************************************************
 void AddActorForm::on_scenario_premade_comboBox_currentIndexChanged(const QString &arg1)
 {
     QString scenario;
@@ -146,7 +170,9 @@ void AddActorForm::on_scenario_premade_comboBox_currentIndexChanged(const QStrin
     }
 }
 
+// *************************************************************************************
 // Inserts actor to combat table
+// *************************************************************************************
 void AddActorForm::SubmitPremadeActor()
 {
     TableModel manager;
@@ -165,7 +191,9 @@ void AddActorForm::SubmitPremadeActor()
     manager.InsertActorToCombat(combat, premade, init);
 }
 
+// *************************************************************************************
 // Stores data from add custom fields in an actor & inserts actor to combat table
+// *************************************************************************************
 void AddActorForm::SubmitCustomActor()
 {
     TableModel manager;
@@ -184,7 +212,9 @@ void AddActorForm::SubmitCustomActor()
     manager.InsertActorToCombat(combat, custom, init);
 }
 
+// *************************************************************************************
 // Initializes modal window pages & sets current index to the menu
+// *************************************************************************************
 void AddActorForm::Initialize()
 {
     ui->stackedWidget->setCurrentIndex(MENU);
@@ -192,7 +222,9 @@ void AddActorForm::Initialize()
     InitializeAddPremade();
 }
 
+// *************************************************************************************
 // Reinitializes the add pages each time the user goes back to the menu
+// *************************************************************************************
 void AddActorForm::on_stackedWidget_currentChanged(int arg1)
 {
     if(arg1 == MENU)

@@ -18,6 +18,7 @@ public:
     // Load partymembers from database into program memory
     void CreatePartyList();
 
+    // Load scenarios from database into program memory
     void CreateScenarioList();
 
     // Access list of partymembers
@@ -26,10 +27,13 @@ public:
     // Access list of actors
     QVector<Actor>* GetActorList() const;
 
+    // Access list of scenarios
     QStringList GetScenarioList() const;
 
+    // Access scenario actor is part of based on actorID
     QString GetScenarioByID(int id);
 
+    // Access data of passed in actor name
     Actor GetActor(QString name);
 
     Database(QString path, QString driver);
@@ -39,8 +43,6 @@ private:
     QVector<Actor>* actorList = nullptr; // list of actor profiles
     QVector<Actor>* combatList = nullptr; // list of actor profiles added to combat
     QStringList scenarioList;
-
-
     QSqlQuery query; // Reusable query for all class methods
 
     enum ActorProfile { ID, NAME , HP, AC, DC, NOTES, TYPE };

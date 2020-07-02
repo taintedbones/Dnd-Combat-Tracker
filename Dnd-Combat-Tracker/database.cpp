@@ -6,7 +6,8 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
     setHostName("localhost");
     setDatabaseName(path);
 
-    if(open()) {
+    if(open())
+    {
         qDebug() << "Database opened sucessfully";
     }
     else {
@@ -21,7 +22,9 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
     scenarioList.clear();
 }
 
+// *************************************************************************************
 // Load database of actors into program
+// *************************************************************************************
 void Database::CreateActorList()
 {
     // These temp variables are here because the compiler isnt letting me assign the
@@ -78,7 +81,9 @@ void Database::CreateActorList()
     }
 }
 
+// *************************************************************************************
 // Pull party from actor list
+// *************************************************************************************
 void Database::CreatePartyList()
 {
     // Cycle actorlist, pulling partymembers onto partylist
@@ -97,6 +102,9 @@ void Database::CreatePartyList()
     }
 }
 
+// *************************************************************************************
+// Load scenarios from database into program memory
+// *************************************************************************************
 void Database::CreateScenarioList()
 {
      query.prepare("SELECT DISTINCT scenarioName FROM scenarios");
@@ -114,6 +122,9 @@ void Database::CreateScenarioList()
      }
 }
 
+// *************************************************************************************
+// Access scenario actor is part of based on actorID
+// *************************************************************************************
 QString Database::GetScenarioByID(int id)
 {
     QString scenario;
@@ -136,25 +147,33 @@ QString Database::GetScenarioByID(int id)
     return scenario;
 }
 
+// *************************************************************************************
 // Accessor to return list of all actors currently on list
+// *************************************************************************************
 QVector<Actor>* Database::GetActorList() const
 {   
     return actorList;
 }
 
+// *************************************************************************************
 // Accessor to return list of partymembers
+// *************************************************************************************
 QVector<Actor>* Database::GetPartyList() const
 {
     return combatList;
 }
 
-
+// *************************************************************************************
+// Access list of scenarios
+// *************************************************************************************
 QStringList Database::GetScenarioList() const
 {
     return scenarioList;
 }
 
-
+// *************************************************************************************
+// Access data of passed in actor name
+// *************************************************************************************
 Actor Database::GetActor(QString name)
 {
     Actor foundActor;
