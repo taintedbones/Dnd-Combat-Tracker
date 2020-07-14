@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -268,9 +269,49 @@ void MainWindow::on_activeCombatTable_tableWidget_itemSelectionChanged()
     ui->notesName_label->setText(name);
 }
 
+// *************************************************************************************
+//
+// *************************************************************************************
 void MainWindow::on_endTurn_pushButton_clicked()
 {
     combatManager->NextTurn();
     ui->roundVal_label->setText(QString::number(combatManager->GetRound()));
     ui->playerName_label->setText(ui->activeCombatTable_tableWidget->item(0, 0)->text());
+}
+
+// *************************************************************************************
+//  Deletes the selected actor from the active combat table
+// *************************************************************************************
+void MainWindow::on_deleteActor_combat_pushButton_clicked()
+{
+    QMessageBox confirmBox;
+    QString selectedName;
+    bool emptyCombat;
+    int selectedRow;
+
+    emptyCombat = ui->activeCombatTable_tableWidget->rowCount() < 1;
+
+    // Check if combat is empty before removing
+    if(emptyCombat)
+    {
+        QMessageBox::warning(this, "No Actors in Combat", "Add an actor to the combat before removing");
+    }
+    else
+    {
+        selectedRow = ui->activeCombatTable_tableWidget->currentRow();
+        selectedName = ui->activeCombatTable_tableWidget->item(selectedRow, combatManager->NAME)->text();
+
+        // Set message box attributes to confirm removal of selected actor
+        confirmBox.setText("Remove actor from combat");
+        confirmBox.setInformativeText("Are you sure you want to remove " + selectedName + " ?");
+        confirmBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        confirmBox.setDefaultButton(QMessageBox::Yes);
+        int ret = confirmBox.exec();
+
+        // if user selects 'yes' then remove row
+        if(ret == QMessageBox::Yes)
+        {
+            ui->activeCombatTable_tableWidget->removeRow(selectedRow);
+        }
+    } // END - if else
 }

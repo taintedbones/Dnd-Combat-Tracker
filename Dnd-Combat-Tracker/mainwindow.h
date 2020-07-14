@@ -95,6 +95,8 @@ private slots:
 
     void on_endTurn_pushButton_clicked();
 
+    void on_deleteActor_combat_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     Database *db;
