@@ -7,11 +7,11 @@
 
 class Actor;
 
-enum CombatCols { NAME, HP, AC, DC, INIT, NOTES };
-
 class CombatManager
 {
-public:
+public: 
+    enum CombatCols { NAME, HP, AC, DC, INIT, NOTES };
+
     CombatManager();
     CombatManager(QTableWidget *table);
     bool IsActorInCombat(QString name);
