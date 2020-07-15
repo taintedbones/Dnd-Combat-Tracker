@@ -80,19 +80,28 @@ void MainWindow::on_back_editPage_pushButton_clicked()
 // *************************************************************************************
 void MainWindow::on_next_editPage_pushButton_clicked()
 {
-    ui->main_stackedWidget->setCurrentIndex(ASSIGN);
+    bool emptyCombat = ui->combatTable_tableWidget->rowCount() < 1;
 
-     tableManager->InitializeInitiativeModel(ui->assignInit_tableWidget);
+    if(emptyCombat)
+    {
+        QMessageBox::critical(this, "Empty Combat", "Please add an actor to combat before proceeding");
+    }
+    else
+    {
+        ui->main_stackedWidget->setCurrentIndex(ASSIGN);
 
-     // Inserts initiative column to ensure table copies to assign init page correctly
-     ui->combatTable_tableWidget->insertColumn(tableManager->I_INIT);
+         tableManager->InitializeInitiativeModel(ui->assignInit_tableWidget);
 
-    // Copy combat table to assignInit table
-    tableManager->CopyTableToInitPage(ui->combatTable_tableWidget, ui->assignInit_tableWidget);
-    tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 20, tableManager->I_INIT);
+         // Inserts initiative column to ensure table copies to assign init page correctly
+         ui->combatTable_tableWidget->insertColumn(tableManager->I_INIT);
 
-    // Removes actor type column
-    ui->assignInit_tableWidget->removeColumn(tableManager->AssignInitColCount);
+        // Copy combat table to assignInit table
+        tableManager->CopyTableToInitPage(ui->combatTable_tableWidget, ui->assignInit_tableWidget);
+        tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 30, tableManager->I_INIT);
+
+        // Removes actor type column
+        ui->assignInit_tableWidget->removeColumn(tableManager->AssignInitColCount);
+    }
 }
 
 // *************************************************************************************
