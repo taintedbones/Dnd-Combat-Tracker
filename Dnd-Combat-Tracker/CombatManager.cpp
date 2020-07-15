@@ -1,5 +1,6 @@
 #include "CombatManager.h"
 #include "Actor.h"
+#include <QMessageBox>
 
 CombatManager::CombatManager(QTableWidget *table)
 {
@@ -7,6 +8,9 @@ CombatManager::CombatManager(QTableWidget *table)
     round = 1;
 }
 
+// *************************************************************************************
+//
+// *************************************************************************************
 // Determines if the passed in actor is already in the combat table
 bool CombatManager::IsActorInCombat(QString name)
 {
@@ -51,6 +55,9 @@ bool CombatManager::IsActorInCombat(QString name)
     return found;
 }
 
+// *************************************************************************************
+//
+// *************************************************************************************
 void CombatManager::InsertActorToCombat(Actor actor, int init)
 {
     QTableWidgetItem *item;
@@ -99,7 +106,9 @@ void CombatManager::InsertActorToCombat(Actor actor, int init)
     } // END - for(col)
 }
 
-
+// *************************************************************************************
+//
+// *************************************************************************************
 void CombatManager::InsertRoundDivider()
 {
     QTableWidgetItem *item;
@@ -122,11 +131,17 @@ void CombatManager::InsertRoundDivider()
     }
 }
 
+// *************************************************************************************
+//
+// *************************************************************************************
 int CombatManager::GetRound() const
 {
     return round;
 }
 
+// *************************************************************************************
+//
+// *************************************************************************************
 // Moves the top row to the bottom, displaying a change of turn
 void CombatManager::NextTurn()
 {
@@ -137,7 +152,7 @@ void CombatManager::NextTurn()
     combat->insertRow(combat->rowCount());
     row = combat->rowCount() - 1;
 
-    isDivider = combat->item(0, NAME)->text() == "------------";
+    isDivider = combat->item(0, NAME)->text() == DIV;
 
     for(int col = 0; col < combat->columnCount(); col++)
     {
@@ -153,7 +168,7 @@ void CombatManager::NextTurn()
 
     combat->removeRow(0);
 
-    lastInRound = combat->item(0, NAME)->text() == "------------";
+    lastInRound = combat->item(0, NAME)->text() == DIV;
 
     if(lastInRound)
     {
@@ -163,3 +178,46 @@ void CombatManager::NextTurn()
     }
 }
 
+// *************************************************************************************
+//
+// *************************************************************************************
+void CombatManager::DeleteActor()
+{
+    QMessageBox confirmBox;
+    QString selectedName;
+    bool emptyCombat;
+    int selectedRow;
+
+    emptyCombat = combat->rowCount() < 1;
+    selectedRow = combat->currentRow();
+
+    if(!emptyCombat && !IsDivider())
+    {
+        selectedName = combat->item(selectedRow, NAME)->text();
+
+        // Set message box attributes to confirm removal of selected actor
+        confirmBox.setText("Remove actor from combat");
+        confirmBox.setInformativeText("Are you sure you want to remove " + selectedName + " ?");
+        confirmBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        confirmBox.setDefaultButton(QMessageBox::Yes);
+        int ret = confirmBox.exec();
+
+        // if user selects 'yes' then remove row
+        if(ret == QMessageBox::Yes)
+        {
+            combat->removeRow(selectedRow);
+        }
+    }
+    else
+    {
+        QMessageBox::warning(combat, "No Actors in Combat", "Add an actor to the combat before removing");
+    }
+
+}
+
+bool CombatManager::IsDivider()
+{
+    int selectedRow = combat->currentRow();
+
+    return combat->item(selectedRow, NAME)->text() == DIV;
+}

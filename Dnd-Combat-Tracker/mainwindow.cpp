@@ -262,11 +262,17 @@ void MainWindow::on_activeCombatTable_tableWidget_itemSelectionChanged()
     QString name;
 
     currentRow = ui->activeCombatTable_tableWidget->currentRow();
-    actorNotes = ui->activeCombatTable_tableWidget->item(currentRow, tableManager->C_NOTES)->text();
-    name = ui->activeCombatTable_tableWidget->item(currentRow, tableManager->C_NAME)->text();
 
-    ui->notes_textEdit->setText(actorNotes);
-    ui->notesName_label->setText(name);
+    ui->deleteActor_combat_pushButton->setDisabled(combatManager->IsDivider());
+
+    if(!combatManager->IsDivider())
+    {
+        actorNotes = ui->activeCombatTable_tableWidget->item(currentRow, tableManager->C_NOTES)->text();
+        name = ui->activeCombatTable_tableWidget->item(currentRow, tableManager->C_NAME)->text();
+
+        ui->notes_textEdit->setText(actorNotes);
+        ui->notesName_label->setText(name);
+    }
 }
 
 // *************************************************************************************
@@ -284,34 +290,5 @@ void MainWindow::on_endTurn_pushButton_clicked()
 // *************************************************************************************
 void MainWindow::on_deleteActor_combat_pushButton_clicked()
 {
-    QMessageBox confirmBox;
-    QString selectedName;
-    bool emptyCombat;
-    int selectedRow;
-
-    emptyCombat = ui->activeCombatTable_tableWidget->rowCount() < 1;
-
-    // Check if combat is empty before removing
-    if(emptyCombat)
-    {
-        QMessageBox::warning(this, "No Actors in Combat", "Add an actor to the combat before removing");
-    }
-    else
-    {
-        selectedRow = ui->activeCombatTable_tableWidget->currentRow();
-        selectedName = ui->activeCombatTable_tableWidget->item(selectedRow, combatManager->NAME)->text();
-
-        // Set message box attributes to confirm removal of selected actor
-        confirmBox.setText("Remove actor from combat");
-        confirmBox.setInformativeText("Are you sure you want to remove " + selectedName + " ?");
-        confirmBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        confirmBox.setDefaultButton(QMessageBox::Yes);
-        int ret = confirmBox.exec();
-
-        // if user selects 'yes' then remove row
-        if(ret == QMessageBox::Yes)
-        {
-            ui->activeCombatTable_tableWidget->removeRow(selectedRow);
-        }
-    } // END - if else
+    combatManager->DeleteActor();
 }

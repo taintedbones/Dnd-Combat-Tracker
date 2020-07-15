@@ -19,11 +19,13 @@ public:
     void InsertRoundDivider();
     int GetRound() const;
     void NextTurn();
-
+    void DeleteActor();
+    bool IsDivider();
 private:
     QTableWidget *combat;
     TableModel tableManager;
     int round;
+    const QString DIV = "------------";
 };
 
 #endif // COMBATMANAGER_H
