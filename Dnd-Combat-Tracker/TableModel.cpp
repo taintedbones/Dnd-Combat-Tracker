@@ -154,7 +154,7 @@ void TableModel::CopyTableToInitPage(QTableWidget *origin, QTableWidget *destina
     for(int originRow = 0; originRow < origin->rowCount(); originRow++)
     {
         // Get quantity of current actor in origin table
-        qtyBox = qobject_cast<QSpinBox*>(origin->cellWidget(originRow, 7));
+        qtyBox = qobject_cast<QSpinBox*>(origin->cellWidget(originRow, S_QTY));
         qty = qtyBox->value();
 
         // Determines how many times actor will be copied to next table
@@ -165,54 +165,54 @@ void TableModel::CopyTableToInitPage(QTableWidget *origin, QTableWidget *destina
             // insert new row to destination table
             destination->insertRow(destination->rowCount());
 
-            // Access each column in origin at current row to copy to destination
-            for(int col = 0; col < origin->columnCount(); col++)
+            // Copy all columns before notes from origin to destination
+            for(int col = 0; col < S_NOTES; col++)
             {
                 isFirstOccurence = i == 0;
 
-                if(col < AssignInitColCount && col != I_INIT)
+                if(isFirstOccurence)
                 {
-                    if(isFirstOccurence)
-                    {
-                        newCell = new QTableWidgetItem(origin->item(originRow, col)->text());
-                        destination->setItem(destRow, col, newCell);
+                    newCell = new QTableWidgetItem(origin->item(originRow, col)->text());
+                    destination->setItem(destRow, col, newCell);
 
-                        if(qty > 1)
+                    // Only save first occurence if multiples of actor
+                    if(qty > 1)
+                    {
+                        firstOcc = destRow;
+                    }
+                }
+                else
+                {
+                    // Copies text of current column for first occurence & stores in new item
+                    newCell = new QTableWidgetItem(destination->item(firstOcc, col)->text());
+
+                    // sets item in destination table
+                    destination->setItem(destRow, col, newCell);
+
+                    if (col == S_NAME)
+                    {
+                        // get name & qrt number
+                        name = destination->item(destRow,col)->text();
+                        num = QString::number(i + 1);
+
+                        // reset actor name to include qty number
+                        destination->item(destRow, col)->setText(name  + " " + num);
+
+                        isFirstOccurence = i == (qty - 1);
+
+                        // reset actor name to include qty number
+                        if(isFirstOccurence)
                         {
-                            firstOcc = destRow;
+                            name = destination->item(firstOcc, col)->text();
+                            num = QString::number(1);
+                            destination->item(firstOcc, col)->setText(name  + " " + num);
                         }
                     }
-                    else
-                    {
-                        // Copies text of current column for first occurence & stores in new item
-                        newCell = new QTableWidgetItem(destination->item(firstOcc, col)->text());
-
-                        // sets item in destination table
-                        destination->setItem(destRow, col, newCell);
-
-                        if (col == S_NAME)
-                        {
-                            // get name & qrt number
-                            name = destination->item(destRow,col)->text();
-                            num = QString::number(i + 1);
-
-                            // reset actor name to include qty number
-                            destination->item(destRow, col)->setText(name  + " " + num);
-
-                            isFirstOccurence = i == (qty - 1);
-
-                            if(isFirstOccurence)
-                            {
-                                name = destination->item(firstOcc, col)->text();
-                                num = QString::number(1);
-
-                                // reset actor name to include qty number
-                                destination->item(firstOcc, col)->setText(name  + " " + num);
-                            }
-                        }
-                    } // END - if (isFirstOccurence)
-                } // END - if ( col)
+                } // END - if (isFirstOccurence)
             } // END - for (col)
+
+            newCell = new QTableWidgetItem(origin->item(originRow, S_NOTES)->text());
+            destination->setItem(destRow, I_NOTES, newCell);
         } // END - for (i)
     } // END - for (originRow)
 }
@@ -249,6 +249,8 @@ void TableModel::CopyTableToCombatPage(QTableWidget *origin, QTableWidget *desti
 void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col)
 {
     QSpinBox *sBox;
+
+//    table->insertColumn(col);
 
     for(int row = 0; row < table->rowCount(); row++)
     {

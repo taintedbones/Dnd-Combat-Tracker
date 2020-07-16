@@ -64,6 +64,7 @@ void MainWindow::on_welcomeStart_pushButton_clicked()
 
         // Populate prepCombatTable tableWidget
     tableManager->PopulateAddActorTable(ui->combatTable_tableWidget, db->GetPartyList());
+
     tableManager->InsertSpinBoxCol(ui->combatTable_tableWidget, 1, 1, tableManager->S_QTY);
 }
 
@@ -76,7 +77,8 @@ void MainWindow::on_back_editPage_pushButton_clicked()
 }
 
 // *************************************************************************************
-// Navigates user to assign initiative page from combat edit page
+// Navigates user to assign initiative page from combat edit page. Also copies selected
+// actors to set initiative table
 // *************************************************************************************
 void MainWindow::on_next_editPage_pushButton_clicked()
 {
@@ -93,14 +95,14 @@ void MainWindow::on_next_editPage_pushButton_clicked()
          tableManager->InitializeInitiativeModel(ui->assignInit_tableWidget);
 
          // Inserts initiative column to ensure table copies to assign init page correctly
-         ui->combatTable_tableWidget->insertColumn(tableManager->I_INIT);
+//         ui->combatTable_tableWidget->insertColumn(tableManager->I_INIT);
 
         // Copy combat table to assignInit table
         tableManager->CopyTableToInitPage(ui->combatTable_tableWidget, ui->assignInit_tableWidget);
         tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 30, tableManager->I_INIT);
 
         // Removes actor type column
-        ui->assignInit_tableWidget->removeColumn(tableManager->AssignInitColCount);
+//        ui->assignInit_tableWidget->removeColumn(tableManager->AssignInitColCount);
     }
 }
 
@@ -112,7 +114,7 @@ void MainWindow::on_back_assignInit_pushButton_clicked()
     ui->main_stackedWidget->setCurrentIndex(EDIT);
 
     // Removes initiative column to ensure table copies to combat editor page correctly
-    ui->combatTable_tableWidget->removeColumn(tableManager->I_INIT);
+//    ui->combatTable_tableWidget->removeColumn(tableManager->I_INIT);
 
     // Ensure combobox displays proper index
     ui->showActors_comboBox->setCurrentIndex(0);
@@ -146,6 +148,8 @@ void MainWindow::on_fight_assignInit_pushButton_clicked()
 void MainWindow::on_endCombat_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(WELCOME);
+
+    ui->activeCombatTable_tableWidget->clear();
 
     // This needs to call CreateActorList from db class because the
     // existing one has been altered.
