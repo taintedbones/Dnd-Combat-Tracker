@@ -278,7 +278,12 @@ void MainWindow::on_activeCombatTable_tableWidget_itemSelectionChanged()
 
     ui->deleteActor_combat_pushButton->setDisabled(combatManager->IsDivider());
 
-    if(!combatManager->IsDivider())
+    if(combatManager->IsDivider())
+    {
+        ui->notes_textEdit->clear();
+        ui->notesName_label->clear();
+    }
+    else
     {
         actorNotes = ui->activeCombatTable_tableWidget->item(currentRow, tableManager->C_NOTES)->text();
         name = ui->activeCombatTable_tableWidget->item(currentRow, tableManager->C_NAME)->text();
@@ -304,4 +309,6 @@ void MainWindow::on_endTurn_pushButton_clicked()
 void MainWindow::on_deleteActor_combat_pushButton_clicked()
 {
     combatManager->DeleteActor();
+
+    ui->endTurn_pushButton->setDisabled(combatManager->IsEmpty());
 }

@@ -221,3 +221,8 @@ bool CombatManager::IsDivider()
 
     return combat->item(selectedRow, NAME)->text() == DIV;
 }
+
+bool CombatManager::IsEmpty()
+{
+    return combat->rowCount() == 1 && IsDivider();
+}

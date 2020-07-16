@@ -21,6 +21,7 @@ public:
     void NextTurn();
     void DeleteActor();
     bool IsDivider();
+    bool IsEmpty();
 private:
     QTableWidget *combat;
     TableModel tableManager;
