@@ -233,7 +233,8 @@ void TableModel::CopyTableToCombatPage(QTableWidget *origin, QTableWidget *desti
             if(col == I_INIT)
             {
                 initBox = qobject_cast<QSpinBox*>(origin->cellWidget(row, I_INIT));
-                initCell = new QTableWidgetItem(initBox->cleanText());
+                initCell = new QTableWidgetItem();
+                initCell->setData(0, initBox->value());
 
                 destination->setItem(row, I_INIT, initCell);
             }
