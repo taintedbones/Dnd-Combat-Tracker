@@ -251,13 +251,16 @@ void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col
 {
     QSpinBox *sBox;
 
-//    table->insertColumn(col);
-
     for(int row = 0; row < table->rowCount(); row++)
     {
         sBox = new QSpinBox(table);
         sBox->setRange(min, max);
         table->setCellWidget(row, col, sBox);
+
+        if(col == S_QTY)
+        {
+            sBox->setDisabled(true);
+        }
     }
 }
 
@@ -279,6 +282,7 @@ void TableModel::AddActorToTable(QTableWidget *origin, QTableWidget *destination
     QTableWidgetItem *qtyItem = new QTableWidgetItem();
     bool empty  = origin->rowCount() == 0;
     bool inParty = false;
+    bool isCompanion = false;
 
     if(!empty)
     {
@@ -297,11 +301,13 @@ void TableModel::AddActorToTable(QTableWidget *origin, QTableWidget *destination
         }
 
         inParty = destination->item(placedRow, S_TYPE)->text() == "partymember";
+        isCompanion = destination->item(placedRow, S_TYPE)->text() == "companion";
 
         // Checks if actor is a party member; if true, sets quantity to only 1
-        if(inParty)
+        if(inParty || isCompanion)
         {
             qtyBox->setRange(1, 1);
+            qtyBox->setDisabled(true);
         }
         else
         {
