@@ -312,3 +312,9 @@ void MainWindow::on_deleteActor_combat_pushButton_clicked()
 
     ui->endTurn_pushButton->setDisabled(combatManager->IsEmpty());
 }
+
+void MainWindow::on_actorTable_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
+{
+    // Move selected actor from "Add Actor" table to "Combat" Table
+    tableManager->AddActorToTable(ui->actorTable_tableWidget, ui->combatTable_tableWidget);
+}

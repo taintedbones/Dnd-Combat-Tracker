@@ -97,6 +97,8 @@ private slots:
 
     void on_deleteActor_combat_pushButton_clicked();
 
+    void on_actorTable_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
+
 private:
     Ui::MainWindow *ui;
     Database *db;
