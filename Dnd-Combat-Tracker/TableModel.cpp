@@ -360,5 +360,7 @@ void TableModel::InsertCombatStatsBox(QTableWidget *table, int value, int overfl
     table->setCellWidget(row, col, sBox);
 }
 
+
+
 // Constructor
 TableModel::TableModel() {}

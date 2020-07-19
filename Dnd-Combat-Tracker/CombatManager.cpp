@@ -9,9 +9,8 @@ CombatManager::CombatManager(QTableWidget *table)
 }
 
 // *************************************************************************************
-//
-// *************************************************************************************
 // Determines if the passed in actor is already in the combat table
+// *************************************************************************************
 bool CombatManager::IsActorInCombat(QString name)
 {
     QString currentName;
@@ -56,7 +55,7 @@ bool CombatManager::IsActorInCombat(QString name)
 }
 
 // *************************************************************************************
-//
+// Inserts the passed in actor to the table, sorted by the passed in initiative
 // *************************************************************************************
 void CombatManager::InsertActorToCombat(Actor actor, int init)
 {
@@ -67,10 +66,9 @@ void CombatManager::InsertActorToCombat(Actor actor, int init)
     // Save actor name for renaming of actors to include number
     name = actor.GetName();
 
-    //    qty = ui->qty_premade_spinBox->value();
+    row = FindInsertRow(init);
 
-    combat->insertRow(combat->rowCount());
-    row = combat->rowCount() - 1;
+    combat->insertRow(row);
 
     // Handles which data will be placed on the table depending on the column
     for(int col = 0; col < tableManager.CombatColCount; col++)
@@ -78,7 +76,6 @@ void CombatManager::InsertActorToCombat(Actor actor, int init)
         switch(col)
         {
         case NAME:
-//            item = new QTableWidgetItem(name + " " + QString::number(i + 1));
             item = new QTableWidgetItem(name);
             break;
         case HP:
@@ -107,11 +104,12 @@ void CombatManager::InsertActorToCombat(Actor actor, int init)
 }
 
 // *************************************************************************************
-//
+// Inserts divider row to the end of the combat table
 // *************************************************************************************
 void CombatManager::InsertRoundDivider()
 {
     QTableWidgetItem *item;
+
     combat->insertRow(combat->rowCount());
 
     for(int col = 0; col < combat->columnCount(); col++)
@@ -122,7 +120,7 @@ void CombatManager::InsertRoundDivider()
         }
         else
         {
-            item = new QTableWidgetItem("------------");
+            item = new QTableWidgetItem(DIV);
             item->setTextAlignment(Qt::AlignCenter);
         }
 
@@ -132,7 +130,7 @@ void CombatManager::InsertRoundDivider()
 }
 
 // *************************************************************************************
-//
+// Returns the current round number
 // *************************************************************************************
 int CombatManager::GetRound() const
 {
@@ -140,9 +138,8 @@ int CombatManager::GetRound() const
 }
 
 // *************************************************************************************
-//
-// *************************************************************************************
 // Moves the top row to the bottom, displaying a change of turn
+// *************************************************************************************
 void CombatManager::NextTurn()
 {
     int row;
@@ -179,7 +176,7 @@ void CombatManager::NextTurn()
 }
 
 // *************************************************************************************
-//
+// Displays confirmation qmessagebox & removes selected actor from combat
 // *************************************************************************************
 void CombatManager::DeleteActor()
 {
@@ -191,7 +188,7 @@ void CombatManager::DeleteActor()
     emptyCombat = combat->rowCount() < 1;
     selectedRow = combat->currentRow();
 
-    if(!emptyCombat && !IsDivider())
+    if(!emptyCombat && !IsDivider(selectedRow))
     {
         selectedName = combat->item(selectedRow, NAME)->text();
 
@@ -212,17 +209,108 @@ void CombatManager::DeleteActor()
     {
         QMessageBox::warning(combat, "No Actors in Combat", "Add an actor to the combat before removing");
     }
-
 }
 
-bool CombatManager::IsDivider()
+// *************************************************************************************
+// Checks if the passed in row is a divider
+// *************************************************************************************
+bool CombatManager::IsDivider(int row)
 {
-    int selectedRow = combat->currentRow();
-
-    return combat->item(selectedRow, NAME)->text() == DIV;
+    return combat->item(row, NAME)->text() == DIV;
 }
 
+// *************************************************************************************
+// Checks if the combat table is empty
+// *************************************************************************************
 bool CombatManager::IsEmpty()
 {
-    return combat->rowCount() == 1 && IsDivider();
+    return combat->rowCount() == 1;
+}
+
+// *************************************************************************************
+//  Searches the table for the row that a new actor will be inserted at, based on initiative
+// *************************************************************************************
+int CombatManager::FindInsertRow(int initiative)
+{
+    int divRow = GetDividerLocation();
+    int first = -1;
+    int last = -1;
+    int row = 0;
+    int insertAtRow = -1;
+
+    bool found = false;
+    bool divIsLast = divRow == combat->rowCount() - 1;
+    bool firstGreater = combat->item(0, INIT)->text().toInt() >= initiative;
+
+    // Divider is in last row
+    if(divIsLast)
+    {
+        first = 0;
+        last = divRow - 1;
+    }
+    else // Divider anywhere else in table
+    {
+        if(firstGreater) // Actor gets inserted to current round
+        {
+            first = 0;
+            last = divRow - 1;
+        }
+        else // Actor gets inserted to next round
+        {
+            first = divRow + 1;
+            last = combat->rowCount() - 1;
+        }
+    }
+
+    // Init will be placed above/below divider on side where only one row exists
+    if(first == last)
+    {
+        insertAtRow = last + 1;
+    }
+    // Divider is anywhere else in combat table
+    else
+    {
+        row = first;
+
+        // Linear search from 'first' to 'last' row
+        while(!found && row < (last + 1))
+        {
+            if(combat->item(row, INIT)->text().toInt() < initiative)
+            {
+                insertAtRow = row;
+                found = true;
+            }
+            else // Add to end of list
+            {
+                insertAtRow = row + 1;
+            }
+
+            row++;
+        }
+    }
+
+    return insertAtRow;
+}
+
+// *************************************************************************************
+// Searches combat for divider row location
+// *************************************************************************************
+int CombatManager::GetDividerLocation()
+{
+    bool found = false;
+    int loc = -1;
+   int row = 0;
+
+   while(!found && row < combat->rowCount())
+   {
+        if(IsDivider(row))
+        {
+            found = true;
+            loc = row;
+        }
+
+       row++;
+   }
+
+   return loc;
 }

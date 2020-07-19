@@ -52,19 +52,14 @@ void MainWindow::on_welcomeStart_pushButton_clicked()
     ui->showActors_comboBox->setCurrentIndex(0);
 
     // Populate "Actors" TableWidget
-        // Initialize/Clear TableWidget
+        // Initialize/Clear & populate TableWidget
     tableManager->InitializeAddActorTable(ui->actorTable_tableWidget, tableManager->ActorListColCount, tableManager->ActorListColNames);
-
-        // Get list of all actors from db, store in vector of type actor
     tableManager->PopulateAddActorTable(ui->actorTable_tableWidget, db->GetActorList());
 
     // Populate "Combat" TableWidget
-        // Initialize "combatList" TableWidget
+        // Initialize & populate "combatList" TableWidget
     tableManager->InitializeAddActorTable(ui->combatTable_tableWidget, tableManager->SelectedListColCount, tableManager->SelectedListColNames);
-
-        // Populate prepCombatTable tableWidget
     tableManager->PopulateAddActorTable(ui->combatTable_tableWidget, db->GetPartyList());
-
     tableManager->InsertSpinBoxCol(ui->combatTable_tableWidget, 1, 1, tableManager->S_QTY);
 }
 
@@ -276,9 +271,9 @@ void MainWindow::on_activeCombatTable_tableWidget_itemSelectionChanged()
 
     currentRow = ui->activeCombatTable_tableWidget->currentRow();
 
-    ui->deleteActor_combat_pushButton->setDisabled(combatManager->IsDivider());
+    ui->deleteActor_combat_pushButton->setDisabled(combatManager->IsDivider(currentRow));
 
-    if(combatManager->IsDivider())
+    if(combatManager->IsDivider(currentRow))
     {
         ui->notes_textEdit->clear();
         ui->notesName_label->clear();
