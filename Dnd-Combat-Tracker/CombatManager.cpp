@@ -332,6 +332,7 @@ int CombatManager::GetDividerLocation()
 // *************************************************************************************
 void CombatManager::CheckForTie()
 {
+    QInputDialog tiePrompt;
     QStringList names;
     QString selectedTurn;
 
@@ -367,8 +368,11 @@ void CombatManager::CheckForTie()
     // If a tie is found, prompts the user to select which actor will go next
     if(tie)
     {
+
+        tiePrompt.resize(400, 200);
+
         // Display input dialog modal window with combobox of actors to select from
-        selectedTurn = QInputDialog::getItem(combat, "TIE!", "Please select which actor will go this turn:", names);
+        selectedTurn = tiePrompt.getItem(combat, "TIE!", "Please select which actor will go this turn:", names);
 
         // Moves the selected actor to the first position in the list
         if(selectedTurn != combat->item(0, NAME)->text())

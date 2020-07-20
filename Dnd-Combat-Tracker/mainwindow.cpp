@@ -68,7 +68,17 @@ void MainWindow::on_welcomeStart_pushButton_clicked()
 // *************************************************************************************
 void MainWindow::on_back_editPage_pushButton_clicked()
 {
-    ui->main_stackedWidget->setCurrentIndex(WELCOME);
+    QMessageBox warnPrompt;
+
+    warnPrompt.setIcon(QMessageBox::Warning);
+    warnPrompt.setText("WARNING");
+    warnPrompt.setInformativeText("Any changes will be lost. Do you want to continue?");
+    warnPrompt.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+
+    if(warnPrompt.exec() == QMessageBox::Ok)
+    {
+        ui->main_stackedWidget->setCurrentIndex(WELCOME);
+    }
 }
 
 // *************************************************************************************
