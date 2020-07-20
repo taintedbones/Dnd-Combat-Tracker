@@ -1,6 +1,7 @@
 #include "CombatManager.h"
 #include "Actor.h"
 #include <QMessageBox>
+#include <QInputDialog>
 
 CombatManager::CombatManager(QTableWidget *table)
 {
@@ -101,6 +102,11 @@ void CombatManager::InsertActorToCombat(Actor actor, int init)
             combat->setItem(row, col, item);
         }
     } // END - for(col)
+
+    if(row == 1)
+    {
+        CheckForTie();
+    }
 }
 
 // *************************************************************************************
@@ -209,6 +215,11 @@ void CombatManager::DeleteActor()
     {
         QMessageBox::warning(combat, "No Actors in Combat", "Add an actor to the combat before removing");
     }
+
+    if(selectedRow == 1)
+    {
+        CheckForTie();
+    }
 }
 
 // *************************************************************************************
@@ -313,4 +324,95 @@ int CombatManager::GetDividerLocation()
    }
 
    return loc;
+}
+
+// *************************************************************************************
+// Checks the combat table for a tied initiative and prompts the user to select which
+//      actor will take the current turn
+// *************************************************************************************
+void CombatManager::CheckForTie()
+{
+    QStringList names;
+    QString selectedTurn;
+
+    int first = 0;
+    int firstInit = combat->item(first, INIT)->text().toInt();
+    int last = -1;
+
+    bool active = true;
+    bool initMatch = false;
+    bool tie= false;
+
+    last = first + 1;
+    names.append(combat->item(first, NAME)->text());
+
+    // Linear search to check if the first actor in the list has a tied initiative
+    while(active)
+    {
+        initMatch = combat->item(last, INIT)->text().toInt() == firstInit;
+
+        if(initMatch)
+        {
+            names.append(combat->item(last, NAME)->text());
+            last++;
+        }
+        else
+        {
+            active = false;
+        }
+    }
+
+    tie = names.size() > 1;
+
+    // If a tie is found, prompts the user to select which actor will go next
+    if(tie)
+    {
+        // Display input dialog modal window with combobox of actors to select from
+        selectedTurn = QInputDialog::getItem(combat, "TIE!", "Please select which actor will go this turn:", names);
+
+        // Moves the selected actor to the first position in the list
+        if(selectedTurn != combat->item(0, NAME)->text())
+        {
+            int row = FindActorByName(selectedTurn);
+
+            combat->insertRow(0);
+            row += 1;
+
+            for(int col = 0; col < combat->columnCount(); col++)
+            {
+                if(col == HP || col == AC)
+                {
+                    combat->setCellWidget(0, col, combat->cellWidget(row, col));
+                }
+                else
+                {
+                    combat->setItem(0, col, combat->takeItem(row, col));
+                }
+            }
+
+            combat->removeRow(row);
+        }
+    }
+}
+
+// *************************************************************************************
+// Searches the combat table for the passed in actor and returns their row number
+// *************************************************************************************
+int CombatManager::FindActorByName(QString name)
+{
+    bool found = false;
+    int foundRow= -1;
+    int row = 0;
+
+    while(!found && row < combat->rowCount())
+    {
+        if(combat->item(row, NAME)->text() == name)
+        {
+            foundRow = row;
+            found = true;
+        }
+        row++;
+    }
+
+    return foundRow;
 }

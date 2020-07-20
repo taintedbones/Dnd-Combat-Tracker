@@ -44,6 +44,10 @@ public:
 
     // Searches combat for divider row location
     int GetDividerLocation();
+
+    void CheckForTie();
+
+    int FindActorByName(QString name);
 private:
     QTableWidget *combat;
     TableModel tableManager;

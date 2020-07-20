@@ -135,6 +135,8 @@ void MainWindow::on_fight_assignInit_pushButton_clicked()
 
     ui->roundVal_label->setText(QString::number(combatManager->GetRound()));
     ui->playerName_label->setText(ui->activeCombatTable_tableWidget->item(0, 0)->text());
+
+    combatManager->CheckForTie();
 }
 
 // *************************************************************************************
@@ -296,6 +298,7 @@ void MainWindow::on_endTurn_pushButton_clicked()
     combatManager->NextTurn();
     ui->roundVal_label->setText(QString::number(combatManager->GetRound()));
     ui->playerName_label->setText(ui->activeCombatTable_tableWidget->item(0, 0)->text());
+    combatManager->CheckForTie();
 }
 
 // *************************************************************************************
@@ -304,7 +307,7 @@ void MainWindow::on_endTurn_pushButton_clicked()
 void MainWindow::on_deleteActor_combat_pushButton_clicked()
 {
     combatManager->DeleteActor();
-
+    combatManager->CheckForTie();
     ui->endTurn_pushButton->setDisabled(combatManager->IsEmpty());
 }
 
