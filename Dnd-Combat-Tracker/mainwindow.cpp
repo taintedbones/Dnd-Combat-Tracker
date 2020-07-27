@@ -399,3 +399,95 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
         FormatScenarioTableView(ui->scenarioView_editScenario_comboBox->currentText());
     }
 }
+
+// *************************************************************************************
+//  Shows actor statistics fields, allowing user to add actor to db
+// *************************************************************************************
+
+// DEV NOTE: this'll be ready once the new button is added and i find out why 'type_'anything isnt showing up as member of ui
+void MainWindow::on_addActor_dbEdit_pushButton_clicked()
+{
+    // Display fields
+
+    // THE REST OF THIS IS PLACEHOLDER until the other button is implemented
+
+    // START 'save actor' button
+
+        // Create object
+    Actor* toAdd;
+    toAdd = new Actor;
+
+        // Load field information into object
+    toAdd->SetName(ui->name_editActors_lineEdit->text());
+    toAdd->SetHitPoints(ui->hp_editActors_spinBox->text().toInt());
+    toAdd->SetArmorClass(ui->ac_editActors_spinBox->text().toInt());
+    toAdd->SetSpellSaveDC(ui->dc_editActors_spinBox->text().toInt());
+    toAdd->SetNotes(ui->notes_editActors_lineEdit->text());
+
+
+    // dafuq type_edit not coming up as ui object
+    //toAdd->SetType();
+
+        // Pass object into void AddActor(toAdd)
+
+        // START void AddActor(toAdd)
+    QSqlQuery query;
+
+    query.prepare("INSERT INTO actors (name,health,armorClass,spellSaveDC,notes,type"
+                  "VALUES (:name,:health,:armorClass,:spellSaveDC,:notes,:type)");
+
+    query.bindValue(":name", toAdd->GetName());
+    query.bindValue(":health", toAdd->GetHitPoints());
+    query.bindValue(":armorClass", toAdd->GetArmorClass());
+    query.bindValue(":spellSaveDC", toAdd->GetSpellSaveDC());
+    query.bindValue(":notes", toAdd->GetNotes());
+    query.bindValue(":type", toAdd->GetType());
+
+    // Print error if unsuccessful
+    if(!query.exec()) { qDebug() << query.lastError().text(); }
+
+        // END void AddActor(toAdd)
+
+        // refresh table
+
+    //ui->dbEdit_tableView->setModel()
+
+
+        // clear fields (this can prob be a method)
+    ui->name_editActors_lineEdit->clear();
+    ui->hp_editActors_spinBox->clear();
+    ui->ac_editActors_spinBox->clear();
+    ui->dc_editActors_spinBox->clear();
+    ui->notes_editActors_lineEdit->clear();
+
+        // destroy object
+    delete toAdd;
+
+    // END 'save actor' button
+
+}
+
+void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
+{
+    // get the row that's selected
+    int row = ui->dbEdit_tableView->currentIndex().row();
+
+    qDebug() << "Row Selected: " << row;
+
+    // pull id out of the row
+    int actorID = ui->dbEdit_tableView->model()->index(row,0).data().toInt();
+
+    qDebug() << "Actor ID Selected: " << row;
+
+    // START void DeleteActor(int actorID)
+    QSqlQuery query;
+
+    query.prepare("DELETE FROM actors WHERE actorID = :actorID");
+
+    query.bindValue(":actorID", actorID);
+
+    // Print error if unsuccessful
+    if(!query.exec()) { qDebug() << query.lastError().text(); }
+
+    // END void DeleteActor(int actorID)
+}

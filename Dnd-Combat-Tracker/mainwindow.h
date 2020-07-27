@@ -118,6 +118,8 @@ private slots:
     //      scenario
     void on_scenarioView_editScenario_comboBox_currentIndexChanged(const QString &arg1);
 
+    void on_addActor_dbEdit_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     Database *db;

@@ -201,3 +201,18 @@ Actor Database::GetActor(QString name)
 
     return foundActor;
 }
+
+// *************************************************************************************
+// Add actor to database
+// *************************************************************************************
+void AddActor();
+
+// Edit actor in DB
+
+// Delete actor from DB
+
+// Add scenario to DB
+
+// Edit scenario in DB
+
+// Delete scenario from DB
