@@ -201,12 +201,26 @@ void MainWindow::on_combatEditor_pushButton_clicked()
 // *************************************************************************************
 void MainWindow::format_dbEdit_tableView()
 {
-    model = new DbEditTableModel(this, db);
+    DbEditTableModel *editActorsModel = new DbEditTableModel(this, db);
+    DbEditTableModel *editScenarioActorsModel = new DbEditTableModel(this, db);
+    DbEditTableModel *editScenarioModel = new DbEditTableModel(this, db);
 
-    ui->dbEdit_tableView->setModel(model);
+    // Format editActors tableview
+    ui->dbEdit_tableView->setModel(editActorsModel);
     ui->dbEdit_tableView->setColumnHidden(tableManager->D_ID, true);
     ui->dbEdit_tableView->setColumnWidth(tableManager->D_NOTES, 400);
     ui->dbEdit_tableView->setColumnWidth(tableManager->D_NAME, 200);
+
+    // Format actors tableview on editScenario page
+    ui->actors_editScenario_tableView->setModel(editScenarioActorsModel);
+    ui->actors_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
+    ui->actors_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
+    ui->actors_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
+
+    // Change this to pass in current dropdown selection
+    editScenarioModel->InitializeScenarios("All");
+
+    ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
 }
 
 // *************************************************************************************

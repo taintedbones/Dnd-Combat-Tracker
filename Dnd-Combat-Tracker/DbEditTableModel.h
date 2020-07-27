@@ -11,7 +11,7 @@ class DbEditTableModel : public QSqlTableModel
 public:
     DbEditTableModel(QObject *parent, Database *db);
     void Initialize();
-    void InitializeType();
+    void InitializeScenarios(QString combatName);
 };
 
 #endif // DBEDITTABLEMODEL_H

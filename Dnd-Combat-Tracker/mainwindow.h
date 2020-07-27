@@ -102,7 +102,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     Database *db;
-    DbEditTableModel *model;
+//    DbEditTableModel *model;
     TableModel *tableManager;
 
     // TableWidgets

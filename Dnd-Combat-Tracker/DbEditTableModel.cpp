@@ -19,3 +19,10 @@ void DbEditTableModel::Initialize()
 
     this->select();
 }
+
+void DbEditTableModel::InitializeScenarios(QString combatName)
+{
+    this->setTable("scenarios");
+
+    this->select();
+}
