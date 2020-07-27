@@ -122,6 +122,10 @@ private slots:
 
     void on_save_editActors_pushButton_clicked();
 
+    void on_deleteActor_dbEdit_pushButton_clicked();
+
+    void on_editActor_dbEdit__pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     Database *db;

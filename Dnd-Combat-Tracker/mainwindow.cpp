@@ -405,11 +405,11 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
 // *************************************************************************************
 void MainWindow::on_addActor_dbEdit_pushButton_clicked()
 {
-    // Display fields
-    ui->editActorsContainer_verticalLayout->show();
-
     // Label save button as 'add'
     ui->save_editActors_pushButton->setText("ADD");
+
+    // Display fields
+    ui->editActors_groupBox->show();
 }
 
 // *************************************************************************************
@@ -513,6 +513,8 @@ void MainWindow::on_save_editActors_pushButton_clicked()
     delete toAdd;
 
     // END 'save actor' button
+
+    // Hide box
 }
 
 // *************************************************************************************
