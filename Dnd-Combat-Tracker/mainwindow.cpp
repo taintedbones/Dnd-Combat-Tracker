@@ -525,44 +525,38 @@ void MainWindow::on_help_dbEdit__pushButton_clicked()
 
 }
 
-void MainWindow::on_dbEdit_tableView_activated(const QModelIndex &index)
+// *************************************************************************************
+//  Pulls data from tableview into text fields upon clicking any table entry
+// *************************************************************************************
+void MainWindow::on_dbEdit_tableView_clicked()
 {
-    enum DbEditColPositions { D_ID, D_NAME, D_HP, D_AC, D_DC, D_NOTES, D_TYPE };
-
     // If not in edit mode, enter edit mode
-    if(ui->save_editActors_pushButton->text() != "SAVE CHANGES")
+    if(ui->save_editActors_pushButton->text() != "Save Changes")
     {
-        ui->save_editActors_pushButton->setText("SAVE CHANGES");
+        ui->save_editActors_pushButton->setText("Save Changes");
     }
 
     // Get selected row
     int row = ui->dbEdit_tableView->currentIndex().row();
     qDebug() << "Row Selected: " << row;
 
-    // Pull ID from row
-    int actorID = ui->dbEdit_tableView->model()->index(row,0).data().toInt();
-    qDebug() << "Actor ID Selected: " << row;
-
     // Pull name from row for popup window
     QString name = ui->dbEdit_tableView->model()->index(row,1).data().toString();
     qDebug() << "Actor Name Selected: " << name;
 
-    QString actorType = ui->dbEdit_tableView->model()->index(row, D_TYPE).data().toString();
+    QString actorType = ui->dbEdit_tableView->model()->index(row, tableManager->D_TYPE).data().toString();
 
-    // pull the info into the fields
-    ui->name_editActors_lineEdit->setText(ui->dbEdit_tableView->model()->index(row, D_NAME).data().toString());
-    ui->hp_editActors_spinBox->setValue(ui->dbEdit_tableView->model()->index(row, D_HP).data().toInt());
-    ui->ac_editActors_spinBox->setValue(ui->dbEdit_tableView->model()->index(row, D_AC).data().toInt());
-    ui->dc_editActors_spinBox->setValue(ui->dbEdit_tableView->model()->index(row, D_DC).data().toInt());
-        ui->notes_editActors_textBrowser->set;
+    // Pull info from table to fields
+    ui->name_editActors_lineEdit->setText(ui->dbEdit_tableView->model()->index(row, tableManager->D_NAME).data().toString());
+    ui->hp_editActors_spinBox->setValue(ui->dbEdit_tableView->model()->index(row, tableManager->D_HP).data().toInt());
+    ui->ac_editActors_spinBox->setValue(ui->dbEdit_tableView->model()->index(row, tableManager->D_AC).data().toInt());
+    ui->dc_editActors_spinBox->setValue(ui->dbEdit_tableView->model()->index(row, tableManager->D_DC).data().toInt());
+    ui->notes_editActors_textEdit->setText(ui->dbEdit_tableView->model()->index(row, tableManager->D_NOTES).data().toString());
 
-    // Gotta figure out how to properly set the index of this combobox
-    if(actorType == "partymember") { ui->type_editActors_comboBox->setCurrentIndex(PARTY); }
-    else if(actorType == "creature") { ui->type_editActors_comboBox->setCurrentIndex(CREATURES); }
-    else if(actorType == "companion") { ui->type_editActors_comboBox->setCurrentIndex(COMPANIONS); }
-    else if(actorType == "effect") { ui->type_editActors_comboBox->setCurrentIndex(EFFECTS); }
+    // Set index on 'type' combobox
+    if(actorType == "partymember") { ui->type_editActors_comboBox->setCurrentIndex(DB_PARTY); }
+    else if(actorType == "creature") { ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE); }
+    else if(actorType == "companion") { ui->type_editActors_comboBox->setCurrentIndex(DB_COMPANION); }
+    else if(actorType == "effect") { ui->type_editActors_comboBox->setCurrentIndex(DB_EFFECT); }
     else { qDebug() << "Makeshift switch failed"; }
-
-
-    // delete button will take this information (probably name field) and prompt deletion
 }

@@ -18,10 +18,13 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    enum  pages {WELCOME, EDIT, ASSIGN, COMBAT, DB_EDIT};
+    enum  pages {WELCOME, EDIT, ASSIGN, COMBAT, DB_EDIT };
 
     // Add Actors Page ComboBox
-    enum  addActorsComboBox { ALL, PARTY, CREATURES, COMPANIONS, EFFECTS};
+    enum  addActorsComboBox { ALL, PARTY, CREATURES, COMPANIONS, EFFECTS };
+
+    // Database Options Combobox
+    enum DbEditComboBoxPositions { DB_PARTY, DB_CREATURE, DB_COMPANION, DB_EFFECT };
 
     QStringList addActorsComboBoxLabels = { "All Actors", "Partymembers", "Creatures", "Companions", "Effects" };
 
@@ -125,6 +128,8 @@ private slots:
     void on_deleteActor_dbEdit_pushButton_clicked();
 
     void on_help_dbEdit__pushButton_clicked();
+
+    void on_dbEdit_tableView_clicked();
 
 private:
     Ui::MainWindow *ui;

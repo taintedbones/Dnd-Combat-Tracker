@@ -43,6 +43,8 @@ public:
 
     enum DbEditColPositions { D_ID, D_NAME, D_HP, D_AC, D_DC, D_NOTES, D_TYPE};
 
+    enum DbEditComboBoxPositions { PARTY, COMPANION, CREATURE, EFFECT };
+
     // ************************************************************************************************
 
     const int QtyMax = 10;
