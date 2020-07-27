@@ -38,6 +38,9 @@ private slots:
     // Navigates user to database editor page from welcome page
     void on_dbOpt_welcome_pushButton_clicked();
 
+    //  Initializes DB edit page when user navigates to that page
+    void on_main_stackedWidget_currentChanged(int arg1);
+
     // *************************************************************************************
     //  EDIT PAGE
     // *************************************************************************************
@@ -80,6 +83,19 @@ private slots:
     // Opens & initializes add actor form whenever add actor button is clicked in combat page
     void on_addActor_combat_pushButton_clicked();
 
+    // Updates notes text browser to display selected actor's notes
+    void on_activeCombatTable_tableWidget_itemSelectionChanged();
+
+    // Ends current player's turn by moving their row to bottom of table, updates round &
+    //  player name, and checks for tie
+    void on_endTurn_pushButton_clicked();
+
+    //  Deletes the selected actor from the active combat table
+    void on_deleteActor_combat_pushButton_clicked();
+
+    //   Moves selected actor from "Add Actor" table to "Combat" Table
+    void on_actorTable_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
+
     // *************************************************************************************
     //  DB EDIT PAGE
     // *************************************************************************************
@@ -90,19 +106,21 @@ private slots:
     void on_combatEditor_pushButton_clicked();
 
     // Formats db edit table view
-    void format_dbEdit_tableView();
-    void on_activeCombatTable_tableWidget_itemSelectionChanged();
+    void FormatEditActorsTableView();
 
-    void on_endTurn_pushButton_clicked();
+    //  Formats and sets table model for scenario tableview
+    void FormatScenarioTableView(QString scenarioName);
 
-    void on_deleteActor_combat_pushButton_clicked();
+    //  Formats and sets table model for scenario actors table view
+    void FormatEditScenarioActorsTableView();
 
-    void on_actorTable_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
+    //  Reformats scenario tableview to display scenario listing or actors for selected
+    //      scenario
+    void on_scenarioView_editScenario_comboBox_currentIndexChanged(const QString &arg1);
 
 private:
     Ui::MainWindow *ui;
     Database *db;
-//    DbEditTableModel *model;
     TableModel *tableManager;
 
     // TableWidgets

@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     db = new Database("../itdb.db", "QSQLITE");
 
-    format_dbEdit_tableView();
+    FormatEditActorsTableView();
 
     tableManager = new TableModel;
 
@@ -99,15 +99,9 @@ void MainWindow::on_next_editPage_pushButton_clicked()
 
          tableManager->InitializeInitiativeModel(ui->assignInit_tableWidget);
 
-         // Inserts initiative column to ensure table copies to assign init page correctly
-//         ui->combatTable_tableWidget->insertColumn(tableManager->I_INIT);
-
         // Copy combat table to assignInit table
         tableManager->CopyTableToInitPage(ui->combatTable_tableWidget, ui->assignInit_tableWidget);
         tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 30, tableManager->I_INIT);
-
-        // Removes actor type column
-//        ui->assignInit_tableWidget->removeColumn(tableManager->AssignInitColCount);
     }
 }
 
@@ -117,9 +111,6 @@ void MainWindow::on_next_editPage_pushButton_clicked()
 void MainWindow::on_back_assignInit_pushButton_clicked()
 {
     ui->main_stackedWidget->setCurrentIndex(EDIT);
-
-    // Removes initiative column to ensure table copies to combat editor page correctly
-//    ui->combatTable_tableWidget->removeColumn(tableManager->I_INIT);
 
     // Ensure combobox displays proper index
     ui->showActors_comboBox->setCurrentIndex(0);
@@ -143,6 +134,7 @@ void MainWindow::on_fight_assignInit_pushButton_clicked()
     combatManager->InsertRoundDivider();
     ui->activeCombatTable_tableWidget->selectRow(0);
 
+    // Set round count and current player name labels
     ui->roundVal_label->setText(QString::number(combatManager->GetRound()));
     ui->playerName_label->setText(ui->activeCombatTable_tableWidget->item(0, 0)->text());
 
@@ -199,28 +191,15 @@ void MainWindow::on_combatEditor_pushButton_clicked()
 // *************************************************************************************
 // Formats db edit table view
 // *************************************************************************************
-void MainWindow::format_dbEdit_tableView()
+void MainWindow::FormatEditActorsTableView()
 {
     DbEditTableModel *editActorsModel = new DbEditTableModel(this, db);
-    DbEditTableModel *editScenarioActorsModel = new DbEditTableModel(this, db);
-    DbEditTableModel *editScenarioModel = new DbEditTableModel(this, db);
 
     // Format editActors tableview
     ui->dbEdit_tableView->setModel(editActorsModel);
     ui->dbEdit_tableView->setColumnHidden(tableManager->D_ID, true);
     ui->dbEdit_tableView->setColumnWidth(tableManager->D_NOTES, 400);
     ui->dbEdit_tableView->setColumnWidth(tableManager->D_NAME, 200);
-
-    // Format actors tableview on editScenario page
-    ui->actors_editScenario_tableView->setModel(editScenarioActorsModel);
-    ui->actors_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
-    ui->actors_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
-    ui->actors_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
-
-    // Change this to pass in current dropdown selection
-    editScenarioModel->InitializeScenarios("All");
-
-    ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
 }
 
 // *************************************************************************************
@@ -287,7 +266,7 @@ void MainWindow::on_addActor_combat_pushButton_clicked()
 }
 
 // *************************************************************************************
-//
+// Updates notes text browser to display selected actor's notes
 // *************************************************************************************
 void MainWindow::on_activeCombatTable_tableWidget_itemSelectionChanged()
 {
@@ -299,6 +278,7 @@ void MainWindow::on_activeCombatTable_tableWidget_itemSelectionChanged()
 
     ui->deleteActor_combat_pushButton->setDisabled(combatManager->IsDivider(currentRow));
 
+    // Only displays selected actor's notes if valid actor
     if(combatManager->IsDivider(currentRow))
     {
         ui->notes_textEdit->clear();
@@ -315,7 +295,8 @@ void MainWindow::on_activeCombatTable_tableWidget_itemSelectionChanged()
 }
 
 // *************************************************************************************
-//
+// Ends current player's turn by moving their row to bottom of table, updates round &
+//  player name, and checks for tie
 // *************************************************************************************
 void MainWindow::on_endTurn_pushButton_clicked()
 {
@@ -335,8 +316,86 @@ void MainWindow::on_deleteActor_combat_pushButton_clicked()
     ui->endTurn_pushButton->setDisabled(combatManager->IsEmpty());
 }
 
+// *************************************************************************************
+//   Moves selected actor from "Add Actor" table to "Combat" Table
+// *************************************************************************************
 void MainWindow::on_actorTable_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
 {
-    // Move selected actor from "Add Actor" table to "Combat" Table
     tableManager->AddActorToTable(ui->actorTable_tableWidget, ui->combatTable_tableWidget);
+}
+
+// *************************************************************************************
+//  Reformats scenario tableview to display scenario listing or actors for selected
+//      scenario
+// *************************************************************************************
+void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const QString &arg1)
+{
+    FormatScenarioTableView(arg1);
+}
+
+// *************************************************************************************
+//  Formats and sets table model for scenario tableview
+// *************************************************************************************
+void MainWindow::FormatScenarioTableView(QString scenarioName)
+{
+    DbEditTableModel *editScenarioModel = new DbEditTableModel(this, db);
+
+    if(scenarioName == "All Scenarios")
+    {
+        editScenarioModel->InitializeScenarios();
+
+        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
+        ui->scenarios_editScenario_tableView->setColumnHidden(0, false);
+    }
+    else
+    {
+        editScenarioModel->InitializeScenarioByName(scenarioName);
+
+        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
+        ui->scenarios_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
+        ui->scenarios_editScenario_tableView->setColumnHidden(7, true);
+        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
+        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
+    }
+
+    ui->scenarios_editScenario_tableView->update();
+}
+
+// *************************************************************************************
+//  Formats and sets table model for scenario actors table view
+// *************************************************************************************
+void MainWindow::FormatEditScenarioActorsTableView()
+{
+    DbEditTableModel *editScenarioActorsModel = new DbEditTableModel(this, db);
+
+    ui->actors_editScenario_tableView->setModel(editScenarioActorsModel);
+    ui->actors_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
+    ui->actors_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
+    ui->actors_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
+}
+
+// *************************************************************************************
+//  Initializes DB edit page when user navigates to that page
+// *************************************************************************************
+void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
+{
+    QStringList scenarios;
+
+    // Initialize DB edit page
+    if(arg1 == DB_EDIT)
+    {
+        ui->dbEdit_tabWidget->setCurrentIndex(0);
+
+        FormatEditActorsTableView();
+
+        // Load scenario list into view dropdown
+        db->CreateScenarioList();
+        scenarios = db->GetScenarioList();
+        scenarios.prepend("All Scenarios");
+
+        ui->scenarioView_editScenario_comboBox->addItems(scenarios);
+
+        FormatEditScenarioActorsTableView();
+        FormatScenarioTableView(ui->scenarioView_editScenario_comboBox->currentText());
+    }
 }
