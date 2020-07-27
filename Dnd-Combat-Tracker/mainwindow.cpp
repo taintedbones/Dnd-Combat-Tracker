@@ -470,7 +470,7 @@ void MainWindow::on_save_editActors_pushButton_clicked()
     toAdd->SetHitPoints(ui->hp_editActors_spinBox->text().toInt());
     toAdd->SetArmorClass(ui->ac_editActors_spinBox->text().toInt());
     toAdd->SetSpellSaveDC(ui->dc_editActors_spinBox->text().toInt());
-    toAdd->SetNotes(ui->notes_editActors_textBrowser->);
+//    toAdd->SetNotes(ui->notes_editActors_textBrowser->);
     toAdd->SetType(ui->type_editActors_comboBox->currentText());
 
 
@@ -518,9 +518,9 @@ void MainWindow::on_save_editActors_pushButton_clicked()
 }
 
 // *************************************************************************************
-//  Edit actor: Shows actor statistics fields, allowing user to edit actor to db
+//  Help: Displays QMessageBox with instructions on how to use the database options
 // *************************************************************************************
-void MainWindow::on_editActor_dbEdit__pushButton_clicked()
+void MainWindow::on_help_dbEdit__pushButton_clicked()
 {
 
 }
