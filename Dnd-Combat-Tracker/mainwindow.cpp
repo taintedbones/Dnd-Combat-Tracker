@@ -401,16 +401,64 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
 }
 
 // *************************************************************************************
-//  Shows actor statistics fields, allowing user to add actor to db
+//  Shows actor statistics fields, allowing user to add actor to database
 // *************************************************************************************
-
-// DEV NOTE: this'll be ready once the new button is added and i find out why 'type_'anything isnt showing up as member of ui
 void MainWindow::on_addActor_dbEdit_pushButton_clicked()
 {
     // Display fields
+    ui->editActorsContainer_verticalLayout->show();
 
-    // THE REST OF THIS IS PLACEHOLDER until the other button is implemented
+    // Label save button as 'add'
+    ui->save_editActors_pushButton->setText("ADD");
+}
 
+// *************************************************************************************
+//  Deletes actor from database
+// *************************************************************************************
+void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
+{
+    // Get selected row
+    int row = ui->dbEdit_tableView->currentIndex().row();
+    qDebug() << "Row Selected: " << row;
+
+    // Pull ID from row
+    int actorID = ui->dbEdit_tableView->model()->index(row,0).data().toInt();
+    qDebug() << "Actor ID Selected: " << row;
+
+    // Pull name from row for popup window
+    QString name = ui->dbEdit_tableView->model()->index(row,1).data().toString();
+    qDebug() << "Actor Name Selected: " << name;
+
+    // Popup window asking if they want to delete that person
+    QMessageBox warnPrompt;
+    QString warnMsg = "Are you sure to want to delete " + name.toUpper() + " from the database?";
+
+    warnPrompt.setIcon(QMessageBox::Warning);
+    warnPrompt.setText("WARNING");
+    warnPrompt.setInformativeText(warnMsg);
+    warnPrompt.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+
+    if(warnPrompt.exec() == QMessageBox::Ok)
+    {
+        // START void DeleteActor(int actorID)
+        QSqlQuery query;
+
+        query.prepare("DELETE FROM actors WHERE actorID = :actorID");
+
+        query.bindValue(":actorID", actorID);
+
+        // Print error if unsuccessful
+        if(!query.exec()) { qDebug() << query.lastError().text(); }
+
+        // END void DeleteActor(int actorID)
+    }
+}
+
+// *************************************************************************************
+//  Saves changes (add/edit) to database
+// *************************************************************************************
+void MainWindow::on_save_editActors_pushButton_clicked()
+{
     // START 'save actor' button
 
         // Create object
@@ -422,7 +470,8 @@ void MainWindow::on_addActor_dbEdit_pushButton_clicked()
     toAdd->SetHitPoints(ui->hp_editActors_spinBox->text().toInt());
     toAdd->SetArmorClass(ui->ac_editActors_spinBox->text().toInt());
     toAdd->SetSpellSaveDC(ui->dc_editActors_spinBox->text().toInt());
-    toAdd->SetNotes(ui->notes_editActors_lineEdit->text());
+    toAdd->SetNotes(ui->notes_editActors_textBrowser->);
+    toAdd->SetType(ui->type_editActors_comboBox->currentText());
 
 
     // dafuq type_edit not coming up as ui object
@@ -458,36 +507,18 @@ void MainWindow::on_addActor_dbEdit_pushButton_clicked()
     ui->hp_editActors_spinBox->clear();
     ui->ac_editActors_spinBox->clear();
     ui->dc_editActors_spinBox->clear();
-    ui->notes_editActors_lineEdit->clear();
+    ui->notes_textEdit->clear();
 
         // destroy object
     delete toAdd;
 
     // END 'save actor' button
-
 }
 
-void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
+// *************************************************************************************
+//  Edit actor: Shows actor statistics fields, allowing user to edit actor to db
+// *************************************************************************************
+void MainWindow::on_editActor_dbEdit__pushButton_clicked()
 {
-    // get the row that's selected
-    int row = ui->dbEdit_tableView->currentIndex().row();
 
-    qDebug() << "Row Selected: " << row;
-
-    // pull id out of the row
-    int actorID = ui->dbEdit_tableView->model()->index(row,0).data().toInt();
-
-    qDebug() << "Actor ID Selected: " << row;
-
-    // START void DeleteActor(int actorID)
-    QSqlQuery query;
-
-    query.prepare("DELETE FROM actors WHERE actorID = :actorID");
-
-    query.bindValue(":actorID", actorID);
-
-    // Print error if unsuccessful
-    if(!query.exec()) { qDebug() << query.lastError().text(); }
-
-    // END void DeleteActor(int actorID)
 }
