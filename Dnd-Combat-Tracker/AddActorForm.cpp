@@ -1,6 +1,6 @@
 #include "AddActorForm.h"
 #include "ui_addactorform.h"
-#include "TableModel.h"
+#include "CombatManager.h"
 
 AddActorForm::AddActorForm(QWidget *parent, Database *data, QTableWidget *table)
     : QWidget(parent), ui(new Ui::AddActorForm)
@@ -140,7 +140,7 @@ void AddActorForm::on_name_premade_comboBox_currentIndexChanged(const QString &a
 void AddActorForm::on_scenario_premade_comboBox_currentIndexChanged(const QString &arg1)
 {
     QString scenario;
-    TableModel manager;
+    CombatManager manager = CombatManager(combat);
     int id;
     bool matchingScenario = false;
     bool inCombat = false;
@@ -153,7 +153,7 @@ void AddActorForm::on_scenario_premade_comboBox_currentIndexChanged(const QStrin
         scenario = db->GetScenarioByID(id);
 
         matchingScenario = scenario == arg1;
-        inCombat = manager.IsActorInCombat(actorList->at(i).GetName(), combat);
+        inCombat = manager.IsActorInCombat(actorList->at(i).GetName());
 
         if(!inCombat)
         {
@@ -175,7 +175,7 @@ void AddActorForm::on_scenario_premade_comboBox_currentIndexChanged(const QStrin
 // *************************************************************************************
 void AddActorForm::SubmitPremadeActor()
 {
-    TableModel manager;
+    CombatManager manager = CombatManager(combat);
     Actor premade;
     int init;
 
@@ -188,7 +188,7 @@ void AddActorForm::SubmitPremadeActor()
 
     init = ui->init_premade_spinBox->value();
 
-    manager.InsertActorToCombat(combat, premade, init);
+    manager.InsertActorToCombat(premade, init);
 }
 
 // *************************************************************************************
@@ -196,7 +196,7 @@ void AddActorForm::SubmitPremadeActor()
 // *************************************************************************************
 void AddActorForm::SubmitCustomActor()
 {
-    TableModel manager;
+    CombatManager manager = CombatManager(combat);
     Actor custom;
     int init;
 
@@ -209,7 +209,7 @@ void AddActorForm::SubmitCustomActor()
 
     init = ui->init_spinBox->value();
 
-    manager.InsertActorToCombat(combat, custom, init);
+    manager.InsertActorToCombat(custom, init);
 }
 
 // *************************************************************************************

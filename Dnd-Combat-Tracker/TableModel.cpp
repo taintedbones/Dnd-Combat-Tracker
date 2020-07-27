@@ -1,5 +1,6 @@
 #include "TableModel.h"
 #include "Actor.h"
+#include "CombatManager.h"
 #include <QtDebug>
 
 // Model used for 'combat_page' (Conduct Combat) Page
@@ -153,7 +154,7 @@ void TableModel::CopyTableToInitPage(QTableWidget *origin, QTableWidget *destina
     for(int originRow = 0; originRow < origin->rowCount(); originRow++)
     {
         // Get quantity of current actor in origin table
-        qtyBox = qobject_cast<QSpinBox*>(origin->cellWidget(originRow, 7));
+        qtyBox = qobject_cast<QSpinBox*>(origin->cellWidget(originRow, S_QTY));
         qty = qtyBox->value();
 
         // Determines how many times actor will be copied to next table
@@ -164,54 +165,54 @@ void TableModel::CopyTableToInitPage(QTableWidget *origin, QTableWidget *destina
             // insert new row to destination table
             destination->insertRow(destination->rowCount());
 
-            // Access each column in origin at current row to copy to destination
-            for(int col = 0; col < origin->columnCount(); col++)
+            // Copy all columns before notes from origin to destination
+            for(int col = 0; col < S_NOTES; col++)
             {
                 isFirstOccurence = i == 0;
 
-                if(col < AssignInitColCount && col != I_INIT)
+                if(isFirstOccurence)
                 {
-                    if(isFirstOccurence)
-                    {
-                        newCell = new QTableWidgetItem(origin->item(originRow, col)->text());
-                        destination->setItem(destRow, col, newCell);
+                    newCell = new QTableWidgetItem(origin->item(originRow, col)->text());
+                    destination->setItem(destRow, col, newCell);
 
-                        if(qty > 1)
+                    // Only save first occurence if multiples of actor
+                    if(qty > 1)
+                    {
+                        firstOcc = destRow;
+                    }
+                }
+                else
+                {
+                    // Copies text of current column for first occurence & stores in new item
+                    newCell = new QTableWidgetItem(destination->item(firstOcc, col)->text());
+
+                    // sets item in destination table
+                    destination->setItem(destRow, col, newCell);
+
+                    if (col == S_NAME)
+                    {
+                        // get name & qrt number
+                        name = destination->item(destRow,col)->text();
+                        num = QString::number(i + 1);
+
+                        // reset actor name to include qty number
+                        destination->item(destRow, col)->setText(name  + " " + num);
+
+                        isFirstOccurence = i == (qty - 1);
+
+                        // reset actor name to include qty number
+                        if(isFirstOccurence)
                         {
-                            firstOcc = destRow;
+                            name = destination->item(firstOcc, col)->text();
+                            num = QString::number(1);
+                            destination->item(firstOcc, col)->setText(name  + " " + num);
                         }
                     }
-                    else
-                    {
-                        // Copies text of current column for first occurence & stores in new item
-                        newCell = new QTableWidgetItem(destination->item(firstOcc, col)->text());
-
-                        // sets item in destination table
-                        destination->setItem(destRow, col, newCell);
-
-                        if (col == S_NAME)
-                        {
-                            // get name & qrt number
-                            name = destination->item(destRow,col)->text();
-                            num = QString::number(i + 1);
-
-                            // reset actor name to include qty number
-                            destination->item(destRow, col)->setText(name  + " " + num);
-
-                            isFirstOccurence = i == (qty - 1);
-
-                            if(isFirstOccurence)
-                            {
-                                name = destination->item(firstOcc, col)->text();
-                                num = QString::number(1);
-
-                                // reset actor name to include qty number
-                                destination->item(firstOcc, col)->setText(name  + " " + num);
-                            }
-                        }
-                    } // END - if (isFirstOccurence)
-                } // END - if ( col)
+                } // END - if (isFirstOccurence)
             } // END - for (col)
+
+            newCell = new QTableWidgetItem(origin->item(originRow, S_NOTES)->text());
+            destination->setItem(destRow, I_NOTES, newCell);
         } // END - for (i)
     } // END - for (originRow)
 }
@@ -232,7 +233,8 @@ void TableModel::CopyTableToCombatPage(QTableWidget *origin, QTableWidget *desti
             if(col == I_INIT)
             {
                 initBox = qobject_cast<QSpinBox*>(origin->cellWidget(row, I_INIT));
-                initCell = new QTableWidgetItem(initBox->cleanText());
+                initCell = new QTableWidgetItem();
+                initCell->setData(0, initBox->value());
 
                 destination->setItem(row, I_INIT, initCell);
             }
@@ -254,6 +256,11 @@ void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col
         sBox = new QSpinBox(table);
         sBox->setRange(min, max);
         table->setCellWidget(row, col, sBox);
+
+        if(col == S_QTY)
+        {
+            sBox->setDisabled(true);
+        }
     }
 }
 
@@ -275,6 +282,7 @@ void TableModel::AddActorToTable(QTableWidget *origin, QTableWidget *destination
     QTableWidgetItem *qtyItem = new QTableWidgetItem();
     bool empty  = origin->rowCount() == 0;
     bool inParty = false;
+    bool isCompanion = false;
 
     if(!empty)
     {
@@ -293,11 +301,13 @@ void TableModel::AddActorToTable(QTableWidget *origin, QTableWidget *destination
         }
 
         inParty = destination->item(placedRow, S_TYPE)->text() == "partymember";
+        isCompanion = destination->item(placedRow, S_TYPE)->text() == "companion";
 
         // Checks if actor is a party member; if true, sets quantity to only 1
-        if(inParty)
+        if(inParty || isCompanion)
         {
             qtyBox->setRange(1, 1);
+            qtyBox->setDisabled(true);
         }
         else
         {
@@ -350,103 +360,7 @@ void TableModel::InsertCombatStatsBox(QTableWidget *table, int value, int overfl
     table->setCellWidget(row, col, sBox);
 }
 
-// Determines if the passed in actor is already in the combat table
-bool TableModel::IsActorInCombat(QString name, QTableWidget *table)
-{
-    QString currentName;
-    QStringList nameParse;
-    int row = 0;
-    bool found = false;
 
-    while(!found && row < table->rowCount())
-    {
-        currentName = table->item(row, C_NAME)->text();
-
-        // Parse the current name in case it has a number after it
-        nameParse = currentName.split(" ");
-
-        qDebug() << nameParse;
-
-        if(nameParse.size() > 1)
-        {
-            nameParse.removeLast();
-
-            qDebug() << nameParse;
-            if(nameParse.size() > 1)
-            {
-                currentName = nameParse.join(" ");
-            }
-            else
-            {
-                currentName = nameParse.first();
-            }
-        }
-        else
-        {
-            currentName = nameParse.first();
-        }
-
-        qDebug() << currentName;
-
-
-        if(currentName == name)
-        {
-            found = true;
-        }
-
-        row++;
-    }
-
-    return found;
-}
-
-void TableModel::InsertActorToCombat(QTableWidget *combat, Actor actor, int init)
-{
-    QTableWidgetItem *item;
-    QString name;
-    int row = 0;
-
-    // Save actor name for renaming of actors to include number
-    name = actor.GetName();
-
-    //    qty = ui->qty_premade_spinBox->value();
-
-    combat->insertRow(combat->rowCount());
-    row = combat->rowCount() - 1;
-
-    // Handles which data will be placed on the table depending on the column
-    for(int col = 0; col < CombatColCount; col++)
-    {
-        switch(col)
-        {
-        case C_NAME:
-//            item = new QTableWidgetItem(name + " " + QString::number(i + 1));
-            item = new QTableWidgetItem(name);
-            break;
-        case C_HP:
-           InsertCombatStatsBox(combat, actor.GetHitPoints(), 10, row, col);
-            break;
-        case C_AC:
-            InsertCombatStatsBox(combat, actor.GetArmorClass(), 0, row, col);
-            break;
-        case C_DC:
-            item = new QTableWidgetItem(QString::number(actor.GetSpellSaveDC()));
-            break;
-        case C_INIT:
-            item = new QTableWidgetItem(QString::number(init));
-            break;
-        case C_NOTES:
-            item = new QTableWidgetItem(actor.GetNotes());
-            break;
-        }
-
-        // Inserts item to table if cell does not contain a spinbox
-        if(col != C_HP && col != C_AC)
-        {
-            combat->setItem(row, col, item);
-        }
-    } // END - for(col)
-}
 
 // Constructor
 TableModel::TableModel() {}
