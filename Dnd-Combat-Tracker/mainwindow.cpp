@@ -161,7 +161,12 @@ void MainWindow::on_endCombat_pushButton_clicked()
 // *************************************************************************************
 void MainWindow::on_dbOpt_welcome_pushButton_clicked()
 {
+    // Navigate to Database Options Page
     ui->main_stackedWidget->setCurrentIndex(DB_EDIT);
+
+    // Disable use of save button until appropriate option clicked
+    ui->save_editActors_pushButton->setEnabled(false);
+    ui->save_editActors_pushButton->setText("Save");
 }
 
 // *************************************************************************************
@@ -409,12 +414,10 @@ void MainWindow::on_addActor_dbEdit_pushButton_clicked()
     ui->save_editActors_pushButton->setText("Add Actor");
 
     // Clear fields
-    ui->name_editActors_lineEdit->clear();
-    ui->hp_editActors_spinBox->clear();
-    ui->ac_editActors_spinBox->clear();
-    ui->dc_editActors_spinBox->clear();
-    ui->notes_editActors_textEdit->clear();
-    ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE);
+    ClearDBFields();
+
+    // Enable 'save' button usage
+    ui->save_editActors_pushButton->setEnabled(true);
 }
 
 // *************************************************************************************
@@ -445,18 +448,17 @@ void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
 
         if(warnPrompt.exec() == QMessageBox::Ok)
         {
+            // Delete actor
             db->DeleteActor(actorID);
 
             // Clear fields
-            ui->name_editActors_lineEdit->clear();
-            ui->hp_editActors_spinBox->clear();
-            ui->ac_editActors_spinBox->clear();
-            ui->dc_editActors_spinBox->clear();
-            ui->notes_editActors_textEdit->clear();
-            ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE);
+            ClearDBFields();
 
             // Refresh table
             editActorsModel->select();
+
+            // Disable button until further action taken
+            ui->save_editActors_pushButton->setEnabled(false);
         }
     }
 }
@@ -487,11 +489,12 @@ void MainWindow::on_save_editActors_pushButton_clicked()
         editActorsModel->select();
 
         // Clear Fields
-        ui->name_editActors_lineEdit->clear();
-        ui->hp_editActors_spinBox->clear();
-        ui->ac_editActors_spinBox->clear();
-        ui->dc_editActors_spinBox->clear();
-        ui->notes_editActors_textEdit->clear();
+        ClearDBFields();
+
+        // Disable button until further action taken
+        ui->save_editActors_pushButton->setEnabled(false);
+
+        ui->save_editActors_pushButton->setText("Save");
 
         // Destroy object
         delete toAdd;
@@ -528,6 +531,15 @@ void MainWindow::on_save_editActors_pushButton_clicked()
             // Refresh table
             editActorsModel->select();
 
+            // Clear Fields
+            ClearDBFields();
+
+            // Disable button until further action taken
+            ui->save_editActors_pushButton->setEnabled(false);
+
+            // Reset button text
+            ui->save_editActors_pushButton->setText("Save");
+
             // Destroy object
             delete toEdit;
         }
@@ -554,6 +566,9 @@ void MainWindow::on_dbEdit_tableView_clicked()
         ui->save_editActors_pushButton->setText("Save Changes");
     }
 
+    // Enable use of save button
+    ui->save_editActors_pushButton->setEnabled(true);
+
     // Get selected row
     int row = ui->dbEdit_tableView->currentIndex().row();
     qDebug() << "Row Selected: " << row;
@@ -578,3 +593,26 @@ void MainWindow::on_dbEdit_tableView_clicked()
     else if(actorType == "effect") { ui->type_editActors_comboBox->setCurrentIndex(DB_EFFECT); }
     else { qDebug() << "Makeshift switch failed"; }
 }
+
+
+// *************************************************************************************
+//  PushButton for user to clear fields on DB edit page
+// *************************************************************************************
+void MainWindow::on_clear_editActors_pushButton_clicked()
+{
+    ClearDBFields();
+}
+
+// Helper method clears Database entry lineedits
+void MainWindow::ClearDBFields()
+{
+    ui->name_editActors_lineEdit->clear();
+    ui->hp_editActors_spinBox->clear();
+    ui->ac_editActors_spinBox->clear();
+    ui->dc_editActors_spinBox->clear();
+    ui->notes_editActors_textEdit->clear();
+    ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE);
+
+}
+
+

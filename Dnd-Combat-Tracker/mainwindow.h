@@ -131,6 +131,11 @@ private slots:
 
     void on_dbEdit_tableView_clicked();
 
+    // Helper Functions
+    void ClearDBFields();
+
+    void on_clear_editActors_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     Database *db;
