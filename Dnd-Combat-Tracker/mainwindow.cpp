@@ -193,7 +193,7 @@ void MainWindow::on_combatEditor_pushButton_clicked()
 // *************************************************************************************
 void MainWindow::FormatEditActorsTableView()
 {
-    DbEditTableModel *editActorsModel = new DbEditTableModel(this, db);
+    editActorsModel = new DbEditTableModel(this, db);
 
     // Format editActors tableview
     ui->dbEdit_tableView->setModel(editActorsModel);
@@ -406,10 +406,15 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
 void MainWindow::on_addActor_dbEdit_pushButton_clicked()
 {
     // Label save button as 'add'
-    ui->save_editActors_pushButton->setText("ADD");
+    ui->save_editActors_pushButton->setText("Add Actor");
 
-    // Display fields
-    ui->editActors_groupBox->show();
+    // Clear fields
+    ui->name_editActors_lineEdit->clear();
+    ui->hp_editActors_spinBox->clear();
+    ui->ac_editActors_spinBox->clear();
+    ui->dc_editActors_spinBox->clear();
+    ui->notes_editActors_textEdit->clear();
+    ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE);
 }
 
 // *************************************************************************************
@@ -459,62 +464,44 @@ void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
 // *************************************************************************************
 void MainWindow::on_save_editActors_pushButton_clicked()
 {
-    // START 'save actor' button
-
+    if(ui->save_editActors_pushButton->text() == "Add Actor")
+    {
         // Create object
-    Actor* toAdd;
-    toAdd = new Actor;
+        Actor* toAdd;
+        toAdd = new Actor;
+
+        // String Testing
+        QString notesText = ui->notes_editActors_textEdit->toPlainText();
 
         // Load field information into object
-    toAdd->SetName(ui->name_editActors_lineEdit->text());
-    toAdd->SetHitPoints(ui->hp_editActors_spinBox->text().toInt());
-    toAdd->SetArmorClass(ui->ac_editActors_spinBox->text().toInt());
-    toAdd->SetSpellSaveDC(ui->dc_editActors_spinBox->text().toInt());
-//    toAdd->SetNotes(ui->notes_editActors_textBrowser->);
-    toAdd->SetType(ui->type_editActors_comboBox->currentText());
+        toAdd->SetName(ui->name_editActors_lineEdit->text());
+        toAdd->SetHitPoints(ui->hp_editActors_spinBox->text().toInt());
+        toAdd->SetArmorClass(ui->ac_editActors_spinBox->text().toInt());
+        toAdd->SetSpellSaveDC(ui->dc_editActors_spinBox->text().toInt());
+        toAdd->SetNotes(ui->notes_editActors_textEdit->toPlainText());
+        toAdd->SetType(ui->type_editActors_comboBox->currentText());
 
+        // Add object to database
+        db->AddActor(toAdd);
 
-    // dafuq type_edit not coming up as ui object
-    //toAdd->SetType();
+        // Refresh table
+        editActorsModel->select();
 
-        // Pass object into void AddActor(toAdd)
+        // Clear Fields
+        ui->name_editActors_lineEdit->clear();
+        ui->hp_editActors_spinBox->clear();
+        ui->ac_editActors_spinBox->clear();
+        ui->dc_editActors_spinBox->clear();
+        ui->notes_editActors_textEdit->clear();
 
-        // START void AddActor(toAdd)
-    QSqlQuery query;
-
-    query.prepare("INSERT INTO actors (name,health,armorClass,spellSaveDC,notes,type"
-                  "VALUES (:name,:health,:armorClass,:spellSaveDC,:notes,:type)");
-
-    query.bindValue(":name", toAdd->GetName());
-    query.bindValue(":health", toAdd->GetHitPoints());
-    query.bindValue(":armorClass", toAdd->GetArmorClass());
-    query.bindValue(":spellSaveDC", toAdd->GetSpellSaveDC());
-    query.bindValue(":notes", toAdd->GetNotes());
-    query.bindValue(":type", toAdd->GetType());
-
-    // Print error if unsuccessful
-    if(!query.exec()) { qDebug() << query.lastError().text(); }
-
-        // END void AddActor(toAdd)
-
-        // refresh table
-
-    //ui->dbEdit_tableView->setModel()
-
-
-        // clear fields (this can prob be a method)
-    ui->name_editActors_lineEdit->clear();
-    ui->hp_editActors_spinBox->clear();
-    ui->ac_editActors_spinBox->clear();
-    ui->dc_editActors_spinBox->clear();
-    ui->notes_textEdit->clear();
-
-        // destroy object
-    delete toAdd;
-
-    // END 'save actor' button
-
-    // Hide box
+        // Destroy object
+        delete toAdd;
+    }
+    else if (ui->save_editActors_pushButton->text() == "Save Changes")
+    {
+        // do the edit method here
+    }
+    else { qDebug() << "Add/Edit Switch Failure"; }
 }
 
 // *************************************************************************************
