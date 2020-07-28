@@ -470,9 +470,6 @@ void MainWindow::on_save_editActors_pushButton_clicked()
         Actor* toAdd;
         toAdd = new Actor;
 
-        // String Testing
-        QString notesText = ui->notes_editActors_textEdit->toPlainText();
-
         // Load field information into object
         toAdd->SetName(ui->name_editActors_lineEdit->text());
         toAdd->SetHitPoints(ui->hp_editActors_spinBox->text().toInt());
@@ -499,7 +496,39 @@ void MainWindow::on_save_editActors_pushButton_clicked()
     }
     else if (ui->save_editActors_pushButton->text() == "Save Changes")
     {
-        // do the edit method here
+        // Get selected row
+        int row = ui->dbEdit_tableView->currentIndex().row();
+        qDebug() << "Row Selected: " << row;
+
+        // Determine if row is selected
+        bool rowSelected = row != -1;
+
+        if(rowSelected)
+        {
+            // Create object
+            Actor* toEdit;
+            toEdit = new Actor;
+
+            // Load field information into object
+            toEdit->SetID(ui->dbEdit_tableView->model()->index(row,0).data().toInt());
+            toEdit->SetName(ui->name_editActors_lineEdit->text());
+            toEdit->SetHitPoints(ui->hp_editActors_spinBox->text().toInt());
+            toEdit->SetArmorClass(ui->ac_editActors_spinBox->text().toInt());
+            toEdit->SetSpellSaveDC(ui->dc_editActors_spinBox->text().toInt());
+            toEdit->SetNotes(ui->notes_editActors_textEdit->toPlainText());
+            toEdit->SetType(ui->type_editActors_comboBox->currentText());
+
+            // Debug: See if ID is selected
+            qDebug() << "Actor ID Selected: " << row;
+
+            db->EditActor(toEdit);
+
+            // Refresh table
+            editActorsModel->select();
+
+            // Destroy object
+            delete toEdit;
+        }
     }
     else { qDebug() << "Add/Edit Switch Failure"; }
 }
