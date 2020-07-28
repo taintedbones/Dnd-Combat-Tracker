@@ -424,6 +424,9 @@ void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
 {
     // Get selected row
     int row = ui->dbEdit_tableView->currentIndex().row();
+
+    bool rowSelected =  row != -1;
+
     qDebug() << "Row Selected: " << row;
 
     // Pull ID from row
@@ -438,35 +441,40 @@ void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
     QMessageBox warnPrompt;
     QString warnMsg = "Are you sure to want to delete " + name.toUpper() + " from the database?";
 
-    warnPrompt.setIcon(QMessageBox::Warning);
-    warnPrompt.setText("WARNING");
-    warnPrompt.setInformativeText(warnMsg);
-    warnPrompt.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    qDebug() << "DEFAULT ROW SELECTED: " << ui->dbEdit_tableView->currentIndex().row();
 
-    if(warnPrompt.exec() == QMessageBox::Ok)
+    if(rowSelected)
     {
-        // START void DeleteActor(int actorID)
-        QSqlQuery query;
+        warnPrompt.setIcon(QMessageBox::Warning);
+        warnPrompt.setText("WARNING");
+        warnPrompt.setInformativeText(warnMsg);
+        warnPrompt.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 
-        query.prepare("DELETE FROM actors WHERE actorID = :actorID");
+        if(warnPrompt.exec() == QMessageBox::Ok)
+        {
+            // START void DeleteActor(int actorID)
+            QSqlQuery query;
 
-        query.bindValue(":actorID", actorID);
+            query.prepare("DELETE FROM actors WHERE actorID = :actorID");
 
-        // Print error if unsuccessful
-        if(!query.exec()) { qDebug() << query.lastError().text(); }
+            query.bindValue(":actorID", actorID);
 
-        // END void DeleteActor(int actorID)
+            // Print error if unsuccessful
+            if(!query.exec()) { qDebug() << query.lastError().text(); }
 
-        // Clear fields
-        ui->name_editActors_lineEdit->clear();
-        ui->hp_editActors_spinBox->clear();
-        ui->ac_editActors_spinBox->clear();
-        ui->dc_editActors_spinBox->clear();
-        ui->notes_editActors_textEdit->clear();
-        ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE);
+            // END void DeleteActor(int actorID)
 
-        // Refresh table
-        editActorsModel->select();
+            // Clear fields
+            ui->name_editActors_lineEdit->clear();
+            ui->hp_editActors_spinBox->clear();
+            ui->ac_editActors_spinBox->clear();
+            ui->dc_editActors_spinBox->clear();
+            ui->notes_editActors_textEdit->clear();
+            ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE);
+
+            // Refresh table
+            editActorsModel->select();
+        }
     }
 }
 
