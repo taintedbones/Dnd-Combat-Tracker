@@ -424,24 +424,17 @@ void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
 {
     // Get selected row
     int row = ui->dbEdit_tableView->currentIndex().row();
-
     bool rowSelected =  row != -1;
-
-    qDebug() << "Row Selected: " << row;
 
     // Pull ID from row
     int actorID = ui->dbEdit_tableView->model()->index(row,0).data().toInt();
-    qDebug() << "Actor ID Selected: " << row;
 
     // Pull name from row for popup window
     QString name = ui->dbEdit_tableView->model()->index(row,1).data().toString();
-    qDebug() << "Actor Name Selected: " << name;
 
     // Popup window asking if they want to delete that person
     QMessageBox warnPrompt;
     QString warnMsg = "Are you sure to want to delete " + name.toUpper() + " from the database?";
-
-    qDebug() << "DEFAULT ROW SELECTED: " << ui->dbEdit_tableView->currentIndex().row();
 
     if(rowSelected)
     {
@@ -452,17 +445,7 @@ void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
 
         if(warnPrompt.exec() == QMessageBox::Ok)
         {
-            // START void DeleteActor(int actorID)
-            QSqlQuery query;
-
-            query.prepare("DELETE FROM actors WHERE actorID = :actorID");
-
-            query.bindValue(":actorID", actorID);
-
-            // Print error if unsuccessful
-            if(!query.exec()) { qDebug() << query.lastError().text(); }
-
-            // END void DeleteActor(int actorID)
+            db->DeleteActor(actorID);
 
             // Clear fields
             ui->name_editActors_lineEdit->clear();

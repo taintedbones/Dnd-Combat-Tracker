@@ -42,7 +42,7 @@ public:
     // Edit actor in DB
 
     // Delete actor from DB
-    void DeleteActor(int actorID);
+    void DeleteActor(const int &actorID);
 
     // Add scenario to DB
 

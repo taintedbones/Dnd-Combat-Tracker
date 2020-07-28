@@ -228,6 +228,17 @@ void Database::AddActor(Actor* toAdd)
 // Edit actor in DB
 
 // Delete actor from DB
+void Database::DeleteActor(const int &actorID)
+{
+    QSqlQuery query;
+
+    query.prepare("DELETE FROM actors WHERE actorID = :actorID");
+
+    query.bindValue(":actorID", actorID);
+
+    // Print error if unsuccessful
+    if(!query.exec()) { qDebug() << query.lastError().text(); }
+}
 
 // Add scenario to DB
 
