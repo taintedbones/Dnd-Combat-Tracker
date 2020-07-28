@@ -40,6 +40,7 @@ public:
     void AddActor(Actor* toAdd);
 
     // Edit actor in DB
+    void EditActor(Actor* toEdit);
 
     // Delete actor from DB
     void DeleteActor(int actorID);

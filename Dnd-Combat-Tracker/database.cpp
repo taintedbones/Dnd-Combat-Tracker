@@ -226,6 +226,31 @@ void Database::AddActor(Actor* toAdd)
 }
 
 // Edit actor in DB
+void Database::EditActor(Actor *toEdit)
+{
+        QSqlQuery query;
+
+        query.prepare("UPDATE actors "
+                      "SET name = :name, "
+                      "health = :health, "
+                      "armorClass = :armorClass, "
+                      "spellSaveDC = :spellSaveDC, "
+                      "notes = :notes, "
+                      "type = :type "
+                      "WHERE actorID = :actorID;");
+
+        // Bind safe values
+        query.bindValue(":actorID", toEdit->GetID());
+        query.bindValue(":name", toEdit->GetName());
+        query.bindValue(":health", toEdit->GetHitPoints());
+        query.bindValue(":armorClass", toEdit->GetArmorClass());
+        query.bindValue(":spellSaveDC", toEdit->GetSpellSaveDC());
+        query.bindValue(":notes", toEdit->GetNotes());
+        query.bindValue(":type", toEdit->GetType());
+
+        // Print error if unsuccessful
+        if(!query.exec()) { qDebug() << query.lastError().text(); }
+}
 
 // Delete actor from DB
 
