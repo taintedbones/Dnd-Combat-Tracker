@@ -456,6 +456,17 @@ void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
         if(!query.exec()) { qDebug() << query.lastError().text(); }
 
         // END void DeleteActor(int actorID)
+
+        // Clear fields
+        ui->name_editActors_lineEdit->clear();
+        ui->hp_editActors_spinBox->clear();
+        ui->ac_editActors_spinBox->clear();
+        ui->dc_editActors_spinBox->clear();
+        ui->notes_editActors_textEdit->clear();
+        ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE);
+
+        // Refresh table
+        editActorsModel->select();
     }
 }
 
