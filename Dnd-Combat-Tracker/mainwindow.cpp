@@ -470,9 +470,6 @@ void MainWindow::on_save_editActors_pushButton_clicked()
         Actor* toAdd;
         toAdd = new Actor;
 
-        // String Testing
-        QString notesText = ui->notes_editActors_textEdit->toPlainText();
-
         // Load field information into object
         toAdd->SetName(ui->name_editActors_lineEdit->text());
         toAdd->SetHitPoints(ui->hp_editActors_spinBox->text().toInt());
@@ -499,7 +496,65 @@ void MainWindow::on_save_editActors_pushButton_clicked()
     }
     else if (ui->save_editActors_pushButton->text() == "Save Changes")
     {
-        // do the edit method here
+        // Get selected row
+        int row = ui->dbEdit_tableView->currentIndex().row();
+        qDebug() << "Row Selected: " << row;
+
+        // Determine if row is selected
+        bool rowSelected = row != -1;
+
+        if(rowSelected)
+        {
+            // Create object
+            Actor* toEdit;
+            toEdit = new Actor;
+
+            // Load field information into object
+            toEdit->SetID(ui->dbEdit_tableView->model()->index(row,0).data().toInt());
+            toEdit->SetName(ui->name_editActors_lineEdit->text());
+            toEdit->SetHitPoints(ui->hp_editActors_spinBox->text().toInt());
+            toEdit->SetArmorClass(ui->ac_editActors_spinBox->text().toInt());
+            toEdit->SetSpellSaveDC(ui->dc_editActors_spinBox->text().toInt());
+            toEdit->SetNotes(ui->notes_editActors_textEdit->toPlainText());
+            toEdit->SetType(ui->type_editActors_comboBox->currentText());
+
+            // Check to see if notes are set
+            qDebug() << "NOTES IN OBJECT: " << toEdit->GetNotes();
+
+            // Debug: See if ID is selected
+            qDebug() << "Actor ID Selected: " << row;
+
+        // START EditActor(Actor* toEdit)
+            QSqlQuery query;
+
+            query.prepare("UPDATE actors "
+                          "SET name = :name, "
+                          "health = :health, "
+                          "armorClass = :armorClass, "
+                          "spellSaveDC = :spellSaveDC, "
+                          "notes = :notes, "
+                          "type = :type "
+                          "WHERE actorID = :actorID;");
+
+            // Bind safe values
+            query.bindValue(":actorID", toEdit->GetID());
+            query.bindValue(":name", toEdit->GetName());
+            query.bindValue(":health", toEdit->GetHitPoints());
+            query.bindValue(":armorClass", toEdit->GetArmorClass());
+            query.bindValue(":spellSaveDC", toEdit->GetSpellSaveDC());
+            query.bindValue(":notes", toEdit->GetNotes());
+            query.bindValue(":type", toEdit->GetType());
+
+            // Print error if unsuccessful
+            if(!query.exec()) { qDebug() << query.lastError().text(); }
+        // END EditActor(const int &actorID)
+
+            // Refresh table
+            editActorsModel->select();
+
+            // Destroy object
+            delete toEdit;
+        }
     }
     else { qDebug() << "Add/Edit Switch Failure"; }
 }
