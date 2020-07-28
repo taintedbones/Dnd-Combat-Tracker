@@ -37,7 +37,7 @@ public:
     Actor GetActor(QString name);
 
     // Add actor to DB
-    void AddActor(Actor toAdd);
+    void AddActor(Actor* toAdd);
 
     // Edit actor in DB
 

@@ -205,7 +205,25 @@ Actor Database::GetActor(QString name)
 // *************************************************************************************
 // Add actor to database
 // *************************************************************************************
-void AddActor();
+void Database::AddActor(Actor* toAdd)
+{
+    QSqlQuery query;
+
+    // Prepare query
+    query.prepare("INSERT INTO actors (name,health,armorClass,spellSaveDC,notes,type)"
+                  "VALUES (:name,:health,:armorClass,:spellSaveDC,:notes,:type)");
+
+    // Bind values
+    query.bindValue(":name", toAdd->GetName());
+    query.bindValue(":health", toAdd->GetHitPoints());
+    query.bindValue(":armorClass", toAdd->GetArmorClass());
+    query.bindValue(":spellSaveDC", toAdd->GetSpellSaveDC());
+    query.bindValue(":notes", toAdd->GetNotes());
+    query.bindValue(":type", toAdd->GetType());
+
+    // Execute query. Print error if unsuccessful
+    if(!query.exec()) { qDebug() << query.lastError().text(); }
+}
 
 // Edit actor in DB
 

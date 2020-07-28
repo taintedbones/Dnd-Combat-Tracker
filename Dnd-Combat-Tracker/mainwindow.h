@@ -145,5 +145,8 @@ private:
     QVector<Actor> *combatList;
     AddActorForm *addActorForm;
     CombatManager *combatManager;
+
+    // Models
+    DbEditTableModel *editActorsModel = nullptr;
 };
 #endif // MAINWINDOW_H

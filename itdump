@@ -23,8 +23,8 @@ INSERT INTO actors VALUES(8,'Skeleton',13,13,0,'Cannot speak','creature');
 INSERT INTO actors VALUES(9,'Orc',15,13,0,'Move up to speed as bonus action','creature');
 INSERT INTO actors VALUES(10,'Vampire Spawn',82,15,13,'Regeneration, Spider Climb, Vampire Weakness, Multiattack','creature');
 
-INSERT INTO actors VALUES(11,'Guard',11,16,0,'','companion');
-INSERT INTO actors VALUES(12,'Priest',27,13,13,'Divine Eminence, Spellcasting','companion');
+INSERT INTO actors VALUES(11,'Guard',11,16,0,'','creature');
+INSERT INTO actors VALUES(12,'Priest',27,13,13,'Divine Eminence, Spellcasting','creature');
 INSERT INTO actors VALUES(13,'Bogart',96,17,14,'The Wanderer','companion');
 INSERT INTO actors VALUES(14,'Viggo',42,15,12,'They call him "The Flightless" for some reason','companion');
 
