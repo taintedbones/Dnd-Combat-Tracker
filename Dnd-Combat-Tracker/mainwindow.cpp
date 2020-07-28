@@ -424,38 +424,40 @@ void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
 {
     // Get selected row
     int row = ui->dbEdit_tableView->currentIndex().row();
-    qDebug() << "Row Selected: " << row;
+    bool rowSelected =  row != -1;
 
     // Pull ID from row
     int actorID = ui->dbEdit_tableView->model()->index(row,0).data().toInt();
-    qDebug() << "Actor ID Selected: " << row;
 
     // Pull name from row for popup window
     QString name = ui->dbEdit_tableView->model()->index(row,1).data().toString();
-    qDebug() << "Actor Name Selected: " << name;
 
     // Popup window asking if they want to delete that person
     QMessageBox warnPrompt;
     QString warnMsg = "Are you sure to want to delete " + name.toUpper() + " from the database?";
 
-    warnPrompt.setIcon(QMessageBox::Warning);
-    warnPrompt.setText("WARNING");
-    warnPrompt.setInformativeText(warnMsg);
-    warnPrompt.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-
-    if(warnPrompt.exec() == QMessageBox::Ok)
+    if(rowSelected)
     {
-        // START void DeleteActor(int actorID)
-        QSqlQuery query;
+        warnPrompt.setIcon(QMessageBox::Warning);
+        warnPrompt.setText("WARNING");
+        warnPrompt.setInformativeText(warnMsg);
+        warnPrompt.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 
-        query.prepare("DELETE FROM actors WHERE actorID = :actorID");
+        if(warnPrompt.exec() == QMessageBox::Ok)
+        {
+            db->DeleteActor(actorID);
 
-        query.bindValue(":actorID", actorID);
+            // Clear fields
+            ui->name_editActors_lineEdit->clear();
+            ui->hp_editActors_spinBox->clear();
+            ui->ac_editActors_spinBox->clear();
+            ui->dc_editActors_spinBox->clear();
+            ui->notes_editActors_textEdit->clear();
+            ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE);
 
-        // Print error if unsuccessful
-        if(!query.exec()) { qDebug() << query.lastError().text(); }
-
-        // END void DeleteActor(int actorID)
+            // Refresh table
+            editActorsModel->select();
+        }
     }
 }
 

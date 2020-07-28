@@ -43,7 +43,7 @@ public:
     void EditActor(Actor* toEdit);
 
     // Delete actor from DB
-    void DeleteActor(int actorID);
+    void DeleteActor(const int &actorID);
 
     // Add scenario to DB
 
