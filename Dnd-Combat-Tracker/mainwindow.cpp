@@ -161,7 +161,12 @@ void MainWindow::on_endCombat_pushButton_clicked()
 // *************************************************************************************
 void MainWindow::on_dbOpt_welcome_pushButton_clicked()
 {
+    // Navigate to Database Options Page
     ui->main_stackedWidget->setCurrentIndex(DB_EDIT);
+
+    // Disable use of save button until appropriate option clicked
+    ui->save_editActors_pushButton->setEnabled(false);
+    ui->save_editActors_pushButton->setText("Save");
 }
 
 // *************************************************************************************
@@ -193,7 +198,7 @@ void MainWindow::on_combatEditor_pushButton_clicked()
 // *************************************************************************************
 void MainWindow::FormatEditActorsTableView()
 {
-    DbEditTableModel *editActorsModel = new DbEditTableModel(this, db);
+    editActorsModel = new DbEditTableModel(this, db);
 
     // Format editActors tableview
     ui->dbEdit_tableView->setModel(editActorsModel);
@@ -399,3 +404,215 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
         FormatScenarioTableView(ui->scenarioView_editScenario_comboBox->currentText());
     }
 }
+
+// *************************************************************************************
+//  Shows actor statistics fields, allowing user to add actor to database
+// *************************************************************************************
+void MainWindow::on_addActor_dbEdit_pushButton_clicked()
+{
+    // Label save button as 'add'
+    ui->save_editActors_pushButton->setText("Add Actor");
+
+    // Clear fields
+    ClearDBFields();
+
+    // Enable 'save' button usage
+    ui->save_editActors_pushButton->setEnabled(true);
+}
+
+// *************************************************************************************
+//  Deletes actor from database
+// *************************************************************************************
+void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
+{
+    // Get selected row
+    int row = ui->dbEdit_tableView->currentIndex().row();
+    bool rowSelected =  row != -1;
+
+    // Pull ID from row
+    int actorID = ui->dbEdit_tableView->model()->index(row,0).data().toInt();
+
+    // Pull name from row for popup window
+    QString name = ui->dbEdit_tableView->model()->index(row,1).data().toString();
+
+    // Popup window asking if they want to delete that person
+    QMessageBox warnPrompt;
+    QString warnMsg = "Are you sure to want to delete " + name.toUpper() + " from the database?";
+
+    if(rowSelected)
+    {
+        warnPrompt.setIcon(QMessageBox::Warning);
+        warnPrompt.setText("WARNING");
+        warnPrompt.setInformativeText(warnMsg);
+        warnPrompt.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+
+        if(warnPrompt.exec() == QMessageBox::Ok)
+        {
+            // Delete actor
+            db->DeleteActor(actorID);
+
+            // Clear fields
+            ClearDBFields();
+
+            // Refresh table
+            editActorsModel->select();
+
+            // Disable button until further action taken
+            ui->save_editActors_pushButton->setEnabled(false);
+        }
+    }
+}
+
+// *************************************************************************************
+//  Saves changes (add/edit) to database
+// *************************************************************************************
+void MainWindow::on_save_editActors_pushButton_clicked()
+{
+    if(ui->save_editActors_pushButton->text() == "Add Actor")
+    {
+        // Create object
+        Actor* toAdd;
+        toAdd = new Actor;
+
+        // Load field information into object
+        toAdd->SetName(ui->name_editActors_lineEdit->text());
+        toAdd->SetHitPoints(ui->hp_editActors_spinBox->text().toInt());
+        toAdd->SetArmorClass(ui->ac_editActors_spinBox->text().toInt());
+        toAdd->SetSpellSaveDC(ui->dc_editActors_spinBox->text().toInt());
+        toAdd->SetNotes(ui->notes_editActors_textEdit->toPlainText());
+        toAdd->SetType(ui->type_editActors_comboBox->currentText());
+
+        // Add object to database
+        db->AddActor(toAdd);
+
+        // Refresh table
+        editActorsModel->select();
+
+        // Clear Fields
+        ClearDBFields();
+
+        // Disable button until further action taken
+        ui->save_editActors_pushButton->setEnabled(false);
+
+        ui->save_editActors_pushButton->setText("Save");
+
+        // Destroy object
+        delete toAdd;
+    }
+    else if (ui->save_editActors_pushButton->text() == "Save Changes")
+    {
+        // Get selected row
+        int row = ui->dbEdit_tableView->currentIndex().row();
+        qDebug() << "Row Selected: " << row;
+
+        // Determine if row is selected
+        bool rowSelected = row != -1;
+
+        if(rowSelected)
+        {
+            // Create object
+            Actor* toEdit;
+            toEdit = new Actor;
+
+            // Load field information into object
+            toEdit->SetID(ui->dbEdit_tableView->model()->index(row,0).data().toInt());
+            toEdit->SetName(ui->name_editActors_lineEdit->text());
+            toEdit->SetHitPoints(ui->hp_editActors_spinBox->text().toInt());
+            toEdit->SetArmorClass(ui->ac_editActors_spinBox->text().toInt());
+            toEdit->SetSpellSaveDC(ui->dc_editActors_spinBox->text().toInt());
+            toEdit->SetNotes(ui->notes_editActors_textEdit->toPlainText());
+            toEdit->SetType(ui->type_editActors_comboBox->currentText());
+
+            // Debug: See if ID is selected
+            qDebug() << "Actor ID Selected: " << row;
+
+            db->EditActor(toEdit);
+
+            // Refresh table
+            editActorsModel->select();
+
+            // Clear Fields
+            ClearDBFields();
+
+            // Disable button until further action taken
+            ui->save_editActors_pushButton->setEnabled(false);
+
+            // Reset button text
+            ui->save_editActors_pushButton->setText("Save");
+
+            // Destroy object
+            delete toEdit;
+        }
+    }
+    else { qDebug() << "Add/Edit Switch Failure"; }
+}
+
+// *************************************************************************************
+//  Help: Displays QMessageBox with instructions on how to use the database options
+// *************************************************************************************
+void MainWindow::on_help_dbEdit__pushButton_clicked()
+{
+
+}
+
+// *************************************************************************************
+//  Pulls data from tableview into text fields upon clicking any table entry
+// *************************************************************************************
+void MainWindow::on_dbEdit_tableView_clicked()
+{
+    // If not in edit mode, enter edit mode
+    if(ui->save_editActors_pushButton->text() != "Save Changes")
+    {
+        ui->save_editActors_pushButton->setText("Save Changes");
+    }
+
+    // Enable use of save button
+    ui->save_editActors_pushButton->setEnabled(true);
+
+    // Get selected row
+    int row = ui->dbEdit_tableView->currentIndex().row();
+    qDebug() << "Row Selected: " << row;
+
+    // Pull name from row for popup window
+    QString name = ui->dbEdit_tableView->model()->index(row,1).data().toString();
+    qDebug() << "Actor Name Selected: " << name;
+
+    QString actorType = ui->dbEdit_tableView->model()->index(row, tableManager->D_TYPE).data().toString();
+
+    // Pull info from table to fields
+    ui->name_editActors_lineEdit->setText(ui->dbEdit_tableView->model()->index(row, tableManager->D_NAME).data().toString());
+    ui->hp_editActors_spinBox->setValue(ui->dbEdit_tableView->model()->index(row, tableManager->D_HP).data().toInt());
+    ui->ac_editActors_spinBox->setValue(ui->dbEdit_tableView->model()->index(row, tableManager->D_AC).data().toInt());
+    ui->dc_editActors_spinBox->setValue(ui->dbEdit_tableView->model()->index(row, tableManager->D_DC).data().toInt());
+    ui->notes_editActors_textEdit->setText(ui->dbEdit_tableView->model()->index(row, tableManager->D_NOTES).data().toString());
+
+    // Set index on 'type' combobox
+    if(actorType == "partymember") { ui->type_editActors_comboBox->setCurrentIndex(DB_PARTY); }
+    else if(actorType == "creature") { ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE); }
+    else if(actorType == "companion") { ui->type_editActors_comboBox->setCurrentIndex(DB_COMPANION); }
+    else if(actorType == "effect") { ui->type_editActors_comboBox->setCurrentIndex(DB_EFFECT); }
+    else { qDebug() << "Makeshift switch failed"; }
+}
+
+
+// *************************************************************************************
+//  PushButton for user to clear fields on DB edit page
+// *************************************************************************************
+void MainWindow::on_clear_editActors_pushButton_clicked()
+{
+    ClearDBFields();
+}
+
+// Helper method clears Database entry lineedits
+void MainWindow::ClearDBFields()
+{
+    ui->name_editActors_lineEdit->clear();
+    ui->hp_editActors_spinBox->clear();
+    ui->ac_editActors_spinBox->clear();
+    ui->dc_editActors_spinBox->clear();
+    ui->notes_editActors_textEdit->clear();
+    ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE);
+
+}
+
+

@@ -36,7 +36,25 @@ public:
     // Access data of passed in actor name
     Actor GetActor(QString name);
 
+    // Add actor to DB
+    void AddActor(Actor* toAdd);
+
+    // Edit actor in DB
+    void EditActor(Actor* toEdit);
+
+    // Delete actor from DB
+    void DeleteActor(const int &actorID);
+
+    // Add scenario to DB
+
+    // Edit scenario in DB
+
+    // Delete scenario from DB
+
+    // Constructor
     Database(QString path, QString driver);
+
+    // Destructor
     ~Database() {}
 
 private:

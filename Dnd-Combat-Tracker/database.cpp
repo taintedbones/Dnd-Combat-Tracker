@@ -201,3 +201,72 @@ Actor Database::GetActor(QString name)
 
     return foundActor;
 }
+
+// *************************************************************************************
+// Add actor to database
+// *************************************************************************************
+void Database::AddActor(Actor* toAdd)
+{
+    QSqlQuery query;
+
+    // Prepare query
+    query.prepare("INSERT INTO actors (name,health,armorClass,spellSaveDC,notes,type)"
+                  "VALUES (:name,:health,:armorClass,:spellSaveDC,:notes,:type)");
+
+    // Bind values
+    query.bindValue(":name", toAdd->GetName());
+    query.bindValue(":health", toAdd->GetHitPoints());
+    query.bindValue(":armorClass", toAdd->GetArmorClass());
+    query.bindValue(":spellSaveDC", toAdd->GetSpellSaveDC());
+    query.bindValue(":notes", toAdd->GetNotes());
+    query.bindValue(":type", toAdd->GetType());
+
+    // Execute query. Print error if unsuccessful
+    if(!query.exec()) { qDebug() << query.lastError().text(); }
+}
+
+// Edit actor in DB
+void Database::EditActor(Actor *toEdit)
+{
+        QSqlQuery query;
+
+        query.prepare("UPDATE actors "
+                      "SET name = :name, "
+                      "health = :health, "
+                      "armorClass = :armorClass, "
+                      "spellSaveDC = :spellSaveDC, "
+                      "notes = :notes, "
+                      "type = :type "
+                      "WHERE actorID = :actorID;");
+
+        // Bind safe values
+        query.bindValue(":actorID", toEdit->GetID());
+        query.bindValue(":name", toEdit->GetName());
+        query.bindValue(":health", toEdit->GetHitPoints());
+        query.bindValue(":armorClass", toEdit->GetArmorClass());
+        query.bindValue(":spellSaveDC", toEdit->GetSpellSaveDC());
+        query.bindValue(":notes", toEdit->GetNotes());
+        query.bindValue(":type", toEdit->GetType());
+
+        // Print error if unsuccessful
+        if(!query.exec()) { qDebug() << query.lastError().text(); }
+}
+
+// Delete actor from DB
+void Database::DeleteActor(const int &actorID)
+{
+    QSqlQuery query;
+
+    query.prepare("DELETE FROM actors WHERE actorID = :actorID");
+
+    query.bindValue(":actorID", actorID);
+
+    // Print error if unsuccessful
+    if(!query.exec()) { qDebug() << query.lastError().text(); }
+}
+
+// Add scenario to DB
+
+// Edit scenario in DB
+
+// Delete scenario from DB

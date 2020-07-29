@@ -30,7 +30,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="welcome_page">
      <widget class="QPushButton" name="welcomeStart_pushButton">
@@ -908,8 +908,11 @@
         <height>821</height>
        </rect>
       </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="editActors_tab">
        <attribute name="title">
@@ -918,8 +921,8 @@
        <widget class="QWidget" name="verticalLayoutWidget_4">
         <property name="geometry">
          <rect>
-          <x>110</x>
-          <y>630</y>
+          <x>100</x>
+          <y>610</y>
           <width>211</width>
           <height>131</height>
          </rect>
@@ -933,16 +936,16 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="editActor_dbEdit__pushButton">
+          <widget class="QPushButton" name="deleteActor_dbEdit_pushButton">
            <property name="text">
-            <string>Edit</string>
+            <string>Delete</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="deleteActor_dbEdit_pushButton">
+          <widget class="QPushButton" name="help_dbEdit__pushButton">
            <property name="text">
-            <string>Delete</string>
+            <string>Help</string>
            </property>
           </widget>
          </item>
@@ -954,7 +957,7 @@
           <x>30</x>
           <y>20</y>
           <width>1061</width>
-          <height>561</height>
+          <height>541</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -975,6 +978,9 @@
          </item>
          <item>
           <widget class="QTableView" name="dbEdit_tableView">
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
            <attribute name="horizontalHeaderStretchLastSection">
             <bool>true</bool>
            </attribute>
@@ -985,98 +991,163 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="formLayoutWidget_2">
+       <widget class="QGroupBox" name="editActors_groupBox">
         <property name="geometry">
          <rect>
-          <x>520</x>
-          <y>590</y>
-          <width>421</width>
-          <height>191</height>
+          <x>350</x>
+          <y>570</y>
+          <width>721</width>
+          <height>211</height>
          </rect>
         </property>
-        <layout class="QFormLayout" name="editActors_formLayout">
-         <item row="0" column="0">
-          <widget class="QLabel" name="name_editActors_label">
-           <property name="text">
-            <string>Name:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="hp_editActors_label">
-           <property name="text">
-            <string>Max HP:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="dc_editActors_label">
-           <property name="text">
-            <string>DC:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="ac_editActors_label">
-           <property name="text">
-            <string>AC:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="notes_editActors_label">
-           <property name="text">
-            <string>Notes:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="name_editActors_lineEdit"/>
-         </item>
-         <item row="1" column="1">
-          <widget class="QSpinBox" name="hp_editActors_spinBox"/>
-         </item>
-         <item row="2" column="1">
-          <widget class="QSpinBox" name="dc_editActors_spinBox"/>
-         </item>
-         <item row="3" column="1">
-          <widget class="QSpinBox" name="ac_editActors_spinBox"/>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="notes_editActors_lineEdit"/>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="type_editActors_label">
-           <property name="text">
-            <string>Type:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QComboBox" name="type_editActors_comboBox">
-           <item>
-            <property name="text">
-             <string>partymember</string>
+        <property name="title">
+         <string>Actor Tools</string>
+        </property>
+        <widget class="QWidget" name="verticalLayoutWidget_6">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>30</y>
+           <width>671</width>
+           <height>165</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="editActorsContainer_verticalLayout">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <item>
+             <layout class="QFormLayout" name="editActors_formLayout">
+              <item row="0" column="0">
+               <widget class="QLabel" name="name_editActors_label">
+                <property name="text">
+                 <string>Name:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="name_editActors_lineEdit"/>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="hp_editActors_label">
+                <property name="text">
+                 <string>Max HP:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QSpinBox" name="hp_editActors_spinBox"/>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="dc_editActors_label">
+                <property name="text">
+                 <string>DC:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QSpinBox" name="dc_editActors_spinBox"/>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="ac_editActors_label">
+                <property name="text">
+                 <string>AC:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QSpinBox" name="ac_editActors_spinBox"/>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QFormLayout" name="formLayout_2">
+              <item row="0" column="0">
+               <widget class="QLabel" name="notes_editActors_label">
+                <property name="text">
+                 <string>Notes:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="type_editActors_label">
+                <property name="text">
+                 <string>Type:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QComboBox" name="type_editActors_comboBox">
+                <item>
+                 <property name="text">
+                  <string>partymember</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>creature</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>companion</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>effect</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QTextEdit" name="notes_editActors_textEdit"/>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <property name="leftMargin">
+             <number>70</number>
             </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>creature</string>
+            <property name="rightMargin">
+             <number>70</number>
             </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>companion</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>effect</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
+            <item>
+             <widget class="QPushButton" name="save_editActors_pushButton">
+              <property name="text">
+               <string>Save</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Preferred</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="clear_editActors_pushButton">
+              <property name="text">
+               <string>Clear</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </widget>
       <widget class="QWidget" name="editScenarios_tab">
@@ -1252,7 +1323,7 @@
      <widget class="QWidget" name="horizontalLayoutWidget">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>20</x>
         <y>850</y>
         <width>1051</width>
         <height>41</height>
