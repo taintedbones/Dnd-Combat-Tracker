@@ -56,6 +56,14 @@ INSERT INTO scenarios VALUES(11,'orc');
 INSERT INTO scenarios VALUES(12,'vampire');
 INSERT INTO scenarios VALUES(13,'goblin');
 INSERT INTO scenarios VALUES(14,'skeleton');
+
+CREATE VIEW scenario_list AS
+SELECT DISTINCT scenarioName FROM scenarios;
+
+
+CREATE VIEW scenario_actorList AS
+SELECT scenarios.actorID, actors.name, actors.health, actors.armorClass, actors.spellSaveDC, actors.notes, actors.type
+FROM actors INNER JOIN scenarios ON scenarios.actorID = actors.actorID;
 COMMIT;
 
 
