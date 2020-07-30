@@ -343,7 +343,7 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
 // *************************************************************************************
 void MainWindow::FormatScenarioTableView(QString scenarioName)
 {
-    DbEditTableModel *editScenarioModel = new DbEditTableModel(this, db);
+    editScenarioModel = new DbEditTableModel(this, db);
 
     if(scenarioName == "All Scenarios")
     {
@@ -371,7 +371,7 @@ void MainWindow::FormatScenarioTableView(QString scenarioName)
 // *************************************************************************************
 void MainWindow::FormatEditScenarioActorsTableView()
 {
-    DbEditTableModel *editScenarioActorsModel = new DbEditTableModel(this, db);
+    editScenarioActorsModel = new DbEditTableModel(this, db);
 
     ui->actors_editScenario_tableView->setModel(editScenarioActorsModel);
     ui->actors_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
@@ -632,7 +632,7 @@ void MainWindow::ClearDBFields()
 
 
 // *************************************************************************************
-//  PushButton "Add Scenario" for user to create scenarios or add actors to existing scenario
+//  Edit-Scenario - PushButton "Add" for user to create scenarios or add actors to existing scenario
 // *************************************************************************************
 void MainWindow::on_add_editScenario_pushButton_clicked()
 {
@@ -659,6 +659,15 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
     }
     else // Add actor to existing scenario
     {
-        // Probably pulls actor from actors table to scenario table
+        // If user has selected a valid row
+        if(ui->actors_editScenario_tableView->currentIndex().row() != -1)
+        {
+            // START DbEditTableModel void AddActorToScenario(origin, destination)? or void MoveActorBetweenTableview(origin, destination)
+
+
+            // END DbEditTableModel AddActorToScenario
+        }
+
+        //tableManager->RemoveActorFromTable(ui->actors_editScenario_tableView, ui->scenarios_editScenario_tableView);
     }
 }

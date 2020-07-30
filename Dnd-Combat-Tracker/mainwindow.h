@@ -164,5 +164,7 @@ private:
 
     // Models
     DbEditTableModel *editActorsModel = nullptr;
+    DbEditTableModel *editScenarioModel = nullptr;
+    DbEditTableModel *editScenarioActorsModel = nullptr;
 };
 #endif // MAINWINDOW_H

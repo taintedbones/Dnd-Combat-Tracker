@@ -20,6 +20,7 @@ public:
     //  Initializes model to display scenario_actorList view & filters table by passed in
     //      scenario name
     void InitializeScenarioByName(QString scenarioName);
+
 private:
     Database *database;
 };
