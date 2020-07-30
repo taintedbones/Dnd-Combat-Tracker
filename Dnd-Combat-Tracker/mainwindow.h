@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QObject>
+#include <QInputDialog>
 #include "Database.h"
 #include "DbEditTableModel.h"
 #include "TableModel.h"
@@ -143,6 +144,8 @@ private slots:
     void on_clear_editActors_pushButton_clicked();
 
     void on_dbEdit_tabWidget_currentChanged(int index);
+
+    void on_add_editScenario_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;

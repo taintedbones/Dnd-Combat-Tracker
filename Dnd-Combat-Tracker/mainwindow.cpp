@@ -631,3 +631,34 @@ void MainWindow::ClearDBFields()
 
 
 
+// *************************************************************************************
+//  PushButton "Add Scenario" for user to create scenarios or add actors to existing scenario
+// *************************************************************************************
+void MainWindow::on_add_editScenario_pushButton_clicked()
+{
+    // New Scenario Creation
+    if(ui->scenarioView_editScenario_comboBox->currentIndex() == 0)
+    {
+        bool ok = false;
+        QInputDialog scenarioDialogue;
+
+        // Get scenario name from user
+        QString scenarioName = scenarioDialogue.getText(this, "Create New Scenario", "Scenario Name: ", QLineEdit::Normal, "", &ok);
+
+        // While scenario name is empty, reprompt
+        while (ok && scenarioName.isEmpty())
+        {
+            scenarioName = scenarioDialogue.getText(this, "Create New Scenario", "Invalid Input. Please Enter Scenario name: ", QLineEdit::Normal, "", &ok);
+        }
+
+        // Add scenario name to combobox list
+        ui->scenarioView_editScenario_comboBox->addItem(scenarioName);
+
+        // Select new scenario
+        ui->scenarioView_editScenario_comboBox->setCurrentIndex(ui->scenarioView_editScenario_comboBox->count() -1);
+    }
+    else // Add actor to existing scenario
+    {
+        // Probably pulls actor from actors table to scenario table
+    }
+}
