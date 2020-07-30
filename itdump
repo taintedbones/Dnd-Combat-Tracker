@@ -62,7 +62,7 @@ SELECT DISTINCT scenarioName FROM scenarios;
 
 
 CREATE VIEW scenario_actorList AS
-SELECT scenarios.actorID, actors.name, actors.health, actors.armorClass, actors.spellSaveDC, actors.notes, actors.type
+SELECT scenarios.actorID, actors.name, actors.health, actors.armorClass, actors.spellSaveDC, actors.notes, actors.type, scenarios.scenarioName
 FROM actors INNER JOIN scenarios ON scenarios.actorID = actors.actorID;
 COMMIT;
 
