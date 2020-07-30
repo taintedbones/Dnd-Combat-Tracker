@@ -594,6 +594,20 @@ void MainWindow::on_dbEdit_tableView_clicked()
     else { qDebug() << "Makeshift switch failed"; }
 }
 
+void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
+{
+    if(index == EDIT_SCENARIOS)
+    {
+        // Reset buttons
+        ui->add_editScenario_pushButton->setText("Create New Scenario");
+        ui->remove_editScenario_pushButton->setEnabled(false);
+        ui->saveChanges_editScenario_pushButton->setEnabled(false);
+
+        // Reset dropdown
+        ui->scenarioView_editScenario_comboBox->setCurrentIndex(0);
+    }
+}
+
 
 // *************************************************************************************
 //  PushButton for user to clear fields on DB edit page
@@ -614,5 +628,6 @@ void MainWindow::ClearDBFields()
     ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE);
 
 }
+
 
 
