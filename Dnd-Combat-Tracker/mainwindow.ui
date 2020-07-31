@@ -1316,20 +1316,20 @@
           </layout>
          </item>
          <item>
-          <widget class="QTableView" name="scenarios_editScenario_tableView">
+          <widget class="QTableWidget" name="scenarios_editScenario_tableWidget">
            <property name="selectionMode">
             <enum>QAbstractItemView::SingleSelection</enum>
            </property>
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectRows</enum>
            </property>
-           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>1</number>
+           </attribute>
+           <attribute name="horizontalHeaderHighlightSections">
             <bool>false</bool>
            </attribute>
-           <attribute name="horizontalHeaderStretchLastSection">
-            <bool>true</bool>
-           </attribute>
-           <attribute name="verticalHeaderVisible">
+           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
             <bool>false</bool>
            </attribute>
           </widget>

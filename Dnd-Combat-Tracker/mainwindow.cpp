@@ -150,6 +150,7 @@ void MainWindow::on_endCombat_pushButton_clicked()
 
     ui->activeCombatTable_tableWidget->clear();
 
+    // TODO
     // This needs to call CreateActorList from db class because the
     // existing one has been altered.
 
@@ -343,27 +344,29 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
 // *************************************************************************************
 void MainWindow::FormatScenarioTableView(QString scenarioName)
 {
-    DbEditTableModel *editScenarioModel = new DbEditTableModel(this, db);
+    editScenarioModel = new DbEditTableModel(this, db);
+
+    // TODO - Fix deadcode
 
     if(scenarioName == "All Scenarios")
     {
-        editScenarioModel->InitializeScenarios();
+//        editScenarioModel->InitializeScenarios();
 
-        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
-        ui->scenarios_editScenario_tableView->setColumnHidden(0, false);
+//        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
+//        ui->scenarios_editScenario_tableView->setColumnHidden(0, false);
     }
     else
     {
-        editScenarioModel->InitializeScenarioByName(scenarioName);
+//        editScenarioModel->InitializeScenarioByName(scenarioName);
 
-        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
-        ui->scenarios_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
-        ui->scenarios_editScenario_tableView->setColumnHidden(7, true);
-        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
-        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
+//        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
+//        ui->scenarios_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
+//        ui->scenarios_editScenario_tableView->setColumnHidden(7, true);
+//        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
+//        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
     }
 
-    ui->scenarios_editScenario_tableView->update();
+//    ui->scenarios_editScenario_tableView->update();
 }
 
 // *************************************************************************************
@@ -371,7 +374,7 @@ void MainWindow::FormatScenarioTableView(QString scenarioName)
 // *************************************************************************************
 void MainWindow::FormatEditScenarioActorsTableView()
 {
-    DbEditTableModel *editScenarioActorsModel = new DbEditTableModel(this, db);
+    editScenarioActorsModel = new DbEditTableModel(this, db);
 
     ui->actors_editScenario_tableView->setModel(editScenarioActorsModel);
     ui->actors_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
@@ -630,4 +633,55 @@ void MainWindow::ClearDBFields()
 }
 
 
+// *************************************************************************************
+//  Edit-Scenario - PushButton "Add" for user to create scenarios or add actors to existing scenario
+// *************************************************************************************
+void MainWindow::on_add_editScenario_pushButton_clicked()
+{
+    // New Scenario Creation
+    if(ui->scenarioView_editScenario_comboBox->currentIndex() == 0)
+    {
+        bool ok = false;
+        QInputDialog scenarioDialogue;
 
+        // Get scenario name from user
+        QString scenarioName = scenarioDialogue.getText(this, "Create New Scenario", "Scenario Name: ", QLineEdit::Normal, "", &ok);
+
+        // While scenario name is empty, reprompt
+        while (ok && scenarioName.isEmpty())
+        {
+            scenarioName = scenarioDialogue.getText(this, "Create New Scenario", "Invalid Input. Please Enter Scenario name: ", QLineEdit::Normal, "", &ok);
+        }
+
+        // Add scenario name to combobox list
+        ui->scenarioView_editScenario_comboBox->addItem(scenarioName);
+
+        // Select new scenario
+        ui->scenarioView_editScenario_comboBox->setCurrentIndex(ui->scenarioView_editScenario_comboBox->count() -1);
+    }
+    else // Add actor to existing scenario
+    {
+        // If user has selected a valid row
+        if(ui->actors_editScenario_tableView->currentIndex().row() != -1)
+        {
+            int row = ui->actors_editScenario_tableView->currentIndex().row(); // Row of table
+            int toAdd; // Actor's ID to add
+            QString scenarioName; // Name of scenario in which to add actor
+
+            // Get actorID from selected row
+            toAdd = ui->actors_editScenario_tableView->model()->index(row,0).data().toInt();
+
+            // Get scenario name from combobox
+            scenarioName = ui->scenarioView_editScenario_comboBox->currentText();
+
+            qDebug() << "ActorID selected: " << toAdd;
+            qDebug() << "Scenario selected: " << scenarioName;
+
+            // START void Database::AddActorToScenario(actorID, scenarioName, qty)
+            QSqlQuery query;
+
+            // Add
+
+        }
+    }
+}

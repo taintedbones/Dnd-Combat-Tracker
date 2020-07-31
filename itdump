@@ -37,25 +37,26 @@ CREATE TABLE scenarios
 (
 actorID int,
 scenarioName text,
+int quantity,
 FOREIGN KEY(actorID) REFERENCES actors(actorID) ON DELETE CASCADE
 );
 
-INSERT INTO scenarios VALUES(1,'vampire');
-INSERT INTO scenarios VALUES(2,'goblin');
-INSERT INTO scenarios VALUES(3,'skeleton');
-INSERT INTO scenarios VALUES(4,'goblin');
-INSERT INTO scenarios VALUES(5,'vampire');
-INSERT INTO scenarios VALUES(6,'orc');
+INSERT INTO scenarios VALUES(1,'vampire',1);
+INSERT INTO scenarios VALUES(2,'goblin',1);
+INSERT INTO scenarios VALUES(3,'skeleton',1);
+INSERT INTO scenarios VALUES(4,'goblin',1);
+INSERT INTO scenarios VALUES(5,'vampire',1);
+INSERT INTO scenarios VALUES(6,'orc',1);
 
-INSERT INTO scenarios VALUES(7,'goblin');
-INSERT INTO scenarios VALUES(8,'skeleton');
-INSERT INTO scenarios VALUES(9,'orc');
-INSERT INTO scenarios VALUES(10,'vampire');
+INSERT INTO scenarios VALUES(7,'goblin',3);
+INSERT INTO scenarios VALUES(8,'skeleton',4);
+INSERT INTO scenarios VALUES(9,'orc',5);
+INSERT INTO scenarios VALUES(10,'vampire',2);
 
-INSERT INTO scenarios VALUES(11,'orc');
-INSERT INTO scenarios VALUES(12,'vampire');
-INSERT INTO scenarios VALUES(13,'goblin');
-INSERT INTO scenarios VALUES(14,'skeleton');
+INSERT INTO scenarios VALUES(11,'orc',3);
+INSERT INTO scenarios VALUES(12,'vampire',2);
+INSERT INTO scenarios VALUES(13,'goblin',1);
+INSERT INTO scenarios VALUES(14,'skeleton',1);
 
 CREATE VIEW scenario_list AS
 SELECT DISTINCT scenarioName FROM scenarios;
