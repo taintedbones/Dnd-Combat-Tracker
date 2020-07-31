@@ -675,7 +675,7 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
             qDebug() << "ActorID selected: " << toAdd;
             qDebug() << "Scenario selected: " << scenarioName;
 
-            // START void Database::AddActorToScenario(actorID, scenarioName)
+            // START void Database::AddActorToScenario(actorID, scenarioName, qty)
             QSqlQuery query;
 
             // Add
