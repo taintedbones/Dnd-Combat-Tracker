@@ -347,23 +347,23 @@ void MainWindow::FormatScenarioTableView(QString scenarioName)
 
     if(scenarioName == "All Scenarios")
     {
-        editScenarioModel->InitializeScenarios();
+//        editScenarioModel->InitializeScenarios();
 
-        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
-        ui->scenarios_editScenario_tableView->setColumnHidden(0, false);
+//        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
+//        ui->scenarios_editScenario_tableView->setColumnHidden(0, false);
     }
     else
     {
-        editScenarioModel->InitializeScenarioByName(scenarioName);
+//        editScenarioModel->InitializeScenarioByName(scenarioName);
 
-        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
-        ui->scenarios_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
-        ui->scenarios_editScenario_tableView->setColumnHidden(7, true);
-        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
-        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
+//        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
+//        ui->scenarios_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
+//        ui->scenarios_editScenario_tableView->setColumnHidden(7, true);
+//        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
+//        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
     }
 
-    ui->scenarios_editScenario_tableView->update();
+//    ui->scenarios_editScenario_tableView->update();
 }
 
 // *************************************************************************************
