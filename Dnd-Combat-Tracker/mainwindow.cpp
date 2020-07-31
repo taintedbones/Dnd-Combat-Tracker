@@ -150,6 +150,7 @@ void MainWindow::on_endCombat_pushButton_clicked()
 
     ui->activeCombatTable_tableWidget->clear();
 
+    // TODO
     // This needs to call CreateActorList from db class because the
     // existing one has been altered.
 
@@ -344,6 +345,8 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
 void MainWindow::FormatScenarioTableView(QString scenarioName)
 {
     editScenarioModel = new DbEditTableModel(this, db);
+
+    // TODO - Fix deadcode
 
     if(scenarioName == "All Scenarios")
     {
@@ -630,7 +633,6 @@ void MainWindow::ClearDBFields()
 }
 
 
-
 // *************************************************************************************
 //  Edit-Scenario - PushButton "Add" for user to create scenarios or add actors to existing scenario
 // *************************************************************************************
@@ -681,7 +683,5 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
             // Add
 
         }
-
-        //tableManager->RemoveActorFromTable(ui->actors_editScenario_tableView, ui->scenarios_editScenario_tableView);
     }
 }
