@@ -107,19 +107,20 @@ void Database::CreatePartyList()
 // *************************************************************************************
 void Database::CreateScenarioList()
 {
-     query.prepare("SELECT DISTINCT scenarioName FROM scenarios");
+    scenarioList.clear();
+    query.prepare("SELECT DISTINCT scenarioName FROM scenarios");
 
-     if(query.exec())
-     {
-         while(query.next())
-         {
-            scenarioList.append(query.value(0).toString());
-         }
-     }
-     else // Print error if query is unsuccessful
-     {
-         qDebug() << query.lastError().text();
-     }
+    if(query.exec())
+    {
+        while(query.next())
+        {
+           scenarioList.append(query.value(0).toString());
+        }
+    }
+    else // Print error if query is unsuccessful
+    {
+        qDebug() << query.lastError().text();
+    }
 }
 
 // *************************************************************************************
@@ -265,8 +266,8 @@ void Database::DeleteActor(const int &actorID)
     if(!query.exec()) { qDebug() << query.lastError().text(); }
 }
 
-// Add scenario to DB
+// TODO Add scenario to DB
 
-// Edit scenario in DB
+// TODO Edit scenario in DB
 
-// Delete scenario from DB
+// TODO Delete scenario from DB

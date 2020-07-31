@@ -147,6 +147,10 @@ private slots:
 
     void on_add_editScenario_pushButton_clicked();
 
+    void on_actors_editScenario_tableView_clicked(const QModelIndex &index);
+
+    void on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetItem *item);
+
 private:
     Ui::MainWindow *ui;
     Database *db;

@@ -336,7 +336,53 @@ void MainWindow::on_actorTable_tableWidget_itemDoubleClicked(QTableWidgetItem *i
 // *************************************************************************************
 void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const QString &arg1)
 {
-    FormatScenarioTableView(arg1);
+    // If user has selected "all scenarios"
+    if(arg1 == "All Scenarios")
+    {
+        // Change add button text
+        if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
+        {
+            ui->add_editScenario_pushButton->setText("Create New Scenario");
+        }
+
+        // Disable delete button
+        if(ui->remove_editScenario_pushButton->isEnabled())
+        {
+            ui->remove_editScenario_pushButton->setEnabled(false);
+        }
+
+        // TODO Top Tableview - Load all actors from db
+
+        // TODO Bottom TableWidget - load scenario names
+    }
+    else // Specific scenario is selected
+    {
+        // Change add button text
+        if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
+        {
+            ui->add_editScenario_pushButton->setText("Create New Scenario");
+        }
+
+        // Disable delete button
+        if(ui->remove_editScenario_pushButton->isEnabled())
+        {
+            ui->remove_editScenario_pushButton->setEnabled(false);
+        }
+
+        // Change delete button text
+        if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
+        {
+            ui->remove_editScenario_pushButton->setText("Remove Actor");
+        }
+
+        // TODO Top Tableview - load all actors EXCEPT those present in scenario
+
+        // TODO Bottom Tablewidget - load actors present in scenario
+    }
+
+    // TODO fix this up
+    // commented out because this function will likely be changed
+    //FormatScenarioTableView(arg1);
 }
 
 // *************************************************************************************
@@ -601,6 +647,8 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
 {
     if(index == EDIT_SCENARIOS)
     {
+        QStringList scenarios;
+
         // Reset buttons
         ui->add_editScenario_pushButton->setText("Create New Scenario");
         ui->remove_editScenario_pushButton->setEnabled(false);
@@ -608,6 +656,11 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
 
         // Reset dropdown
         ui->scenarioView_editScenario_comboBox->setCurrentIndex(0);
+
+        // Initialize and populate bottom tableWidget
+        // TODO: figure out a generic name for this method since it affects more than one type of table, not just 'add actor'
+        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->DBScenarioColCount, tableManager->DBScenarioColNames);
+        tableManager->PopulateScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
     }
 }
 
@@ -631,7 +684,6 @@ void MainWindow::ClearDBFields()
     ui->type_editActors_comboBox->setCurrentIndex(DB_CREATURE);
 
 }
-
 
 // *************************************************************************************
 //  Edit-Scenario - PushButton "Add" for user to create scenarios or add actors to existing scenario
@@ -677,11 +729,99 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
             qDebug() << "ActorID selected: " << toAdd;
             qDebug() << "Scenario selected: " << scenarioName;
 
-            // START void Database::AddActorToScenario(actorID, scenarioName, qty)
+            // TODO START void Database::AddActorToScenario(actorID, scenarioName, qty)
             QSqlQuery query;
 
             // Add
 
         }
+    }
+}
+
+// *************************************************************************************
+//  DB - Edit Scenario - Top Tableview Clicked
+// *************************************************************************************
+void MainWindow::on_actors_editScenario_tableView_clicked(const QModelIndex &index)
+{
+    // If "All Scenarios" selected on combobox
+    if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
+    {
+        // Enable "Add" button
+        if(!ui->add_editScenario_pushButton->isEnabled())
+        { ui->add_editScenario_pushButton->setEnabled(true); }
+
+        // Set "Add" button text
+        if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
+        { ui->add_editScenario_pushButton->setText("Create New Scenario"); }
+
+        // Disable "Delete" button
+        if(ui->remove_editScenario_pushButton->isEnabled())
+        { ui->remove_editScenario_pushButton->setEnabled(false); }
+
+        // Set "Delete" button text
+        if(ui->remove_editScenario_pushButton->text() != "Delete Scenario")
+        { ui->remove_editScenario_pushButton->setText("Delete Scenario"); }
+    }
+    else // Specific scenario selected
+    {
+        // Enable "Add" button
+        if(!ui->add_editScenario_pushButton->isEnabled())
+        { ui->add_editScenario_pushButton->setEnabled(true); }
+
+        // Set "Add" button text
+        if(ui->add_editScenario_pushButton->text() != "Add Actor")
+        { ui->add_editScenario_pushButton->setText("Add Actor"); }
+
+        // Disable "Delete" button
+        if(ui->remove_editScenario_pushButton->isEnabled())
+        { ui->remove_editScenario_pushButton->setEnabled(false); }
+
+        // Set "Delete" button text
+        if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
+        { ui->remove_editScenario_pushButton->setText("Remove Actor"); }
+    }
+}
+
+// *************************************************************************************
+//  DB - Edit Scenario - Bottom TableWidget Clicked
+// *************************************************************************************
+void MainWindow::on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetItem *item)
+{
+    // If "All Scenarios" selected on combobox
+    if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
+    {
+        // Enable "Add" button
+        if(!ui->add_editScenario_pushButton->isEnabled())
+        { ui->add_editScenario_pushButton->setEnabled(true); }
+
+        // Set "Add" button text
+        if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
+        { ui->add_editScenario_pushButton->setText("Create New Scenario"); }
+
+        // Enable "Delete" button
+        if(!ui->remove_editScenario_pushButton->isEnabled())
+        { ui->remove_editScenario_pushButton->setEnabled(true); }
+
+        // Set "Delete" button text
+        if(ui->remove_editScenario_pushButton->text() != "Delete Scenario")
+        { ui->remove_editScenario_pushButton->setText("Delete Scenario"); }
+    }
+    else // Specific scenario selected
+    {
+        // Disable "Add" button
+        if(ui->add_editScenario_pushButton->isEnabled())
+        { ui->add_editScenario_pushButton->setEnabled(false); }
+
+        // Set "Add" button text
+        if(ui->add_editScenario_pushButton->text() != "Add Actor")
+        { ui->add_editScenario_pushButton->setText("Add Actor"); }
+
+        // Enable "Delete" button
+        if(!ui->remove_editScenario_pushButton->isEnabled())
+        { ui->remove_editScenario_pushButton->setEnabled(true); }
+
+        // Set "Delete" button text
+        if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
+        { ui->remove_editScenario_pushButton->setText("Remove Actor"); }
     }
 }

@@ -360,5 +360,26 @@ void TableModel::InsertCombatStatsBox(QTableWidget *table, int value, int overfl
     table->setCellWidget(row, col, sBox);
 }
 
+// Populate Scenario Table with Scenario Names
+void TableModel::PopulateScenarioTable(QTableWidget *scenarioTable, QStringList scenarioNames)
+{
+    QTableWidgetItem* scenarioItem;
+
+    for(int index = 0; index < scenarioNames.length(); index++)
+    {
+        // Create Item
+        scenarioItem = new QTableWidgetItem;
+
+        // Assign name to item
+        scenarioItem->setText(scenarioNames.at(index));
+
+        // Create new row
+        scenarioTable->insertRow(index);
+
+        // Insert item
+        scenarioTable->setItem(index, 0, scenarioItem);
+    } // END for
+}
+
 // Constructor
 TableModel::TableModel() {}

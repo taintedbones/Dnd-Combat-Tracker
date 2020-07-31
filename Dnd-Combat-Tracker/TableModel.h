@@ -45,7 +45,9 @@ public:
 
     enum DbEditComboBoxPositions { PARTY, COMPANION, CREATURE, EFFECT };
 
-    // ************************************************************************************************
+    // *********************************** Database Options - Edit Scenario ************************
+    const int DBScenarioColCount = 1;
+    QStringList DBScenarioColNames = { "Scenario Name" };
 
     const int QtyMax = 10;
     const int QtyMin = 1;
@@ -87,6 +89,9 @@ public:
     void SetupCombatStatsCol(QTableWidget *table, int overflow, int col);
 
     void InsertCombatStatsBox(QTableWidget *table, int value, int overflow, int row, int col);
+
+    // Populate Scenario Table with Scenario Names
+    void PopulateScenarioTable(QTableWidget *scenarioTable, QStringList scenarioNames);
 
     // Constructor
     TableModel();
