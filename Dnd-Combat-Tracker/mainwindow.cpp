@@ -662,10 +662,24 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
         // If user has selected a valid row
         if(ui->actors_editScenario_tableView->currentIndex().row() != -1)
         {
-            // START DbEditTableModel void AddActorToScenario(origin, destination)? or void MoveActorBetweenTableview(origin, destination)
+            int row = ui->actors_editScenario_tableView->currentIndex().row(); // Row of table
+            int toAdd; // Actor's ID to add
+            QString scenarioName; // Name of scenario in which to add actor
 
+            // Get actorID from selected row
+            toAdd = ui->actors_editScenario_tableView->model()->index(row,0).data().toInt();
 
-            // END DbEditTableModel AddActorToScenario
+            // Get scenario name from combobox
+            scenarioName = ui->scenarioView_editScenario_comboBox->currentText();
+
+            qDebug() << "ActorID selected: " << toAdd;
+            qDebug() << "Scenario selected: " << scenarioName;
+
+            // START void Database::AddActorToScenario(actorID, scenarioName)
+            QSqlQuery query;
+
+            // Add
+
         }
 
         //tableManager->RemoveActorFromTable(ui->actors_editScenario_tableView, ui->scenarios_editScenario_tableView);
