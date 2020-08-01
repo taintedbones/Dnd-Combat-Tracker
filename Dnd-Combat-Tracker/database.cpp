@@ -8,7 +8,7 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
 
     if(open())
     {
-        qDebug() << "Database opened sucessfully";
+        qDebug() << "Database opened successfully";
     }
     else {
         qDebug() << this->lastError().text();
@@ -17,8 +17,13 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
     // Create Actor List
     actorList = new QVector<Actor>;
 
-    // Create party list
+    // Create Party List
     combatList = new QVector<Actor>;
+
+    // Create Scenario List
+    actorsInScenario = new QVector<Actor>;
+
+    //TODO what does this do?
     scenarioList.clear();
 }
 
@@ -50,7 +55,6 @@ void Database::CreateActorList()
             // Populate attributes
             id = query.value(ID).toInt();
             actor.SetID(id);
-
                 // Name
             name = query.value(NAME).toString();
             actor.SetName(name);
@@ -66,7 +70,6 @@ void Database::CreateActorList()
                 // Notes
             notes = query.value(NOTES).toString();
             actor.SetNotes(notes);
-
                 // Type
             type = query.value(TYPE).toString();
             actor.SetType(type);
@@ -208,8 +211,6 @@ Actor Database::GetActor(QString name)
 // *************************************************************************************
 void Database::AddActor(Actor* toAdd)
 {
-    QSqlQuery query;
-
     // Prepare query
     query.prepare("INSERT INTO actors (name,health,armorClass,spellSaveDC,notes,type)"
                   "VALUES (:name,:health,:armorClass,:spellSaveDC,:notes,:type)");
@@ -229,8 +230,6 @@ void Database::AddActor(Actor* toAdd)
 // Edit actor in DB
 void Database::EditActor(Actor *toEdit)
 {
-        QSqlQuery query;
-
         query.prepare("UPDATE actors "
                       "SET name = :name, "
                       "health = :health, "
@@ -256,14 +255,51 @@ void Database::EditActor(Actor *toEdit)
 // Delete actor from DB
 void Database::DeleteActor(const int &actorID)
 {
-    QSqlQuery query;
-
     query.prepare("DELETE FROM actors WHERE actorID = :actorID");
 
     query.bindValue(":actorID", actorID);
 
     // Print error if unsuccessful
     if(!query.exec()) { qDebug() << query.lastError().text(); }
+}
+
+// Get actor list by scenario name
+QVector<Actor>* Database::GetActorsByScenario(const QString &scenarioName)
+{
+    Actor actor; // actor to add
+
+    actorsInScenario->clear();
+
+    query.prepare("SELECT actors.actorID, actors.name, actors.health, "
+                  "actors.armorClass, actors.spellSaveDC, actors.notes, actors.type "
+                  "FROM actors, scenarios "
+                  "WHERE scenarios.scenarioName = :scenarioName "
+                  "AND scenarios.actorID = actors.actorID");
+
+    query.bindValue(":scenarioName", scenarioName);
+
+    // Print error if unsuccessful
+    if(!query.exec()) { qDebug() << query.lastError().text(); }
+
+    // Add names to list
+    while(query.next())
+    {
+        // Load data into object
+        actor.SetID(query.value(0).toInt());
+        actor.SetName(query.value(1).toString());
+        actor.SetHitPoints(query.value(2).toInt());
+        actor.SetArmorClass(query.value(3).toInt());
+        actor.SetSpellSaveDC(query.value(4).toInt());
+        actor.SetNotes(query.value(5).toString());
+        actor.SetType(query.value(6).toString());
+
+        // Insert object
+        actorsInScenario->push_back(actor);
+
+        qDebug() << actor.GetName();
+    }
+
+    return actorsInScenario;
 }
 
 // TODO Add scenario to DB

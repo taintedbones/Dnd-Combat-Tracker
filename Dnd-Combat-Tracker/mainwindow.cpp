@@ -353,7 +353,12 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
 
         // TODO Top Tableview - Load all actors from db
 
-        // TODO Bottom TableWidget - load scenario names
+
+        // Initialize and populate bottom tableWidget
+        // TODO: figure out a generic name for this method since it affects more than one type of table, not just 'add actor'
+        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->DBScenarioColCount, tableManager->DBScenarioColNames);
+        tableManager->PopulateScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+
     }
     else // Specific scenario is selected
     {
@@ -377,7 +382,12 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
 
         // TODO Top Tableview - load all actors EXCEPT those present in scenario
 
-        // TODO Bottom Tablewidget - load actors present in scenario
+        // Format bottom tablewidget as actor table
+        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->ActorListColCount, tableManager->ActorListColNames);
+        // Populate tablewidget with actor listings in selected scenario
+        tableManager->PopulateAddActorTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
+
+        // add spinbox
     }
 
     // TODO fix this up
