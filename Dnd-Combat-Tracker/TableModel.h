@@ -23,14 +23,14 @@ public:
 
     enum ActorListColPositions { A_NAME, A_HP, A_AC, A_DC, A_NOTES, A_TYPE };
 
-    QStringList ActorListColNames = { "Name", "HP", "AC", "DC", "Notes", "Type"};
+    QStringList ActorListColNames = { "Name", "HP", "AC", "DC", "Notes", "Type" };
 
     // **********************************  Selected Actor Model **********************************
     const int SelectedListColCount = 7;
 
-    enum SelectedListColPositions {S_NAME, S_HP, S_AC, S_DC, S_NOTES, S_TYPE, S_QTY};
+    enum SelectedListColPositions {S_NAME, S_HP, S_AC, S_DC, S_NOTES, S_TYPE, S_QTY };
 
-    QStringList SelectedListColNames = {"Name", "HP", "AC", "DC", "Notes", "Type", "Quantity"};
+    QStringList SelectedListColNames = {"Name", "HP", "AC", "DC", "Notes", "Type", "Quantity" };
 
      // ********************************** Assign Initiative Model **********************************
     const int AssignInitColCount = 6;
@@ -41,13 +41,18 @@ public:
 
     // ********************************** Database Edit Model ***********************************
 
-    enum DbEditColPositions { D_ID, D_NAME, D_HP, D_AC, D_DC, D_NOTES, D_TYPE};
+    enum DbEditColPositions { D_ID, D_NAME, D_HP, D_AC, D_DC, D_NOTES, D_TYPE };
 
     enum DbEditComboBoxPositions { PARTY, COMPANION, CREATURE, EFFECT };
 
-    // *********************************** Database Options - Edit Scenario ************************
-    const int DBScenarioColCount = 1;
-    QStringList DBScenarioColNames = { "Scenario Name" };
+    // *********************************** Database Options - Edit Scenario "All Scenarios" ************************
+    const int AllScenarioColCount = 1;
+    QStringList AllScenarioColNames = { "Scenario Name" };
+
+    // *********************************** Database Options - Edit Scenario "Specific Scenario" ************************
+
+    const int SpecificScenarioColCount = 7;
+    QStringList SpecificScenarioColNames = { "Name", "HP", "AC", "DC", "Notes", "Type", "Quantity" };
 
     const int QtyMax = 10;
     const int QtyMin = 1;

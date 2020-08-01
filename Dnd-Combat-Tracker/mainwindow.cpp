@@ -356,7 +356,7 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
 
         // Initialize and populate bottom tableWidget
         // TODO: figure out a generic name for this method since it affects more than one type of table, not just 'add actor'
-        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->DBScenarioColCount, tableManager->DBScenarioColNames);
+        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
         tableManager->PopulateScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
 
     }
@@ -382,10 +382,10 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
 
         // TODO Top Tableview - load all actors EXCEPT those present in scenario
 
-        // Format bottom tablewidget as actor table
-        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->ActorListColCount, tableManager->ActorListColNames);
-        // Populate tablewidget with actor listings in selected scenario
+        // Initialize, populate, and format bottom tablewidget
+        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
         tableManager->PopulateAddActorTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
+        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, 1, 20, tableManager->SpecificScenarioColCount);
 
         // add spinbox
     }
@@ -669,7 +669,7 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
 
         // Initialize and populate bottom tableWidget
         // TODO: figure out a generic name for this method since it affects more than one type of table, not just 'add actor'
-        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->DBScenarioColCount, tableManager->DBScenarioColNames);
+        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
         tableManager->PopulateScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
     }
 }

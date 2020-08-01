@@ -295,8 +295,6 @@ QVector<Actor>* Database::GetActorsByScenario(const QString &scenarioName)
 
         // Insert object
         actorsInScenario->push_back(actor);
-
-        qDebug() << actor.GetName();
     }
 
     return actorsInScenario;
