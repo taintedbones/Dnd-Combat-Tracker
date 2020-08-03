@@ -311,7 +311,7 @@ void TableModel::AddActorToTable(QTableWidget *origin, QTableWidget *destination
         }
         else
         {
-             qtyBox->setRange(QtyMin, QtyMax);
+             qtyBox->setRange(qtyMin, qtyMax);
         }
 
         // Stores quantity spin box into table

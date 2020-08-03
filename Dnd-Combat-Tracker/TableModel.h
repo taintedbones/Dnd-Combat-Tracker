@@ -54,8 +54,8 @@ public:
     const int SpecificScenarioColCount = 7;
     QStringList SpecificScenarioColNames = { "Name", "HP", "AC", "DC", "Notes", "Type", "Quantity" };
 
-    const int QtyMax = 10;
-    const int QtyMin = 1;
+    const int qtyMax = 10;
+    const int qtyMin = 1;
 
     // Model used for 'combat_page' (Conduct Combat) Page
     void InitializeCombatModel(QTableWidget *combatTable);

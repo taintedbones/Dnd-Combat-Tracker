@@ -385,7 +385,7 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
         // Initialize, populate, and format bottom tablewidget
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
         tableManager->PopulateAddActorTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
-        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, 1, 20, tableManager->SpecificScenarioColCount);
+        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMin, tableManager->S_QTY);
 
         // add spinbox
     }
@@ -436,6 +436,7 @@ void MainWindow::FormatEditScenarioActorsTableView()
     ui->actors_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
     ui->actors_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
     ui->actors_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
+    ui->actors_editScenario_tableView->verticalHeader()->hide();
 }
 
 // *************************************************************************************
@@ -461,6 +462,8 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
 
         FormatEditScenarioActorsTableView();
         FormatScenarioTableView(ui->scenarioView_editScenario_comboBox->currentText());
+
+
     }
 }
 
@@ -611,7 +614,7 @@ void MainWindow::on_save_editActors_pushButton_clicked()
 // *************************************************************************************
 void MainWindow::on_help_dbEdit__pushButton_clicked()
 {
-
+    //TODO Create popup warning window with instructions for database options
 }
 
 // *************************************************************************************
@@ -670,7 +673,12 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
         // Initialize and populate bottom tableWidget
         // TODO: figure out a generic name for this method since it affects more than one type of table, not just 'add actor'
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
+
+        // TODO if removing vertical headers can be placed somewhere else, that'd be nice
+        ui->scenarios_editScenario_tableWidget->verticalHeader()->hide();
+
         tableManager->PopulateScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+
     }
 }
 
