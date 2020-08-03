@@ -32,18 +32,6 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
 // *************************************************************************************
 void Database::CreateActorList()
 {
-    // These temp variables are here because the compiler isnt letting me assign the
-    // values of object Actor directly using the values of object query. Also,
-    // I could just use two variables, but I created more for readability.
-    QString name;
-    int id;
-    int hitpoints;
-    int armorClass;
-    int spellDC;
-    QString notes;
-    QString type;
-    QString scenario;
-
     Actor actor; // temp object for loading actorList
 
     query.prepare("SELECT * FROM actors");
@@ -53,27 +41,13 @@ void Database::CreateActorList()
         while(query.next())
         {
             // Populate attributes
-            id = query.value(ID).toInt();
-            actor.SetID(id);
-                // Name
-            name = query.value(NAME).toString();
-            actor.SetName(name);
-                // HP
-            hitpoints = query.value(HP).toInt();
-            actor.SetHitPoints(hitpoints);
-                // AC
-            armorClass = query.value(AC).toInt();
-            actor.SetArmorClass(armorClass);
-                // DC
-            spellDC = query.value(DC).toInt();
-            actor.SetSpellSaveDC(spellDC);
-                // Notes
-            notes = query.value(NOTES).toString();
-            actor.SetNotes(notes);
-                // Type
-            type = query.value(TYPE).toString();
-            actor.SetType(type);
-
+            actor.SetID((query.value(ID).toInt()));
+            actor.SetName(query.value(NAME).toString());
+            actor.SetHitPoints(query.value(HP).toInt());
+            actor.SetArmorClass(query.value(AC).toInt());
+            actor.SetSpellSaveDC(query.value(DC).toInt());
+            actor.SetNotes(query.value(NOTES).toString());
+            actor.SetType(query.value(TYPE).toString());
             // Add Actor to List
             actorList->push_back(actor);
         }
