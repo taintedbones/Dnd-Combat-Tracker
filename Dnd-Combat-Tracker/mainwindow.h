@@ -128,9 +128,6 @@ private slots:
     //      scenario
     void on_scenarioView_editScenario_comboBox_currentIndexChanged(const QString &arg1);
 
-    // TODO might need to remove this
-    void on_scenario_spinBox_value_changed(bool changed);
-
     void on_addActor_dbEdit_pushButton_clicked();
 
     void on_save_editActors_pushButton_clicked();

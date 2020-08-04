@@ -386,6 +386,8 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
         // Initialize, populate, and format bottom tablewidget
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
         tableManager->PopulateAddActorTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
+
+        // TODO segfault due to repeated connection of spinbux vector
         tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->S_QTY, false, true);
 
         // activate signals in spinbox
@@ -402,12 +404,6 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
 }
 
 void MainWindow::EnableSaveButton()
-{
-    ui->saveChanges_editScenario_pushButton->setEnabled(true);
-}
-
-
-void MainWindow::on_scenario_spinBox_value_changed(bool changed)
 {
     ui->saveChanges_editScenario_pushButton->setEnabled(true);
 }
