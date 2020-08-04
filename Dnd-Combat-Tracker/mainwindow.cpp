@@ -386,16 +386,17 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
         // Initialize, populate, and format bottom tablewidget
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
         tableManager->PopulateAddActorTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
-
-        // TODO segfault due to repeated connection of spinbux vector
         tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->S_QTY, false, true);
 
-        // activate signals in spinbox
+        // Activate signals in spinbox
         for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
         {
             QObject::connect(tableManager->spinBoxes->at(index), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
 
         }
+
+        //Populate Spinboxes with qtys from db
+
     }
 
     // TODO fix this up

@@ -246,7 +246,7 @@ void TableModel::CopyTableToCombatPage(QTableWidget *origin, QTableWidget *desti
     } // END - for (row)
 }
 
-// Inserts initiative column to the passed in table
+// Inserts spinbox column to the passed in table
 void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col, bool disable, bool addToVector)
 {
     QSpinBox *sBox;
@@ -260,9 +260,7 @@ void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col
         table->setCellWidget(row, col, sBox);
 
         if(addToVector)
-        {
-            spinBoxes->append(sBox);
-        }
+        { spinBoxes->append(sBox); }
 
         if(disable)
         { sBox->setDisabled(true); }
