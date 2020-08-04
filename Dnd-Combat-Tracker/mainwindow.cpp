@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QMessageBox>
 #include <QtGlobal>
+#include <QObject>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -61,7 +62,7 @@ void MainWindow::on_welcomeStart_pushButton_clicked()
         // Initialize & populate "combatList" TableWidget
     tableManager->InitializeAddActorTable(ui->combatTable_tableWidget, tableManager->SelectedListColCount, tableManager->SelectedListColNames);
     tableManager->PopulateAddActorTable(ui->combatTable_tableWidget, db->GetPartyList());
-    tableManager->InsertSpinBoxCol(ui->combatTable_tableWidget, 1, 1, tableManager->S_QTY, true);
+    tableManager->InsertSpinBoxCol(ui->combatTable_tableWidget, 1, 1, tableManager->S_QTY, true, false);
 }
 
 // *************************************************************************************
@@ -102,7 +103,7 @@ void MainWindow::on_next_editPage_pushButton_clicked()
 
         // Copy combat table to assignInit table
         tableManager->CopyTableToInitPage(ui->combatTable_tableWidget, ui->assignInit_tableWidget);
-        tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 30, tableManager->I_INIT, false);
+        tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 30, tableManager->I_INIT, false, false);
     }
 }
 
@@ -390,7 +391,7 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
         // activate signals in spinbox
         for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
         {
-            QObject::connect(tableManager->spinBoxes->at(index), qOverload<int>(&QSpinBox::valueChanged), EnableSaveButton());
+            QObject::connect(tableManager->spinBoxes->at(index), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
 
         }
     }
