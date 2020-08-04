@@ -128,6 +128,9 @@ private slots:
     //      scenario
     void on_scenarioView_editScenario_comboBox_currentIndexChanged(const QString &arg1);
 
+    // TODO might need to remove this
+    void on_scenario_spinBox_value_changed(bool changed);
+
     void on_addActor_dbEdit_pushButton_clicked();
 
     void on_save_editActors_pushButton_clicked();
@@ -137,9 +140,6 @@ private slots:
     void on_help_dbEdit__pushButton_clicked();
 
     void on_dbEdit_tableView_clicked();
-
-    // Helper Functions
-    void ClearDBFields();
 
     void on_clear_editActors_pushButton_clicked();
 
@@ -152,6 +152,11 @@ private slots:
     void on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetItem *item);
 
     void on_saveChanges_editScenario_pushButton_clicked();
+
+    // Helper Functions
+    void ClearDBFields();
+    void EnableSaveButton();
+
 
 private:
     Ui::MainWindow *ui;

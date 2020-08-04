@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
+#include <QtGlobal>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -330,6 +331,7 @@ void MainWindow::on_actorTable_tableWidget_itemDoubleClicked(QTableWidgetItem *i
     tableManager->AddActorToTable(ui->actorTable_tableWidget, ui->combatTable_tableWidget);
 }
 
+
 // *************************************************************************************
 //  Reformats scenario tableview to display scenario listing or actors for selected
 //      scenario
@@ -383,13 +385,30 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
         // Initialize, populate, and format bottom tablewidget
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
         tableManager->PopulateAddActorTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
-        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->S_QTY, false);
+        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->S_QTY, false, true);
 
+        // activate signals in spinbox
+        for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
+        {
+            QObject::connect(tableManager->spinBoxes->at(index), qOverload<int>(&QSpinBox::valueChanged), EnableSaveButton());
+
+        }
     }
 
     // TODO fix this up
     // commented out because this function will likely be changed
     //FormatScenarioTableView(arg1);
+}
+
+void MainWindow::EnableSaveButton()
+{
+    ui->saveChanges_editScenario_pushButton->setEnabled(true);
+}
+
+
+void MainWindow::on_scenario_spinBox_value_changed(bool changed)
+{
+    ui->saveChanges_editScenario_pushButton->setEnabled(true);
 }
 
 // *************************************************************************************
