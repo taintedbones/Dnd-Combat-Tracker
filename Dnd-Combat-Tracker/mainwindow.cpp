@@ -354,7 +354,7 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
             ui->remove_editScenario_pushButton->setEnabled(false);
         }
 
-        // TODO Top Tableview - Load all actors from db
+        // TODO Top Tableview - Load all actors from db? Is this necessary?
 
 
         // Initialize and populate bottom tableWidget
@@ -471,7 +471,10 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
         scenarios = db->GetScenarioList();
         scenarios.prepend("All Scenarios");
 
-        ui->scenarioView_editScenario_comboBox->addItems(scenarios);
+        if(ui->scenarioView_editScenario_comboBox->count()==0)
+        {
+            ui->scenarioView_editScenario_comboBox->addItems(scenarios);
+        }
 
         FormatEditScenarioActorsTableView();
         FormatScenarioTableView(ui->scenarioView_editScenario_comboBox->currentText());
