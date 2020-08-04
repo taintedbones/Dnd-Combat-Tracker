@@ -79,7 +79,7 @@ public:
     void CopyTableToCombatPage(QTableWidget *origin, QTableWidget *destination);
 
     // Inserts initiative column to the passed in table
-    void InsertSpinBoxCol(QTableWidget *table, int min, int max, int col);
+    void InsertSpinBoxCol(QTableWidget *table, int min, int max, int col, bool disable);
 
     // Add Actors - Show selected actor type in actor list
     void ShowActorType(QTableWidget* addActors, const QString &type);

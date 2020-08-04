@@ -247,7 +247,7 @@ void TableModel::CopyTableToCombatPage(QTableWidget *origin, QTableWidget *desti
 }
 
 // Inserts initiative column to the passed in table
-void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col)
+void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col, bool disable)
 {
     QSpinBox *sBox;
 
@@ -257,7 +257,7 @@ void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col
         sBox->setRange(min, max);
         table->setCellWidget(row, col, sBox);
 
-        if(col == S_QTY)
+        if(disable)
         {
             sBox->setDisabled(true);
         }

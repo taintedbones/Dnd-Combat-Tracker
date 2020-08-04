@@ -60,7 +60,7 @@ void MainWindow::on_welcomeStart_pushButton_clicked()
         // Initialize & populate "combatList" TableWidget
     tableManager->InitializeAddActorTable(ui->combatTable_tableWidget, tableManager->SelectedListColCount, tableManager->SelectedListColNames);
     tableManager->PopulateAddActorTable(ui->combatTable_tableWidget, db->GetPartyList());
-    tableManager->InsertSpinBoxCol(ui->combatTable_tableWidget, 1, 1, tableManager->S_QTY);
+    tableManager->InsertSpinBoxCol(ui->combatTable_tableWidget, 1, 1, tableManager->S_QTY, true);
 }
 
 // *************************************************************************************
@@ -101,7 +101,7 @@ void MainWindow::on_next_editPage_pushButton_clicked()
 
         // Copy combat table to assignInit table
         tableManager->CopyTableToInitPage(ui->combatTable_tableWidget, ui->assignInit_tableWidget);
-        tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 30, tableManager->I_INIT);
+        tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 30, tableManager->I_INIT, false);
     }
 }
 
@@ -380,14 +380,11 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
             ui->remove_editScenario_pushButton->setText("Remove Actor");
         }
 
-        // TODO Top Tableview - load all actors EXCEPT those present in scenario
-
         // Initialize, populate, and format bottom tablewidget
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
         tableManager->PopulateAddActorTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
-        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMin, tableManager->S_QTY);
+        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->S_QTY, false);
 
-        // add spinbox
     }
 
     // TODO fix this up
@@ -735,22 +732,26 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
         if(ui->actors_editScenario_tableView->currentIndex().row() != -1)
         {
             int row = ui->actors_editScenario_tableView->currentIndex().row(); // Row of table
-            int toAdd; // Actor's ID to add
+            QString toAdd; // Actor's ID to add
+            int qty = 1; // Quantity of actor type to add
             QString scenarioName; // Name of scenario in which to add actor
 
-            // Get actorID from selected row
-            toAdd = ui->actors_editScenario_tableView->model()->index(row,0).data().toInt();
+            // Get actor's name from selected row
+            toAdd = ui->actors_editScenario_tableView->model()->index(row,1).data().toString();
 
             // Get scenario name from combobox
             scenarioName = ui->scenarioView_editScenario_comboBox->currentText();
 
-            qDebug() << "ActorID selected: " << toAdd;
+            qDebug() << "Actor Name selected: " << toAdd;
             qDebug() << "Scenario selected: " << scenarioName;
+            qDebug() << "Quantity selected: " << qty;
 
             // TODO START void Database::AddActorToScenario(actorID, scenarioName, qty)
             QSqlQuery query;
 
-            // Add
+            // Prepare query
+
+            //
 
         }
     }
@@ -842,4 +843,12 @@ void MainWindow::on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetI
         if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
         { ui->remove_editScenario_pushButton->setText("Remove Actor"); }
     }
+}
+
+void MainWindow::on_saveChanges_editScenario_pushButton_clicked()
+{
+    // This is where we gotta pull the qtys
+    int row = ui->actors_editScenario_tableView->currentIndex().row(); // Row of table
+    QSpinBox* temp = qobject_cast<QSpinBox*>(ui->scenarios_editScenario_tableWidget->cellWidget(row, tableManager->S_QTY));
+
 }
