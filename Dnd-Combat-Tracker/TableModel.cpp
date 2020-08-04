@@ -251,6 +251,8 @@ void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col
 {
     QSpinBox *sBox;
 
+    if(addToVector) { spinBoxes->clear(); }
+
     for(int row = 0; row < table->rowCount(); row++)
     {    
         sBox = new QSpinBox(table);
