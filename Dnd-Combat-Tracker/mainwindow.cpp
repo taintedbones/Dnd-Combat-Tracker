@@ -395,7 +395,19 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
 
         }
 
-        //Populate Spinboxes with qtys from db
+        //Populate Spinboxes with quantities from database
+        // START QVector<int> GetScenarioActorQtys(scenarioName);
+
+        // Get scenario quantities
+
+        // END QVector<int> GetScenarioActorQtys(scenarioName);
+
+        // Assign quantities to spinboxes
+        for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+        {
+            // Insert quantity into spinbox
+            // spinbox[index] = vector[index]
+        }
 
     }
 
@@ -773,6 +785,11 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
 
             //
 
+            // TODO END void Database::AddActorToScenario(actorID, scenarioName, qty)
+
+            // Append scenariolist
+
+            // Refresh view with new list
         }
     }
 }
