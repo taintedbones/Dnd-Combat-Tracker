@@ -93,6 +93,10 @@ void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* 
 // Fills Add Actor Table with actors in database
 void TableModel::PopulateSelectedScenarioTable(QTableWidget *scenarioActorsTable, QVector<Actor>* scenarioActorList)
 {
+    // Prep ID list
+    QVector<QTableWidgetItem*> idItemList;
+    QTableWidgetItem* idItem;
+
     // Prep hp list
     QVector<QTableWidgetItem*> hpItemList;
     QTableWidgetItem* hpItem;
@@ -110,7 +114,15 @@ void TableModel::PopulateSelectedScenarioTable(QTableWidget *scenarioActorsTable
         // Create new row
         scenarioActorsTable->insertRow(index);
         // Insert attributes
-        scenarioActorsTable->setItem(index, SC_ID, new QTableWidgetItem(scenarioActorList->at(index).GetID()));
+        idItem = new QTableWidgetItem;
+        idItem->setData(0, scenarioActorList->at(index).GetID());
+        idItemList.push_back(idItem);
+        scenarioActorsTable->setItem(index, SC_ID, idItemList.at(index));
+
+        // DEBUG CHECKING ID
+        qDebug() << "Actor ID: " << scenarioActorList->at(index).GetID();
+        qDebug() << "Item value : " << scenarioActorsTable->model()->index(index,SC_ID).data().toInt();
+
         scenarioActorsTable->setItem(index, SC_NAME, new QTableWidgetItem(scenarioActorList->at(index).GetName()));
         // HP
         hpItem = new QTableWidgetItem;
@@ -132,6 +144,32 @@ void TableModel::PopulateSelectedScenarioTable(QTableWidget *scenarioActorsTable
         // Type
         scenarioActorsTable->setItem(index, SC_TYPE, new QTableWidgetItem(scenarioActorList->at(index).GetType()));
     } // END for
+}
+
+// Add selected actor from DB Scenario tableview to selected scenario tablewidget
+void TableModel::AddActorToScenarioTable(QTableWidget *scenarioTable, Actor* toAdd)
+{
+    QTableWidgetItem* ID = new QTableWidgetItem;
+    QTableWidgetItem* HP = new QTableWidgetItem;
+    QTableWidgetItem* AC = new QTableWidgetItem;
+    QTableWidgetItem* DC = new QTableWidgetItem;
+
+    ID->setData(0,toAdd->GetID());
+    HP->setData(0,toAdd->GetHitPoints());
+    AC->setData(0,toAdd->GetArmorClass());
+    DC->setData(0,toAdd->GetSpellSaveDC());
+
+    // Create new row
+    scenarioTable->insertRow(scenarioTable->rowCount());
+
+    // Insert attributes
+    scenarioTable->setItem(scenarioTable->rowCount()-1, SC_ID, ID);
+    scenarioTable->setItem(scenarioTable->rowCount()-1, SC_NAME, new QTableWidgetItem(toAdd->GetName()));
+    scenarioTable->setItem(scenarioTable->rowCount()-1, SC_HP, HP);
+    scenarioTable->setItem(scenarioTable->rowCount()-1, SC_AC, AC);
+    scenarioTable->setItem(scenarioTable->rowCount()-1, SC_DC, DC);
+    scenarioTable->setItem(scenarioTable->rowCount()-1, SC_NOTES, new QTableWidgetItem(toAdd->GetNotes()));
+    scenarioTable->setItem(scenarioTable->rowCount()-1, SC_TYPE, new QTableWidgetItem(toAdd->GetType()));
 }
 
 

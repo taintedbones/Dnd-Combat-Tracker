@@ -107,6 +107,8 @@ public:
 
     void PopulateSelectedScenarioTable(QTableWidget *addActors, QVector<Actor>* actorList);
 
+    void AddActorToScenarioTable(QTableWidget *scenarioTable, Actor* toAdd);
+
     // Constructor
     TableModel();
 };

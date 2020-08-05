@@ -762,30 +762,20 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
             int row = ui->actors_editScenario_tableView->currentIndex().row(); // Row of table
             int IDtoAdd; // Actor's ID to add
             int qty = 1; // Quantity of actor type to add
-            QString scenarioName; // Name of scenario in which to add actor
             bool presentOnList = false;
             int index;
 
             // Get actor's name from selected row
             IDtoAdd = ui->actors_editScenario_tableView->model()->index(row,0).data().toInt();
 
-
-            // Get scenario name from combobox
-            scenarioName = ui->scenarioView_editScenario_comboBox->currentText();
-
-            qDebug() << "Actor ID selected: " << IDtoAdd;
-            qDebug() << "Scenario selected: " << scenarioName;
-            qDebug() << "Quantity selected: " << qty;
-
             // Check to see if actor is already on tablewidget
             index = 0;
-            presentOnList = ui->actors_editScenario_tableView->model()->index(index,0).data().toInt() == ui->scenarios_editScenario_tableWidget->model()->index(index,0).data().toInt();
-
+            presentOnList = IDtoAdd == ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_ID).data().toInt();
 
             while(!presentOnList && index < ui->scenarios_editScenario_tableWidget->rowCount())
             {
                 index++;
-                presentOnList = ui->actors_editScenario_tableView->model()->index(index,0).data().toInt() == ui->scenarios_editScenario_tableWidget->model()->index(index,0).data().toInt();
+                presentOnList = IDtoAdd == ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_ID).data().toInt();
             }// End if present on list and still in row
 
             if(presentOnList)
@@ -793,22 +783,31 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
                 // Pop up window informing user that listing is already present
                 QMessageBox warnPrompt;
 
+                QString warningMsg = ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_NAME).data().toString() + " is already present in this scenario. Please select a new actor.";
+
                 warnPrompt.setIcon(QMessageBox::Warning);
                 warnPrompt.setText("WARNING");
-                warnPrompt.setInformativeText("Actor is already listed in scenario. Please select new actor.");
+                warnPrompt.setInformativeText(warningMsg);
                 warnPrompt.setStandardButtons(QMessageBox::Ok);
+
+                warnPrompt.exec();
             }
             else
             {
                 // Collect data from tableview
-                Actor toAdd;
-
-                toAdd.SetID(ui->actors_editScenario_tableView->model()->index(row,0).data().toInt());
-
-                // Create new row
-
+                Actor* toAdd = new Actor;
+                toAdd->SetID(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_ID).data().toInt());
+                toAdd->SetName(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_NAME).data().toString());
+                toAdd->SetHitPoints(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_HP).data().toInt());
+                toAdd->SetArmorClass(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_AC).data().toInt());
+                toAdd->SetSpellSaveDC(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_DC).data().toInt());
+                toAdd->SetNotes(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_NOTES).data().toString());
+                toAdd->SetType(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_TYPE).data().toString());
 
                 // Add listing to tablewidget
+                tableManager->AddActorToScenarioTable(ui->scenarios_editScenario_tableWidget, toAdd);
+
+                // TODO Create a spinbox
 
 
             }
