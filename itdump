@@ -37,7 +37,7 @@ CREATE TABLE scenarios
 (
 actorID int,
 scenarioName text,
-int quantity,
+quantity int,
 FOREIGN KEY(actorID) REFERENCES actors(actorID) ON DELETE CASCADE
 );
 
