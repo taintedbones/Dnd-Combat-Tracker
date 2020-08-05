@@ -114,15 +114,13 @@ void TableModel::PopulateSelectedScenarioTable(QTableWidget *scenarioActorsTable
         // Create new row
         scenarioActorsTable->insertRow(index);
         // Insert attributes
+        // ID
         idItem = new QTableWidgetItem;
         idItem->setData(0, scenarioActorList->at(index).GetID());
         idItemList.push_back(idItem);
         scenarioActorsTable->setItem(index, SC_ID, idItemList.at(index));
 
-        // DEBUG CHECKING ID
-        qDebug() << "Actor ID: " << scenarioActorList->at(index).GetID();
-        qDebug() << "Item value : " << scenarioActorsTable->model()->index(index,SC_ID).data().toInt();
-
+        // Name
         scenarioActorsTable->setItem(index, SC_NAME, new QTableWidgetItem(scenarioActorList->at(index).GetName()));
         // HP
         hpItem = new QTableWidgetItem;
@@ -153,6 +151,7 @@ void TableModel::AddActorToScenarioTable(QTableWidget *scenarioTable, Actor* toA
     QTableWidgetItem* HP = new QTableWidgetItem;
     QTableWidgetItem* AC = new QTableWidgetItem;
     QTableWidgetItem* DC = new QTableWidgetItem;
+    QSpinBox *sBox;
 
     ID->setData(0,toAdd->GetID());
     HP->setData(0,toAdd->GetHitPoints());
@@ -161,6 +160,14 @@ void TableModel::AddActorToScenarioTable(QTableWidget *scenarioTable, Actor* toA
 
     // Create new row
     scenarioTable->insertRow(scenarioTable->rowCount());
+    sBox = new QSpinBox(scenarioTable);
+    sBox->setRange(1, 20);
+    scenarioTable->setCellWidget(scenarioTable->rowCount()-1, SC_QTY, sBox);
+
+    if(toAdd->GetType() == "partymember")
+    {
+        sBox->setDisabled(true);
+    }
 
     // Insert attributes
     scenarioTable->setItem(scenarioTable->rowCount()-1, SC_ID, ID);

@@ -388,6 +388,16 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
         tableManager->PopulateSelectedScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
         tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->SC_QTY, false, true);
 
+        // Disable spinboxes for partymembers
+        for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+        {
+            if(ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_TYPE).data().toString() == "partymember")
+            {
+                if(tableManager->spinBoxes->at(index)->isEnabled())
+                { tableManager->spinBoxes->at(index)->setDisabled(true); }
+            }
+        }
+
         // Activate signals in spinbox
         for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
         {
@@ -487,8 +497,6 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
 
         FormatEditScenarioActorsTableView();
         FormatScenarioTableView(ui->scenarioView_editScenario_comboBox->currentText());
-
-
     }
 }
 
@@ -806,10 +814,6 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
 
                 // Add listing to tablewidget
                 tableManager->AddActorToScenarioTable(ui->scenarios_editScenario_tableWidget, toAdd);
-
-                // TODO Create a spinbox
-
-
             }
         }
     }
