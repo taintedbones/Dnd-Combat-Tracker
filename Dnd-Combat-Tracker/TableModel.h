@@ -57,6 +57,9 @@ public:
     const int qtyMax = 10;
     const int qtyMin = 1;
 
+    // Scenario spinboxes
+    QVector<QSpinBox*>* spinBoxes;
+
     // Model used for 'combat_page' (Conduct Combat) Page
     void InitializeCombatModel(QTableWidget *combatTable);
 
@@ -79,7 +82,7 @@ public:
     void CopyTableToCombatPage(QTableWidget *origin, QTableWidget *destination);
 
     // Inserts initiative column to the passed in table
-    void InsertSpinBoxCol(QTableWidget *table, int min, int max, int col, bool disable);
+    void InsertSpinBoxCol(QTableWidget *table, int min, int max, int col, bool disablebool, bool addToVector);
 
     // Add Actors - Show selected actor type in actor list
     void ShowActorType(QTableWidget* addActors, const QString &type);

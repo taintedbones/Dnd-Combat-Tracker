@@ -138,9 +138,6 @@ private slots:
 
     void on_dbEdit_tableView_clicked();
 
-    // Helper Functions
-    void ClearDBFields();
-
     void on_clear_editActors_pushButton_clicked();
 
     void on_dbEdit_tabWidget_currentChanged(int index);
@@ -152,6 +149,11 @@ private slots:
     void on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetItem *item);
 
     void on_saveChanges_editScenario_pushButton_clicked();
+
+    // Helper Functions
+    void ClearDBFields();
+    void EnableSaveButton();
+
 
 private:
     Ui::MainWindow *ui;

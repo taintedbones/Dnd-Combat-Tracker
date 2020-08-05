@@ -246,21 +246,24 @@ void TableModel::CopyTableToCombatPage(QTableWidget *origin, QTableWidget *desti
     } // END - for (row)
 }
 
-// Inserts initiative column to the passed in table
-void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col, bool disable)
+// Inserts spinbox column to the passed in table
+void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col, bool disable, bool addToVector)
 {
     QSpinBox *sBox;
 
+    if(addToVector) { spinBoxes->clear(); }
+
     for(int row = 0; row < table->rowCount(); row++)
-    {
+    {    
         sBox = new QSpinBox(table);
         sBox->setRange(min, max);
         table->setCellWidget(row, col, sBox);
 
+        if(addToVector)
+        { spinBoxes->append(sBox); }
+
         if(disable)
-        {
-            sBox->setDisabled(true);
-        }
+        { sBox->setDisabled(true); }
     }
 }
 
@@ -382,4 +385,7 @@ void TableModel::PopulateScenarioTable(QTableWidget *scenarioTable, QStringList 
 }
 
 // Constructor
-TableModel::TableModel() {}
+TableModel::TableModel()
+{
+    spinBoxes = new QVector<QSpinBox*>;
+}

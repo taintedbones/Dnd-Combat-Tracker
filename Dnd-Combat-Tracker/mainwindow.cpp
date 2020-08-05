@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
+#include <QtGlobal>
+#include <QObject>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -60,7 +62,7 @@ void MainWindow::on_welcomeStart_pushButton_clicked()
         // Initialize & populate "combatList" TableWidget
     tableManager->InitializeAddActorTable(ui->combatTable_tableWidget, tableManager->SelectedListColCount, tableManager->SelectedListColNames);
     tableManager->PopulateAddActorTable(ui->combatTable_tableWidget, db->GetPartyList());
-    tableManager->InsertSpinBoxCol(ui->combatTable_tableWidget, 1, 1, tableManager->S_QTY, true);
+    tableManager->InsertSpinBoxCol(ui->combatTable_tableWidget, 1, 1, tableManager->S_QTY, true, false);
 }
 
 // *************************************************************************************
@@ -101,7 +103,7 @@ void MainWindow::on_next_editPage_pushButton_clicked()
 
         // Copy combat table to assignInit table
         tableManager->CopyTableToInitPage(ui->combatTable_tableWidget, ui->assignInit_tableWidget);
-        tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 30, tableManager->I_INIT, false);
+        tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 30, tableManager->I_INIT, false, false);
     }
 }
 
@@ -330,6 +332,7 @@ void MainWindow::on_actorTable_tableWidget_itemDoubleClicked(QTableWidgetItem *i
     tableManager->AddActorToTable(ui->actorTable_tableWidget, ui->combatTable_tableWidget);
 }
 
+
 // *************************************************************************************
 //  Reformats scenario tableview to display scenario listing or actors for selected
 //      scenario
@@ -351,7 +354,7 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
             ui->remove_editScenario_pushButton->setEnabled(false);
         }
 
-        // TODO Top Tableview - Load all actors from db
+        // TODO Top Tableview - Load all actors from db? Is this necessary?
 
 
         // Initialize and populate bottom tableWidget
@@ -383,13 +386,39 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
         // Initialize, populate, and format bottom tablewidget
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
         tableManager->PopulateAddActorTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
-        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->S_QTY, false);
+        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->S_QTY, false, true);
+
+        // Activate signals in spinbox
+        for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
+        {
+            QObject::connect(tableManager->spinBoxes->at(index), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
+
+        }
+
+        //Populate Spinboxes with quantities from database
+        // START QVector<int> GetScenarioActorQtys(scenarioName);
+
+        // Get scenario quantities
+
+        // END QVector<int> GetScenarioActorQtys(scenarioName);
+
+        // Assign quantities to spinboxes
+        for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+        {
+            // Insert quantity into spinbox
+            // spinbox[index] = vector[index]
+        }
 
     }
 
     // TODO fix this up
     // commented out because this function will likely be changed
     //FormatScenarioTableView(arg1);
+}
+
+void MainWindow::EnableSaveButton()
+{
+    ui->saveChanges_editScenario_pushButton->setEnabled(true);
 }
 
 // *************************************************************************************
@@ -455,7 +484,10 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
         scenarios = db->GetScenarioList();
         scenarios.prepend("All Scenarios");
 
-        ui->scenarioView_editScenario_comboBox->addItems(scenarios);
+        if(ui->scenarioView_editScenario_comboBox->count()==0)
+        {
+            ui->scenarioView_editScenario_comboBox->addItems(scenarios);
+        }
 
         FormatEditScenarioActorsTableView();
         FormatScenarioTableView(ui->scenarioView_editScenario_comboBox->currentText());
@@ -753,6 +785,11 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
 
             //
 
+            // TODO END void Database::AddActorToScenario(actorID, scenarioName, qty)
+
+            // Append scenariolist
+
+            // Refresh view with new list
         }
     }
 }
