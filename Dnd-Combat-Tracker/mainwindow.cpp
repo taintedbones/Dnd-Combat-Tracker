@@ -360,7 +360,7 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
         // Initialize and populate bottom tableWidget
         // TODO: figure out a generic name for this method since it affects more than one type of table, not just 'add actor'
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
-        tableManager->PopulateScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+        tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
 
     }
     else // Specific scenario is selected
@@ -384,9 +384,9 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
         }
 
         // Initialize, populate, and format bottom tablewidget
-        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
-        tableManager->PopulateAddActorTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
-        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->S_QTY, false, true);
+        tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
+        tableManager->PopulateSelectedScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
+        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->SC_QTY, false, true);
 
         // Activate signals in spinbox
         for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
@@ -405,7 +405,6 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
             // Insert quantity into spinbox
             tableManager->spinBoxes->at(index)->setValue(scenarioQtys->at(index));
         }
-
     }
 
     // TODO fix this up
@@ -703,7 +702,7 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
         // TODO if removing vertical headers can be placed somewhere else, that'd be nice
         ui->scenarios_editScenario_tableWidget->verticalHeader()->hide();
 
-        tableManager->PopulateScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+        tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
 
     }
 }
@@ -761,32 +760,58 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
         if(ui->actors_editScenario_tableView->currentIndex().row() != -1)
         {
             int row = ui->actors_editScenario_tableView->currentIndex().row(); // Row of table
-            QString toAdd; // Actor's ID to add
+            int IDtoAdd; // Actor's ID to add
             int qty = 1; // Quantity of actor type to add
             QString scenarioName; // Name of scenario in which to add actor
+            bool presentOnList = false;
+            int index;
 
             // Get actor's name from selected row
-            toAdd = ui->actors_editScenario_tableView->model()->index(row,1).data().toString();
+            IDtoAdd = ui->actors_editScenario_tableView->model()->index(row,0).data().toInt();
+
 
             // Get scenario name from combobox
             scenarioName = ui->scenarioView_editScenario_comboBox->currentText();
 
-            qDebug() << "Actor Name selected: " << toAdd;
+            qDebug() << "Actor ID selected: " << IDtoAdd;
             qDebug() << "Scenario selected: " << scenarioName;
             qDebug() << "Quantity selected: " << qty;
 
-            // TODO START void Database::AddActorToScenario(actorID, scenarioName, qty)
-            QSqlQuery query;
+            // Check to see if actor is already on tablewidget
+            index = 0;
+            presentOnList = ui->actors_editScenario_tableView->model()->index(index,0).data().toInt() == ui->scenarios_editScenario_tableWidget->model()->index(index,0).data().toInt();
 
-            // Prepare query
 
-            //
+            while(!presentOnList && index < ui->scenarios_editScenario_tableWidget->rowCount())
+            {
+                index++;
+                presentOnList = ui->actors_editScenario_tableView->model()->index(index,0).data().toInt() == ui->scenarios_editScenario_tableWidget->model()->index(index,0).data().toInt();
+            }// End if present on list and still in row
 
-            // TODO END void Database::AddActorToScenario(actorID, scenarioName, qty)
+            if(presentOnList)
+            {
+                // Pop up window informing user that listing is already present
+                QMessageBox warnPrompt;
 
-            // Append scenariolist
+                warnPrompt.setIcon(QMessageBox::Warning);
+                warnPrompt.setText("WARNING");
+                warnPrompt.setInformativeText("Actor is already listed in scenario. Please select new actor.");
+                warnPrompt.setStandardButtons(QMessageBox::Ok);
+            }
+            else
+            {
+                // Collect data from tableview
+                Actor toAdd;
 
-            // Refresh view with new list
+                toAdd.SetID(ui->actors_editScenario_tableView->model()->index(row,0).data().toInt());
+
+                // Create new row
+
+
+                // Add listing to tablewidget
+
+
+            }
         }
     }
 }

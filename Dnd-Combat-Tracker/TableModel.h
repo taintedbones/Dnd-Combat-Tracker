@@ -51,8 +51,9 @@ public:
 
     // *********************************** Database Options - Edit Scenario "Specific Scenario" ************************
 
-    const int SpecificScenarioColCount = 7;
-    QStringList SpecificScenarioColNames = { "Name", "HP", "AC", "DC", "Notes", "Type", "Quantity" };
+    const int SpecificScenarioColCount = 8;
+    QStringList SpecificScenarioColNames = { "ID", "Name", "HP", "AC", "DC", "Notes", "Type", "Quantity" };
+    enum SpecificScenarioColPositions { SC_ID, SC_NAME, SC_HP, SC_AC, SC_DC, SC_NOTES, SC_TYPE, SC_QTY };
 
     const int qtyMax = 10;
     const int qtyMin = 1;
@@ -65,6 +66,9 @@ public:
 
     // Model used for 'edit_page' (Add Actors) Page
     void InitializeAddActorTable(QTableWidget *addActors, int cols, QStringList headers);
+
+    // Model used for 'scenario_db page' (Scenario Database) Page
+    void InitializeScenarioTable(QTableWidget *addActors, int cols, QStringList headers);
 
     // Fills Add Actor Table with actors in database
     void PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* actorList);
@@ -99,7 +103,9 @@ public:
     void InsertCombatStatsBox(QTableWidget *table, int value, int overflow, int row, int col);
 
     // Populate Scenario Table with Scenario Names
-    void PopulateScenarioTable(QTableWidget *scenarioTable, QStringList scenarioNames);
+    void PopulateScenarioNameTable(QTableWidget *scenarioTable, QStringList scenarioNames);
+
+    void PopulateSelectedScenarioTable(QTableWidget *addActors, QVector<Actor>* actorList);
 
     // Constructor
     TableModel();

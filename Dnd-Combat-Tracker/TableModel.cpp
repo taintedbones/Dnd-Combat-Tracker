@@ -31,6 +31,21 @@ void TableModel::InitializeAddActorTable(QTableWidget *addActors, int cols, QStr
     DeleteAllTableRows(addActors);
 }
 
+// Model used for 'edit_page' (Add Actors) Page
+void TableModel::InitializeScenarioTable(QTableWidget *scenarioActors, int cols, QStringList headers)
+{
+    scenarioActors->clearContents();
+    scenarioActors->setColumnCount(cols);
+    scenarioActors->setHorizontalHeaderLabels(headers);
+    scenarioActors->hideColumn(SC_ID);
+    scenarioActors->setColumnWidth(SC_NAME, 150);
+    scenarioActors->setColumnWidth(SC_NOTES, 530);
+    scenarioActors->setEditTriggers(QTableView::NoEditTriggers);
+
+    DeleteAllTableRows(scenarioActors);
+}
+
+
 // Fills Add Actor Table with actors in database
 void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* actorList)
 {
@@ -74,6 +89,51 @@ void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* 
         addActors->setItem(index, A_TYPE, new QTableWidgetItem(actorList->at(index).GetType()));
     } // END for
 }
+
+// Fills Add Actor Table with actors in database
+void TableModel::PopulateSelectedScenarioTable(QTableWidget *scenarioActorsTable, QVector<Actor>* scenarioActorList)
+{
+    // Prep hp list
+    QVector<QTableWidgetItem*> hpItemList;
+    QTableWidgetItem* hpItem;
+
+    // Prep ac list
+    QVector<QTableWidgetItem*> acItemList;
+    QTableWidgetItem* acItem;
+
+    // Prep dc list
+    QVector<QTableWidgetItem*> dcItemList;
+    QTableWidgetItem* dcItem;
+
+    for(int index = 0; index < scenarioActorList->length(); index++)
+    {
+        // Create new row
+        scenarioActorsTable->insertRow(index);
+        // Insert attributes
+        scenarioActorsTable->setItem(index, SC_ID, new QTableWidgetItem(scenarioActorList->at(index).GetID()));
+        scenarioActorsTable->setItem(index, SC_NAME, new QTableWidgetItem(scenarioActorList->at(index).GetName()));
+        // HP
+        hpItem = new QTableWidgetItem;
+        hpItem->setData(0,scenarioActorList->at(index).GetHitPoints());
+        hpItemList.push_back(hpItem);
+        scenarioActorsTable->setItem(index, SC_HP, hpItemList.at(index));
+        // AC
+        acItem = new QTableWidgetItem;
+        acItem->setData(0,scenarioActorList->at(index).GetArmorClass());
+        acItemList.push_back(acItem);
+        scenarioActorsTable->setItem(index, SC_AC, acItemList.at(index));
+        // DC
+        dcItem = new QTableWidgetItem;
+        dcItem->setData(0,scenarioActorList->at(index).GetSpellSaveDC());
+        dcItemList.push_back(dcItem);
+        scenarioActorsTable->setItem(index, SC_DC, dcItemList.at(index));
+        // Notes
+        scenarioActorsTable->setItem(index, SC_NOTES, new QTableWidgetItem(scenarioActorList->at(index).GetNotes()));
+        // Type
+        scenarioActorsTable->setItem(index, SC_TYPE, new QTableWidgetItem(scenarioActorList->at(index).GetType()));
+    } // END for
+}
+
 
 // Model used for 'assignInit_page' (Assign Initiative) Page
 void TableModel::InitializeInitiativeModel(QTableWidget *assignInit)
@@ -364,7 +424,7 @@ void TableModel::InsertCombatStatsBox(QTableWidget *table, int value, int overfl
 }
 
 // Populate Scenario Table with Scenario Names
-void TableModel::PopulateScenarioTable(QTableWidget *scenarioTable, QStringList scenarioNames)
+void TableModel::PopulateScenarioNameTable(QTableWidget *scenarioTable, QStringList scenarioNames)
 {
     QTableWidgetItem* scenarioItem;
 
