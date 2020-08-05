@@ -25,6 +25,8 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
 
     //TODO what does this do?
     scenarioList.clear();
+
+    scenarioQtysList = new QVector<int>;
 }
 
 // *************************************************************************************
@@ -147,6 +149,32 @@ QVector<Actor>* Database::GetPartyList() const
 QStringList Database::GetScenarioList() const
 {
     return scenarioList;
+}
+
+// *************************************************************************************
+// Generate and return list of quantities of actors in given scenario name
+// *************************************************************************************
+QVector<int>* Database::GetScenarioQtys(const QString &scenarioName)
+{
+    scenarioQtysList->clear();
+
+    query.prepare("SELECT quantity FROM scenarios WHERE scenarioName =:scenarioName");
+    query.bindValue(":scenarioName", scenarioName);
+
+    // If successful, assign values to vector and return
+    if(query.exec())
+    {
+        while(query.next())
+        {
+            scenarioQtysList->append(query.value(0).toInt());
+        }
+    }
+    else // Print error
+    {
+        qDebug() << query.lastError().text();
+    }
+
+    return scenarioQtysList;
 }
 
 // *************************************************************************************

@@ -396,17 +396,14 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
         }
 
         //Populate Spinboxes with quantities from database
-        // START QVector<int> GetScenarioActorQtys(scenarioName);
-
-        // Get scenario quantities
-
-        // END QVector<int> GetScenarioActorQtys(scenarioName);
+        QVector<int>* scenarioQtys = new QVector<int>;
+        scenarioQtys = db->GetScenarioQtys(ui->scenarioView_editScenario_comboBox->currentText());
 
         // Assign quantities to spinboxes
         for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
         {
             // Insert quantity into spinbox
-            // spinbox[index] = vector[index]
+            tableManager->spinBoxes->at(index)->setValue(scenarioQtys->at(index));
         }
 
     }

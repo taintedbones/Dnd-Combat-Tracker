@@ -45,8 +45,11 @@ public:
     // Delete actor from DB
     void DeleteActor(const int &actorID);
 
-    // Get actor list by scenario name
+    // Get actor list of given scenario table
     QVector<Actor>* GetActorsByScenario(const QString &scenarioName);
+
+    // Get quantities of given scenario table
+    QVector<int>* GetScenarioQtys(const QString &scenarioName);
 
     // Add scenario to DB
 
@@ -64,6 +67,7 @@ private:
     QVector<Actor>* actorList = nullptr; // list of actor profiles
     QVector<Actor>* combatList = nullptr; // list of actor profiles added to combat
     QVector<Actor>* actorsInScenario = nullptr; // list of actors in specific scenario
+    QVector<int> *scenarioQtysList;
     QStringList scenarioList;
     QSqlQuery query; // Reusable query for all class methods
 
