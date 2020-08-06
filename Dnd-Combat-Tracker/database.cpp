@@ -302,8 +302,4 @@ QVector<Actor>* Database::GetActorsByScenario(const QString &scenarioName)
     return actorsInScenario;
 }
 
-// TODO Add scenario to DB
-
-// TODO Edit scenario in DB
-
-// TODO Delete scenario from DB
+// TODO Save scenario listing changes to DB

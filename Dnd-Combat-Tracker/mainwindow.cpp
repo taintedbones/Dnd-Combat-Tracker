@@ -909,6 +909,7 @@ void MainWindow::on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetI
 
 void MainWindow::on_saveChanges_editScenario_pushButton_clicked()
 {
+
     // This is where we gotta pull the qtys
     int row = ui->actors_editScenario_tableView->currentIndex().row(); // Row of table
     QSpinBox* temp = qobject_cast<QSpinBox*>(ui->scenarios_editScenario_tableWidget->cellWidget(row, tableManager->S_QTY));

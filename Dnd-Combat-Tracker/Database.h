@@ -12,6 +12,15 @@
 class Database : public QSqlDatabase
 {
 public:
+
+    struct ScenarioListing
+    {
+        int _id;
+        QString _scenarioName;
+        int _qty;
+
+    };
+
     // Load actors from database into program memory
     void CreateActorList();
 
@@ -51,11 +60,18 @@ public:
     // Get quantities of given scenario table
     QVector<int>* GetScenarioQtys(const QString &scenarioName);
 
-    // Add scenario to DB
+//    // Set scenario listing ID
+//    void SetScenarioID(const int id);
 
-    // Edit scenario in DB
+//    // Set scenario listing scenario name
+//    void SetScenarioName(QString scenarioName);
 
-    // Delete scenario from DB
+//    // Set scenario listing qty
+//    void SetScenarioQty(int qty);
+
+
+
+    // Save scenario changes to DB
 
     // Constructor
     Database(QString path, QString driver);
@@ -70,6 +86,8 @@ private:
     QVector<int> *scenarioQtysList;
     QStringList scenarioList;
     QSqlQuery query; // Reusable query for all class methods
+
+
 
     enum ActorProfile { ID, NAME , HP, AC, DC, NOTES, TYPE };
 
