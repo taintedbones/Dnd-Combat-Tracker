@@ -23,9 +23,6 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
     // Create Scenario List
     actorsInScenario = new QVector<Actor>;
 
-    // Create scenariolistings list
-    scenarioListingsList = new QVector<ScenarioListing>;
-
     //TODO what does this do?
     scenarioList.clear();
 
@@ -200,7 +197,7 @@ Actor Database::GetActor(QString name)
             foundActor.SetArmorClass(query.value(AC).toInt());
             foundActor.SetSpellSaveDC(query.value(DC).toInt());
             foundActor.SetNotes(query.value(NOTES).toString());
-            foundActor.SetScenario(GetScenarioByID(foundActor.GetID()));
+            foundActor.SetType(query.value(TYPE).toString());
         }
     }
     else
@@ -313,17 +310,17 @@ void Database::SaveChangesToScenario(QVector<ScenarioListing>* scenarioListings)
     query.bindValue(":scenarioName", scenarioListings->at(0)._scenarioName);
 
     // Print error if unsuccessful
-    if(!query.exec()) { qDebug() << query.lastError().text(); }
+    if(!query.exec()) { qDebug() << "Delete Error" << query.lastError().text(); }
 
-    // Add listings to scenarios table
+    // Add new listing data to scenarios table
     for(int index = 0; index < scenarioListings->size(); index++)
     {
-        query.prepare( "INSERT INTO scenarios VALUES (:actorID, :scenarioName, :qty" );
+        query.prepare( "INSERT INTO scenarios VALUES (:actorID, :scenarioName, :qty)" );
         query.bindValue(":actorID", scenarioListings->at(index)._id);
         query.bindValue(":scenarioName", scenarioListings->at(index)._scenarioName);
         query.bindValue(":qty", scenarioListings->at(index)._qty);
 
         // Print error if unsuccessful
-        if(!query.exec()) { qDebug() << query.lastError().text(); }
+        if(!query.exec()) { qDebug() << "Write Error" << query.lastError().text(); }
     }
 }

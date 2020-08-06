@@ -354,9 +354,6 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
             ui->remove_editScenario_pushButton->setEnabled(false);
         }
 
-        // TODO Top Tableview - Load all actors from db? Is this necessary?
-
-
         // Initialize and populate bottom tableWidget
         // TODO: figure out a generic name for this method since it affects more than one type of table, not just 'add actor'
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
@@ -381,6 +378,12 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
         if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
         {
             ui->remove_editScenario_pushButton->setText("Remove Actor");
+        }
+
+        // Disable save button
+        if(ui->saveChanges_editScenario_pushButton->isEnabled())
+        {
+            ui->saveChanges_editScenario_pushButton->setEnabled(false);
         }
 
         // Initialize, populate, and format bottom tablewidget
@@ -424,6 +427,9 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
 
 void MainWindow::EnableSaveButton()
 {
+    // TODO I think this inadvertantly causes the 'save changes' button to turn true whenever
+    // the index is changed because the spinboxes are being created at time of index change
+    // Gotta figure out how to intialize the button to false and only change if the valuechanged activates.
     ui->saveChanges_editScenario_pushButton->setEnabled(true);
 }
 
@@ -711,7 +717,6 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
         ui->scenarios_editScenario_tableWidget->verticalHeader()->hide();
 
         tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
-
     }
 }
 
@@ -764,12 +769,17 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
     }
     else // Add actor to existing scenario
     {
+        // Enable save button
+        if(!ui->saveChanges_editScenario_pushButton->isEnabled())
+        {
+            ui->saveChanges_editScenario_pushButton->setEnabled(true);
+        }
+
         // If user has selected a valid row
         if(ui->actors_editScenario_tableView->currentIndex().row() != -1)
         {
             int row = ui->actors_editScenario_tableView->currentIndex().row(); // Row of table
             int IDtoAdd; // Actor's ID to add
-            int qty = 1; // Quantity of actor type to add
             bool presentOnList = false;
             int index;
 
@@ -814,6 +824,9 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
 
                 // Add listing to tablewidget
                 tableManager->AddActorToScenarioTable(ui->scenarios_editScenario_tableWidget, toAdd);
+
+                // TODO Connect combobox to signal
+                QObject::connect(tableManager->spinBoxes->at(tableManager->spinBoxes->size()-1), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
             }
         }
     }
@@ -909,11 +922,32 @@ void MainWindow::on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetI
 
 void MainWindow::on_saveChanges_editScenario_pushButton_clicked()
 {
+    QVector<ScenarioListing> *listings;
+    listings = new QVector<ScenarioListing>;
+    ScenarioListing singleListing;
 
-    // This is where we gotta pull the qtys
-    int row = ui->actors_editScenario_tableView->currentIndex().row(); // Row of table
-    QSpinBox* temp = qobject_cast<QSpinBox*>(ui->scenarios_editScenario_tableWidget->cellWidget(row, tableManager->S_QTY));
+    for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+    {
+        // Collect data from table
+        singleListing._id = ui->scenarios_editScenario_tableWidget->model()->index(index, tableManager->SC_ID).data().toInt();
+        singleListing._scenarioName = ui->scenarioView_editScenario_comboBox->currentText();
+        QSpinBox* sBox = qobject_cast<QSpinBox*>(ui->scenarios_editScenario_tableWidget->cellWidget(index, tableManager->SC_QTY));
+        singleListing._qty = sBox->value();
 
+        // Load listing into vector
+        listings->append(singleListing);
+
+        // Overwrite old scenario listing
+        db->SaveChangesToScenario(listings);
+
+        // DEBUG
+        qDebug() << "| ID: " << singleListing._id << "| Name:  " << singleListing._scenarioName << "| Quantity |" << singleListing._qty;
+    }
+
+    // Disable button
+    ui->saveChanges_editScenario_pushButton->setDisabled(true);
+
+    // TODO Maybe a popup window saying it was saved
 }
 
 void MainWindow::on_remove_editScenario_pushButton_clicked()
@@ -945,5 +979,11 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
     if(ui->remove_editScenario_pushButton->isEnabled())
     {
         ui->remove_editScenario_pushButton->setEnabled(false);
+    }
+
+    // Enable save button
+    if(!ui->saveChanges_editScenario_pushButton->isEnabled())
+    {
+        ui->saveChanges_editScenario_pushButton->setEnabled(true);
     }
 }
