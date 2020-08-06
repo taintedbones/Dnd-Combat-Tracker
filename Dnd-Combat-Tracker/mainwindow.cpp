@@ -953,17 +953,17 @@ void MainWindow::on_saveChanges_editScenario_pushButton_clicked()
         // Load listing into vector
         listings->append(singleListing);
 
-        // Overwrite old scenario listing
-        db->SaveChangesToScenario(listings);
-
         // DEBUG
         qDebug() << "| ID: " << singleListing._id << "| Name:  " << singleListing._scenarioName << "| Quantity |" << singleListing._qty;
     }
 
+    // Overwrite old scenario listing
+    db->SaveChangesToScenario(listings);
+
     // Disable button
     ui->saveChanges_editScenario_pushButton->setDisabled(true);
 
-    // TODO Maybe a popup window saying it was saved
+    // TODO Maybe a popup window saying it was saved?
 }
 
 void MainWindow::on_remove_editScenario_pushButton_clicked()
