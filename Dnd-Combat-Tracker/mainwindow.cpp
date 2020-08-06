@@ -339,6 +339,22 @@ void MainWindow::on_actorTable_tableWidget_itemDoubleClicked(QTableWidgetItem *i
 // *************************************************************************************
 void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const QString &arg1)
 {
+    // TODO if user attempts to leave the current scenario and it has unsaved changes, inform them
+    // if button enabled
+        // warning: hey you didnt save. want to save?
+            // if okay, run the save code
+
+            // if 'nah' dont do anything
+
+    // TODO if the user attempts to leave a scenario that contains no actors, inform them
+
+    // if tablewidget rowcount==0
+        // warning: hey you're trying to leave without adding anyone to your scenario
+            // if "i know", leave
+            // if "oopsie", don't leave(?) how do we stop them from leaving..?
+
+
+
     // If user has selected "all scenarios"
     if(arg1 == "All Scenarios")
     {
@@ -826,7 +842,6 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
                 tableManager->AddActorToScenarioTable(ui->scenarios_editScenario_tableWidget, toAdd);
 
                 // TODO Connect combobox to signal
-
                 QObject::connect(tableManager->spinBoxes->at(tableManager->spinBoxes->size()-1), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
             }
         }
