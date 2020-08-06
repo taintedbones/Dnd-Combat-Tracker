@@ -177,6 +177,9 @@ void TableModel::AddActorToScenarioTable(QTableWidget *scenarioTable, Actor* toA
     scenarioTable->setItem(scenarioTable->rowCount()-1, SC_DC, DC);
     scenarioTable->setItem(scenarioTable->rowCount()-1, SC_NOTES, new QTableWidgetItem(toAdd->GetNotes()));
     scenarioTable->setItem(scenarioTable->rowCount()-1, SC_TYPE, new QTableWidgetItem(toAdd->GetType()));
+
+    // Append spinbox to spinboxes vector
+    spinBoxes->append(sBox);
 }
 
 

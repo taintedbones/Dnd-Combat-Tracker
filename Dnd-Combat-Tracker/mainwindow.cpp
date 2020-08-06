@@ -826,6 +826,7 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
                 tableManager->AddActorToScenarioTable(ui->scenarios_editScenario_tableWidget, toAdd);
 
                 // TODO Connect combobox to signal
+
                 QObject::connect(tableManager->spinBoxes->at(tableManager->spinBoxes->size()-1), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
             }
         }
