@@ -23,6 +23,9 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
     // Create Scenario List
     actorsInScenario = new QVector<Actor>;
 
+    // Create scenariolistings list
+    scenarioListingsList = new QVector<ScenarioListing>;
+
     //TODO what does this do?
     scenarioList.clear();
 
@@ -303,3 +306,24 @@ QVector<Actor>* Database::GetActorsByScenario(const QString &scenarioName)
 }
 
 // TODO Save scenario listing changes to DB
+void Database::SaveChangesToScenario(QVector<ScenarioListing>* scenarioListings)
+{
+    // Delete old listings
+    query.prepare("DELETE FROM scenarios WHERE scenarioName = :scenarioName");
+    query.bindValue(":scenarioName", scenarioListings->at(0)._scenarioName);
+
+    // Print error if unsuccessful
+    if(!query.exec()) { qDebug() << query.lastError().text(); }
+
+    // Add listings to scenarios table
+    for(int index = 0; index < scenarioListings->size(); index++)
+    {
+        query.prepare( "INSERT INTO scenarios VALUES (:actorID, :scenarioName, :qty" );
+        query.bindValue(":actorID", scenarioListings->at(index)._id);
+        query.bindValue(":scenarioName", scenarioListings->at(index)._scenarioName);
+        query.bindValue(":qty", scenarioListings->at(index)._qty);
+
+        // Print error if unsuccessful
+        if(!query.exec()) { qDebug() << query.lastError().text(); }
+    }
+}

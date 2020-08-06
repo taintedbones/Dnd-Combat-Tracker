@@ -29,6 +29,7 @@ SOURCES += \
 HEADERS += \
     AddActorForm.h \
     CombatManager.h \
+    ScenarioListing.h \
     TableModel.h \
     Actor.h \
     Database.h \

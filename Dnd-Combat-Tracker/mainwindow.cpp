@@ -925,10 +925,6 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
     // Get name
     QString name = ui->scenarios_editScenario_tableWidget->model()->index(row,tableManager->SC_NAME).data().toString();
 
-    // Popup window asking if they want to delete that person
-    QMessageBox warnPrompt;
-    QString warnMsg = "Are you sure to want to remove " + name + " from this scenario?";
-
     // If user has selected valid row, pop warning
     if(rowSelected)
     {
@@ -937,6 +933,7 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
     }
     else // If user has not selected valid row, inform them
     {
+        QMessageBox warnPrompt;
         warnPrompt.setIcon(QMessageBox::Warning);
         warnPrompt.setText("WARNING");
         warnPrompt.setInformativeText("Please select an Actor to remove first!");

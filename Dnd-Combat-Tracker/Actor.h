@@ -17,7 +17,6 @@ public:
     void SetInitiative(int initiative);
     void SetNotes(QString notes);
     void SetType(QString type);
-    void SetScenario(QString scenario);
 
     // Getters
     int GetID() const;
@@ -28,14 +27,13 @@ public:
     int GetInitiative() const;
     QString GetNotes() const;
     QString GetType() const;
-    QString GetScenario() const;
 
     // Constructors
         // Default Constructor
     Actor();
 
         // Parameterized Constructor
-    Actor(int id, QString name, int hitpoints, int armorClass, int spellSaveDC, int initiative, QString notes, QString scenario);
+    Actor(int id, QString name, int hitpoints, int armorClass, int spellSaveDC, int initiative, QString notes, QString type);
 
 private:
     int _id;
@@ -46,7 +44,6 @@ private:
     int _initiative;
     QString _notes;
     QString _type;
-    QString _scenario;
 };
 
 #endif // ACTOR_H
