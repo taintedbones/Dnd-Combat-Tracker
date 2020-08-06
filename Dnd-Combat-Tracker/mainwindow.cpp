@@ -417,13 +417,6 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
             }
         }
 
-        // Activate signals in spinbox
-        for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
-        {
-            QObject::connect(tableManager->spinBoxes->at(index), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
-
-        }
-
         //Populate Spinboxes with quantities from database
         QVector<int>* scenarioQtys = new QVector<int>;
         scenarioQtys = db->GetScenarioQtys(ui->scenarioView_editScenario_comboBox->currentText());
@@ -433,6 +426,13 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
         {
             // Insert quantity into spinbox
             tableManager->spinBoxes->at(index)->setValue(scenarioQtys->at(index));
+        }
+
+        // Activate signals in spinbox
+        for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
+        {
+            QObject::connect(tableManager->spinBoxes->at(index), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
+
         }
     }
 
