@@ -155,6 +155,8 @@ private slots:
     void EnableSaveButton();
 
 
+    void on_remove_editScenario_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     Database *db;

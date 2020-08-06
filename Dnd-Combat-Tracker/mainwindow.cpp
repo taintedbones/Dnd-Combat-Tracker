@@ -914,3 +914,38 @@ void MainWindow::on_saveChanges_editScenario_pushButton_clicked()
     QSpinBox* temp = qobject_cast<QSpinBox*>(ui->scenarios_editScenario_tableWidget->cellWidget(row, tableManager->S_QTY));
 
 }
+
+void MainWindow::on_remove_editScenario_pushButton_clicked()
+{
+    // Get Row
+    int row = ui->scenarios_editScenario_tableWidget->currentRow();
+    bool rowSelected = row != -1;
+
+    // Get name
+    QString name = ui->scenarios_editScenario_tableWidget->model()->index(row,tableManager->SC_NAME).data().toString();
+
+    // Popup window asking if they want to delete that person
+    QMessageBox warnPrompt;
+    QString warnMsg = "Are you sure to want to remove " + name + " from this scenario?";
+
+    // If user has selected valid row, pop warning
+    if(rowSelected)
+    {
+            // remove actor from bottom table widget
+            ui->scenarios_editScenario_tableWidget->removeRow(row);
+    }
+    else // If user has not selected valid row, inform them
+    {
+        warnPrompt.setIcon(QMessageBox::Warning);
+        warnPrompt.setText("WARNING");
+        warnPrompt.setInformativeText("Please select an Actor to remove first!");
+        warnPrompt.setStandardButtons(QMessageBox::Ok);
+        warnPrompt.exec();
+    }
+
+    // Disable delete button
+    if(ui->remove_editScenario_pushButton->isEnabled())
+    {
+        ui->remove_editScenario_pushButton->setEnabled(false);
+    }
+}
