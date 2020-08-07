@@ -55,6 +55,9 @@ public:
     // Save scenario changes to DB
     void SaveChangesToScenario(QVector<ScenarioListing>* scenarioListings);
 
+    // Delete scenario from db
+    void DeleteScenario(const QString &scenarioName);
+
     // Constructor
     Database(QString path, QString driver);
 

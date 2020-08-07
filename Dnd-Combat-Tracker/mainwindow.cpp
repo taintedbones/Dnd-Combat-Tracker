@@ -981,11 +981,15 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
 
         if(warnPrompt.exec() == QMessageBox::Ok)
         {
+            // Delete scenario from db
+            db->DeleteScenario(scenarioToDelete);
 
-            qDebug() << "Ye delete";
+            // Create new scenario list and reset tabe
+            db->CreateScenarioList();
+            tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
+            tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+
         }
-
-        // If yes, delete
     }
     else // Else, they've chosen a specific scenario, and wish to remove an actor
     {
