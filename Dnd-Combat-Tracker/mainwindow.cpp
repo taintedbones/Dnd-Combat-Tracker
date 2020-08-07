@@ -981,14 +981,19 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
 
         if(warnPrompt.exec() == QMessageBox::Ok)
         {
+            bool found = false;
+            int index;
+
             // Delete scenario from db
             db->DeleteScenario(scenarioToDelete);
 
-            // Create new scenario list and reset tabe
+            // Create new scenario list and reset table
             db->CreateScenarioList();
             tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
             tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
 
+            // Remove scenario from combobox
+            ui->scenarioView_editScenario_comboBox->removeItem(ui->scenarioView_editScenario_comboBox->findText(scenarioToDelete));
         }
     }
     else // Else, they've chosen a specific scenario, and wish to remove an actor
