@@ -364,17 +364,22 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
             ui->add_editScenario_pushButton->setText("Create New Scenario");
         }
 
+        // Change delete button text
+        if(ui->remove_editScenario_pushButton->text() != "Delete Scenario")
+        {
+            ui->remove_editScenario_pushButton->setText("Delete Scenario");
+        }
+
         // Disable delete button
         if(ui->remove_editScenario_pushButton->isEnabled())
         {
             ui->remove_editScenario_pushButton->setEnabled(false);
         }
 
+        // TODO this is broken
         // Initialize and populate bottom tableWidget
-        // TODO: figure out a generic name for this method since it affects more than one type of table, not just 'add actor'
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
         tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
-
     }
     else // Specific scenario is selected
     {
@@ -728,11 +733,8 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
         // Initialize and populate bottom tableWidget
         // TODO: figure out a generic name for this method since it affects more than one type of table, not just 'add actor'
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
-
-        // TODO if removing vertical headers can be placed somewhere else, that'd be nice
-        ui->scenarios_editScenario_tableWidget->verticalHeader()->hide();
-
         tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+        ui->scenarios_editScenario_tableWidget->verticalHeader()->hide();
     }
 }
 
@@ -972,23 +974,32 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
     int row = ui->scenarios_editScenario_tableWidget->currentRow();
     bool rowSelected = row != -1;
 
-    // Get name
-    QString name = ui->scenarios_editScenario_tableWidget->model()->index(row,tableManager->SC_NAME).data().toString();
+    // User selected "All Scenarios" their intention is to remove an entire scenario
+    if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
+    {
 
-    // If user has selected valid row, pop warning
-    if(rowSelected)
-    {
-            // remove actor from bottom table widget
-            ui->scenarios_editScenario_tableWidget->removeRow(row);
     }
-    else // If user has not selected valid row, inform them
+    else // Else, they've chosen a specific scenario, and wish to remove an actor
     {
-        QMessageBox warnPrompt;
-        warnPrompt.setIcon(QMessageBox::Warning);
-        warnPrompt.setText("WARNING");
-        warnPrompt.setInformativeText("Please select an Actor to remove first!");
-        warnPrompt.setStandardButtons(QMessageBox::Ok);
-        warnPrompt.exec();
+
+        // Get actor's name to remove
+        QString name = ui->scenarios_editScenario_tableWidget->model()->index(row,tableManager->SC_NAME).data().toString();
+
+        // If user has selected valid row, pop warning
+        if(rowSelected)
+        {
+                // remove actor from bottom table widget
+                ui->scenarios_editScenario_tableWidget->removeRow(row);
+        }
+        else // If user has not selected valid row, inform them
+        {
+            QMessageBox warnPrompt;
+            warnPrompt.setIcon(QMessageBox::Warning);
+            warnPrompt.setText("WARNING");
+            warnPrompt.setInformativeText("Please select an Actor to remove first!");
+            warnPrompt.setStandardButtons(QMessageBox::Ok);
+            warnPrompt.exec();
+        }
     }
 
     // Disable delete button

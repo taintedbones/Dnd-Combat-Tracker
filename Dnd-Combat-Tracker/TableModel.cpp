@@ -490,6 +490,9 @@ void TableModel::PopulateScenarioNameTable(QTableWidget *scenarioTable, QStringL
         // Insert item
         scenarioTable->setItem(index, 0, scenarioItem);
     } // END for
+
+    // DEBUGGING
+    qDebug() << "Scenario names in PopulateScenarioNameTable:" << scenarioNames;
 }
 
 // Constructor
