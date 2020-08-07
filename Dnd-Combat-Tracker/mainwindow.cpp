@@ -376,10 +376,10 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
             ui->remove_editScenario_pushButton->setEnabled(false);
         }
 
-        // TODO this is broken
         // Initialize and populate bottom tableWidget
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
         tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+        ui->scenarios_editScenario_tableWidget->setColumnHidden(0, false);
     }
     else // Specific scenario is selected
     {
@@ -720,21 +720,14 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
 {
     if(index == EDIT_SCENARIOS)
     {
-        QStringList scenarios;
-
         // Reset buttons
         ui->add_editScenario_pushButton->setText("Create New Scenario");
         ui->remove_editScenario_pushButton->setEnabled(false);
         ui->saveChanges_editScenario_pushButton->setEnabled(false);
 
         // Reset dropdown
+        // Note: This will trigger initialization and population of bottom tablewidget because indexchanged
         ui->scenarioView_editScenario_comboBox->setCurrentIndex(0);
-
-        // Initialize and populate bottom tableWidget
-        // TODO: figure out a generic name for this method since it affects more than one type of table, not just 'add actor'
-        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
-        tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
-        ui->scenarios_editScenario_tableWidget->verticalHeader()->hide();
     }
 }
 
@@ -977,7 +970,22 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
     // User selected "All Scenarios" their intention is to remove an entire scenario
     if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
     {
+        // Pop warning to user
+        QMessageBox warnPrompt;
+        QString scenarioToDelete = ui->scenarios_editScenario_tableWidget->model()->index(row, 0).data().toString();
+        QString warnMsg = "This will delete scenario: " + scenarioToDelete + ". Do you wish to continue?";
+        warnPrompt.setIcon(QMessageBox::Warning);
+        warnPrompt.setText("WARNING");
+        warnPrompt.setInformativeText(warnMsg);
+        warnPrompt.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 
+        if(warnPrompt.exec() == QMessageBox::Ok)
+        {
+
+            qDebug() << "Ye delete";
+        }
+
+        // If yes, delete
     }
     else // Else, they've chosen a specific scenario, and wish to remove an actor
     {
