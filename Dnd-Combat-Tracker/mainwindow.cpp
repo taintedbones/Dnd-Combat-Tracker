@@ -29,13 +29,15 @@ MainWindow::MainWindow(QWidget *parent)
     // Populate list of partymembers
     db->CreatePartyList();
 
-    // START COMBOBOX INITIALIZATION
-
     // Populate Combobox
     ui->showActors_comboBox->addItems(addActorsComboBoxLabels);
 
-    // END COMBOBOX INITIALIZATION
+    // Set save status
+    SetSaveStatus(true);
+
     addActorForm = new AddActorForm(nullptr, db, ui->activeCombatTable_tableWidget);
+
+    // Cast the existing designer combobox into a custom box?
 }
 
 MainWindow::~MainWindow()
@@ -332,125 +334,11 @@ void MainWindow::on_actorTable_tableWidget_itemDoubleClicked(QTableWidgetItem *i
     tableManager->AddActorToTable(ui->actorTable_tableWidget, ui->combatTable_tableWidget);
 }
 
-
 // *************************************************************************************
-//  Reformats scenario tableview to display scenario listing or actors for selected
-//      scenario
+//  Enables save button
 // *************************************************************************************
-void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const QString &arg1)
-{
-    // TODO if user attempts to leave the current scenario and it has unsaved changes, inform them
-    // if button enabled
-        // warning: hey you didnt save. want to save?
-            // if okay, run the save code
-
-            // if 'nah' dont do anything
-
-    // TODO if the user attempts to leave a scenario that contains no actors, inform them
-
-    // if tablewidget rowcount==0
-        // warning: hey you're trying to leave without adding anyone to your scenario
-            // if "i know", leave
-            // if "oopsie", don't leave(?) how do we stop them from leaving..?
-
-
-
-    // If user has selected "all scenarios"
-    if(arg1 == "All Scenarios")
-    {
-        // Change add button text
-        if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
-        {
-            ui->add_editScenario_pushButton->setText("Create New Scenario");
-        }
-
-        // Change delete button text
-        if(ui->remove_editScenario_pushButton->text() != "Delete Scenario")
-        {
-            ui->remove_editScenario_pushButton->setText("Delete Scenario");
-        }
-
-        // Disable delete button
-        if(ui->remove_editScenario_pushButton->isEnabled())
-        {
-            ui->remove_editScenario_pushButton->setEnabled(false);
-        }
-
-        // Initialize and populate bottom tableWidget
-        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
-        tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
-        ui->scenarios_editScenario_tableWidget->setColumnHidden(0, false);
-    }
-    else // Specific scenario is selected
-    {
-        // Change add button text
-        if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
-        {
-            ui->add_editScenario_pushButton->setText("Create New Scenario");
-        }
-
-        // Disable delete button
-        if(ui->remove_editScenario_pushButton->isEnabled())
-        {
-            ui->remove_editScenario_pushButton->setEnabled(false);
-        }
-
-        // Change delete button text
-        if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
-        {
-            ui->remove_editScenario_pushButton->setText("Remove Actor");
-        }
-
-        // Disable save button
-        if(ui->saveChanges_editScenario_pushButton->isEnabled())
-        {
-            ui->saveChanges_editScenario_pushButton->setEnabled(false);
-        }
-
-        // Initialize, populate, and format bottom tablewidget
-        tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
-        tableManager->PopulateSelectedScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
-        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->SC_QTY, false, true);
-
-        // Disable spinboxes for partymembers
-        for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
-        {
-            if(ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_TYPE).data().toString() == "partymember")
-            {
-                if(tableManager->spinBoxes->at(index)->isEnabled())
-                { tableManager->spinBoxes->at(index)->setDisabled(true); }
-            }
-        }
-
-        //Populate Spinboxes with quantities from database
-        QVector<int>* scenarioQtys = new QVector<int>;
-        scenarioQtys = db->GetScenarioQtys(ui->scenarioView_editScenario_comboBox->currentText());
-
-        // Assign quantities to spinboxes
-        for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
-        {
-            // Insert quantity into spinbox
-            tableManager->spinBoxes->at(index)->setValue(scenarioQtys->at(index));
-        }
-
-        // Activate signals in spinbox
-        for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
-        {
-            QObject::connect(tableManager->spinBoxes->at(index), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
-
-        }
-    }
-
-    // TODO fix this up
-    // commented out because this function will likely be changed
-    //FormatScenarioTableView(arg1);
-}
-
 void MainWindow::EnableSaveButton()
 {
-    // TODO I think this inadvertantly causes the 'save changes' button to turn true whenever
-    // the index is changed because the spinboxes are being created at time of index change
-    // Gotta figure out how to intialize the button to false and only change if the valuechanged activates.
     ui->saveChanges_editScenario_pushButton->setEnabled(true);
 }
 
@@ -726,7 +614,8 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
         ui->saveChanges_editScenario_pushButton->setEnabled(false);
 
         // Reset dropdown
-        // Note: This will trigger initialization and population of bottom tablewidget because indexchanged
+        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
+        tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
         ui->scenarioView_editScenario_comboBox->setCurrentIndex(0);
     }
 }
@@ -777,6 +666,12 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
 
         // Select new scenario
         ui->scenarioView_editScenario_comboBox->setCurrentIndex(ui->scenarioView_editScenario_comboBox->count() -1);
+
+        // Set save status
+        if(GetSaveStatus() == true)
+        {
+            SetSaveStatus(false);
+        }
     }
     else // Add actor to existing scenario
     {
@@ -784,6 +679,12 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
         if(!ui->saveChanges_editScenario_pushButton->isEnabled())
         {
             ui->saveChanges_editScenario_pushButton->setEnabled(true);
+        }
+
+        // Set save status
+        if(GetSaveStatus() == true)
+        {
+            SetSaveStatus(false);
         }
 
         // If user has selected a valid row
@@ -958,7 +859,11 @@ void MainWindow::on_saveChanges_editScenario_pushButton_clicked()
     // Disable button
     ui->saveChanges_editScenario_pushButton->setDisabled(true);
 
-    // TODO Maybe a popup window saying it was saved?
+    // Set save status
+    if(GetSaveStatus() == false)
+    {
+        SetSaveStatus(true);
+    }
 }
 
 void MainWindow::on_remove_editScenario_pushButton_clicked()
@@ -981,9 +886,6 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
 
         if(warnPrompt.exec() == QMessageBox::Ok)
         {
-            bool found = false;
-            int index;
-
             // Delete scenario from db
             db->DeleteScenario(scenarioToDelete);
 
@@ -994,11 +896,16 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
 
             // Remove scenario from combobox
             ui->scenarioView_editScenario_comboBox->removeItem(ui->scenarioView_editScenario_comboBox->findText(scenarioToDelete));
+
+            // Set save status
+            if(GetSaveStatus() == true)
+            {
+                SetSaveStatus(false);
+            }
         }
     }
     else // Else, they've chosen a specific scenario, and wish to remove an actor
     {
-
         // Get actor's name to remove
         QString name = ui->scenarios_editScenario_tableWidget->model()->index(row,tableManager->SC_NAME).data().toString();
 
@@ -1007,6 +914,12 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
         {
                 // remove actor from bottom table widget
                 ui->scenarios_editScenario_tableWidget->removeRow(row);
+
+                // Set save status
+                if(GetSaveStatus() == true)
+                {
+                    SetSaveStatus(false);
+                }
         }
         else // If user has not selected valid row, inform them
         {
@@ -1030,4 +943,154 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
     {
         ui->saveChanges_editScenario_pushButton->setEnabled(true);
     }
+}
+
+// Set status of saved data
+void MainWindow::SetSaveStatus(const bool saved)
+{
+    _saved = saved;
+}
+
+// Get status of saved data
+bool MainWindow::GetSaveStatus() const
+{
+    return _saved;
+}
+
+// *************************************************************************************
+//  Reformats scenario tableview to display scenario listing or actors for selected
+//  scenario
+// *************************************************************************************
+void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
+{
+    // TODO: This is the 'unsaved changes' implementation for 'user adds scenario, never populates with actors, tries to navigate away'
+    // If unsaved changes, notify the user
+    if(GetSaveStatus() == false)
+    {
+        // Pop Message box "hey stop you didn't add anyone to the scenario. it gonna break your changes. you sure you wanna leave?"
+        QMessageBox warnPrompt;
+        warnPrompt.setIcon(QMessageBox::Warning);
+        warnPrompt.setText("WARNING");
+        warnPrompt.setInformativeText("You haven't added any actors to your new scenario. Would you like to leave without saving?");
+        warnPrompt.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+
+        // "I want to leave without saving changes"
+        if(warnPrompt.exec() == QMessageBox::Ok)
+        {
+            // Remove newly-created listing from combobox
+            ui->scenarioView_editScenario_comboBox->removeItem(ui->scenarioView_editScenario_comboBox->count() - 1);
+
+            // Set saved since user is fine with leaving
+            SetSaveStatus(true);
+        }
+        else // "I want to stay and populate the scenario"
+        {
+            // *** This is what makes the entire code block fire multiple times *** //
+            ui->scenarioView_editScenario_comboBox->setCurrentIndex(ui->scenarioView_editScenario_comboBox->count() - 1);
+        }
+    }
+
+    // TODO if user attempts to leave the current scenario and it has unsaved changes, inform them
+    // if button enabled
+        // warning: hey you didnt save. want to save?
+            // if okay, run the save code
+
+            // if 'nah' dont do anything
+
+    // TODO if the user attempts to leave a scenario that contains no actors, inform them
+
+    // if tablewidget rowcount==0
+        // warning: hey you're trying to leave without adding anyone to your scenario
+            // if "i know", leave
+            // if "oopsie", don't leave(?) how do we stop them from leaving..?
+
+    // If user has selected "all scenarios"
+    if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
+    {
+        // Change add button text
+        if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
+        {
+            ui->add_editScenario_pushButton->setText("Create New Scenario");
+        }
+
+        // Change delete button text
+        if(ui->remove_editScenario_pushButton->text() != "Delete Scenario")
+        {
+            ui->remove_editScenario_pushButton->setText("Delete Scenario");
+        }
+
+        // Disable delete button
+        if(ui->remove_editScenario_pushButton->isEnabled())
+        {
+            ui->remove_editScenario_pushButton->setEnabled(false);
+        }
+
+        // Initialize and populate bottom tableWidget
+        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
+        tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+        ui->scenarios_editScenario_tableWidget->setColumnHidden(0, false);
+    }
+    else // Specific scenario is selected
+    {
+        // Change add button text
+        if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
+        {
+            ui->add_editScenario_pushButton->setText("Create New Scenario");
+        }
+
+        // Disable delete button
+        if(ui->remove_editScenario_pushButton->isEnabled())
+        {
+            ui->remove_editScenario_pushButton->setEnabled(false);
+        }
+
+        // Change delete button text
+        if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
+        {
+            ui->remove_editScenario_pushButton->setText("Remove Actor");
+        }
+
+        // Disable save button
+        if(ui->saveChanges_editScenario_pushButton->isEnabled())
+        {
+            ui->saveChanges_editScenario_pushButton->setEnabled(false);
+        }
+
+        // Initialize, populate, and format bottom tablewidget
+        tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
+        tableManager->PopulateSelectedScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
+        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->SC_QTY, false, true);
+
+        // Disable spinboxes for partymembers
+        for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+        {
+            if(ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_TYPE).data().toString() == "partymember")
+            {
+                if(tableManager->spinBoxes->at(index)->isEnabled())
+                { tableManager->spinBoxes->at(index)->setDisabled(true); }
+            }
+        }
+
+        //Populate Spinboxes with quantities from database
+        QVector<int>* scenarioQtys = new QVector<int>;
+        scenarioQtys = db->GetScenarioQtys(ui->scenarioView_editScenario_comboBox->currentText());
+
+        // Assign quantities to spinboxes
+        for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+        {
+            // Insert quantity into spinbox
+            tableManager->spinBoxes->at(index)->setValue(scenarioQtys->at(index));
+        }
+
+        // Activate signals in spinbox
+        for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
+        {
+            QObject::connect(tableManager->spinBoxes->at(index), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
+
+        }
+    }
+
+    // TODO fix this up
+    // commented out because this function will likely be changed
+    //FormatScenarioTableView(arg1);
 }
