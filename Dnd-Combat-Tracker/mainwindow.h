@@ -9,6 +9,7 @@
 #include "TableModel.h"
 #include "AddActorForm.h"
 #include "CombatManager.h"
+#include "ScenarioListing.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -155,6 +156,8 @@ private slots:
     bool GetSaveStatus() const;
 
 
+
+
 private:
     Ui::MainWindow *ui;
     Database *db;
@@ -174,6 +177,12 @@ private:
     DbEditTableModel *editActorsModel = nullptr;
     DbEditTableModel *editScenarioModel = nullptr;
     DbEditTableModel *editScenarioActorsModel = nullptr;
+
+    // DEBUG: Previous index checking
+    QVector<ScenarioListing> *listings = nullptr;
+    ScenarioListing singleListing;
+    int previousIndex = 0;
+    QString previousText = "";
 
     // Flag to determine if data has been saved or not
     bool _saved;

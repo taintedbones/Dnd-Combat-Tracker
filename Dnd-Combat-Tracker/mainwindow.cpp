@@ -37,7 +37,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     addActorForm = new AddActorForm(nullptr, db, ui->activeCombatTable_tableWidget);
 
-    // Cast the existing designer combobox into a custom box?
+    // DEBUG
+    // Create scenario listings
+    listings = new QVector<ScenarioListing>;
 }
 
 MainWindow::~MainWindow()
@@ -978,11 +980,12 @@ bool MainWindow::GetSaveStatus() const
 // *************************************************************************************
 void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
 {
-    // TODO: This is the 'unsaved changes' implementation for 'user adds scenario, never populates with actors, tries to navigate away'
-    // If unsaved changes, notify the user
+    // DEBUG
+    qDebug() << "---START COMBOBOX INDEX CHANGED---";
+
+    // Inform user they have created an empty scenario and it will not be saved unless populated
     if(GetSaveStatus() == false)
-    {
-        // Pop Message box "hey stop you didn't add anyone to the scenario. it gonna break your changes. you sure you wanna leave?"
+    { 
         QMessageBox warnPrompt;
         warnPrompt.setIcon(QMessageBox::Warning);
         warnPrompt.setText("WARNING");
@@ -1000,24 +1003,85 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
         }
         else // "I want to stay and populate the scenario"
         {
-            // *** This is what makes the entire code block fire multiple times *** //
             ui->scenarioView_editScenario_comboBox->setCurrentIndex(ui->scenarioView_editScenario_comboBox->count() - 1);
         }
     }
 
+    // DEBUG
+    qDebug() << "WRITING TO DB OCCURS HERE" ;
+
     // TODO if user attempts to leave the current scenario and it has unsaved changes, inform them
+    if(ui->saveChanges_editScenario_pushButton->isEnabled())
+    {
+        // Inform user they have not saved changes
+        QMessageBox warnPrompt;
+        QAbstractButton* saveButton = warnPrompt.addButton(tr("Save Changes"), QMessageBox::YesRole);
+        warnPrompt.setIcon(QMessageBox::Warning);
+        warnPrompt.setText("WARNING");
+        warnPrompt.setInformativeText("Unsaved changes will be lost. Would you like to leave without saving?");
+        warnPrompt.addButton(tr("Leave without saving"), QMessageBox::NoRole);
+
+        warnPrompt.exec();
+
+        // If user selects "Save, please" then do so.
+        // TODO If there's a way to force the button to click instead of copy/pasting the code from button below, that'd be nice
+        if(warnPrompt.clickedButton()==saveButton)
+        {
+            // Overwrite old scenario listing
+            // TODO: This saves the listings in the new index, not the intended 'previous' index. Therefore it's saving the wrong listing
+
+            // DEBUG:
+
+            qDebug() << "WRITING TO DB LISTINGS SAVED UNDER NAME" << listings->at(0)._scenarioName;
+            qDebug() << "| ID: " << listings->at(0)._id << "| Name:  " << listings->at(0)._scenarioName << "| Quantity |" << listings->at(0)._qty;
+
+            db->SaveChangesToScenario(listings);
+
+            // Disable button
+            ui->saveChanges_editScenario_pushButton->setDisabled(true);
+
+            // Set save status
+            if(GetSaveStatus() == false)
+            {
+                SetSaveStatus(true);
+            }
+        }
+    }
+
+
+    //THIS ACTUALLY SAVES THE CURRENT DATA INTO THE OLD INDEX? DAFUQ
+    qDebug() << "SAVING CURRENT DATA FROM INDEX " << ui->scenarioView_editScenario_comboBox->currentIndex();
+    // Regardless, save previous scenario listings for use in 'save changes' next iteration
+    if(previousIndex != 0)
+    {
+        listings->clear();
+
+        for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+        {
+            // Collect data from table
+            singleListing._id = ui->scenarios_editScenario_tableWidget->model()->index(index, tableManager->SC_ID).data().toInt();
+            singleListing._scenarioName = ui->scenarioView_editScenario_comboBox->currentText();
+            QSpinBox* sBox = qobject_cast<QSpinBox*>(ui->scenarios_editScenario_tableWidget->cellWidget(index, tableManager->SC_QTY));
+            singleListing._qty = sBox->value();
+
+            // Load listing into vector
+            listings->append(singleListing);
+
+            // DEBUG
+
+            qDebug() << "SAVING LISTINGS UNDER NAME" << listings->at(0)._scenarioName;
+            qDebug() << "| ID: " << listings->at(0)._id << "| Name:  " << listings->at(0)._scenarioName << "| Quantity |" << listings->at(0)._qty;
+        }
+    }
+
+    previousIndex = ui->scenarioView_editScenario_comboBox->currentIndex();
+    previousText = ui->showActors_comboBox->currentText();
+
     // if button enabled
         // warning: hey you didnt save. want to save?
             // if okay, run the save code
 
             // if 'nah' dont do anything
-
-    // TODO if the user attempts to leave a scenario that contains no actors, inform them
-
-    // if tablewidget rowcount==0
-        // warning: hey you're trying to leave without adding anyone to your scenario
-            // if "i know", leave
-            // if "oopsie", don't leave(?) how do we stop them from leaving..?
 
     // If user has selected "all scenarios"
     if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
@@ -1108,4 +1172,7 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
     // TODO fix this up
     // commented out because this function will likely be changed
     //FormatScenarioTableView(arg1);
+
+    // DEBUG
+    qDebug() << "---END COMBOBOX INDEX CHANGED---";
 }
