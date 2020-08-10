@@ -617,6 +617,9 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
         tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
         tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
         ui->scenarioView_editScenario_comboBox->setCurrentIndex(0);
+
+        // Show table data
+        ui->scenarios_editScenario_tableWidget->setColumnHidden(0, false);
     }
 }
 
