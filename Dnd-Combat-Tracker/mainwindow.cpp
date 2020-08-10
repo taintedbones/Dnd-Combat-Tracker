@@ -661,16 +661,19 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
             scenarioName = scenarioDialogue.getText(this, "Create New Scenario", "Invalid Input. Please Enter Scenario name: ", QLineEdit::Normal, "", &ok);
         }
 
-        // Add scenario name to combobox list
-        ui->scenarioView_editScenario_comboBox->addItem(scenarioName);
-
-        // Select new scenario
-        ui->scenarioView_editScenario_comboBox->setCurrentIndex(ui->scenarioView_editScenario_comboBox->count() -1);
-
-        // Set save status
-        if(GetSaveStatus() == true)
+        if(scenarioDialogue.textValue() != "")
         {
-            SetSaveStatus(false);
+            // Add scenario name to combobox list
+            ui->scenarioView_editScenario_comboBox->addItem(scenarioName);
+
+            // Select new scenario
+            ui->scenarioView_editScenario_comboBox->setCurrentIndex(ui->scenarioView_editScenario_comboBox->count() -1);
+
+            // Set save status
+            if(GetSaveStatus() == true)
+            {
+                SetSaveStatus(false);
+            }
         }
     }
     else // Add actor to existing scenario
