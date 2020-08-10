@@ -664,13 +664,22 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
             scenarioName = scenarioDialogue.getText(this, "Create New Scenario", "Invalid Input. Please Enter Scenario name: ", QLineEdit::Normal, "", &ok);
         }
 
-        if(scenarioDialogue.textValue() != "")
+        if(scenarioName != "")
         {
             // Add scenario name to combobox list
             ui->scenarioView_editScenario_comboBox->addItem(scenarioName);
 
             // Select new scenario
             ui->scenarioView_editScenario_comboBox->setCurrentIndex(ui->scenarioView_editScenario_comboBox->count() -1);
+
+            // Initialize tablewidget
+            tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
+
+            // Deactivate "add button"
+            if(ui->add_editScenario_pushButton->isEnabled())
+            {
+                ui->add_editScenario_pushButton->setEnabled(false);
+            }
 
             // Set save status
             if(GetSaveStatus() == true)
