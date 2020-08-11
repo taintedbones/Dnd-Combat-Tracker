@@ -154,6 +154,7 @@ private slots:
     void EnableSaveButton();
     void SetSaveStatus(const bool saved);
     bool GetSaveStatus() const;
+    void ConfigureScenarioUIButtons (const bool &addButtonStatus, const QString &addButtonText, const bool &deleteButtonStatus, const QString &deleteButtonText);
 
 
 

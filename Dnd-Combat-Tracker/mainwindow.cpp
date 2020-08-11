@@ -574,9 +574,7 @@ void MainWindow::on_dbEdit_tableView_clicked()
 {
     // If not in edit mode, enter edit mode
     if(ui->save_editActors_pushButton->text() != "Save Changes")
-    {
-        ui->save_editActors_pushButton->setText("Save Changes");
-    }
+    { ui->save_editActors_pushButton->setText("Save Changes"); }
 
     // Enable use of save button
     ui->save_editActors_pushButton->setEnabled(true);
@@ -679,30 +677,22 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
 
             // Deactivate "add button"
             if(ui->add_editScenario_pushButton->isEnabled())
-            {
-                ui->add_editScenario_pushButton->setEnabled(false);
-            }
+            { ui->add_editScenario_pushButton->setEnabled(false); }
 
             // Set save status
             if(GetSaveStatus() == true)
-            {
-                SetSaveStatus(false);
-            }
+            { SetSaveStatus(false); }
         }
     }
     else // Add actor to existing scenario
     {
         // Enable save button
         if(!ui->saveChanges_editScenario_pushButton->isEnabled())
-        {
-            ui->saveChanges_editScenario_pushButton->setEnabled(true);
-        }
+        { ui->saveChanges_editScenario_pushButton->setEnabled(true); }
 
         // Set save status
         if(GetSaveStatus() == true)
-        {
-            SetSaveStatus(false);
-        }
+        { SetSaveStatus(false); }
 
         // If user has selected a valid row
         if(ui->actors_editScenario_tableView->currentIndex().row() != -1)
@@ -736,7 +726,6 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
                 warnPrompt.setText("WARNING");
                 warnPrompt.setInformativeText(warningMsg);
                 warnPrompt.setStandardButtons(QMessageBox::Ok);
-
                 warnPrompt.exec();
             }
             else
@@ -754,7 +743,7 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
                 // Add listing to tablewidget
                 tableManager->AddActorToScenarioTable(ui->scenarios_editScenario_tableWidget, toAdd);
 
-                // TODO Connect combobox to signal
+                // Connect combobox to signal
                 QObject::connect(tableManager->spinBoxes->at(tableManager->spinBoxes->size()-1), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
             }
         }
@@ -769,39 +758,13 @@ void MainWindow::on_actors_editScenario_tableView_clicked(const QModelIndex &ind
     // If "All Scenarios" selected on combobox
     if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
     {
-        // Enable "Add" button
-        if(!ui->add_editScenario_pushButton->isEnabled())
-        { ui->add_editScenario_pushButton->setEnabled(true); }
-
-        // Set "Add" button text
-        if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
-        { ui->add_editScenario_pushButton->setText("Create New Scenario"); }
-
-        // Disable "Delete" button
-        if(ui->remove_editScenario_pushButton->isEnabled())
-        { ui->remove_editScenario_pushButton->setEnabled(false); }
-
-        // Set "Delete" button text
-        if(ui->remove_editScenario_pushButton->text() != "Delete Scenario")
-        { ui->remove_editScenario_pushButton->setText("Delete Scenario"); }
+        // Configure UI Buttons
+        ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Delete Scenario");
     }
     else // Specific scenario selected
     {
-        // Enable "Add" button
-        if(!ui->add_editScenario_pushButton->isEnabled())
-        { ui->add_editScenario_pushButton->setEnabled(true); }
-
-        // Set "Add" button text
-        if(ui->add_editScenario_pushButton->text() != "Add Actor")
-        { ui->add_editScenario_pushButton->setText("Add Actor"); }
-
-        // Disable "Delete" button
-        if(ui->remove_editScenario_pushButton->isEnabled())
-        { ui->remove_editScenario_pushButton->setEnabled(false); }
-
-        // Set "Delete" button text
-        if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
-        { ui->remove_editScenario_pushButton->setText("Remove Actor"); }
+        // Configure UI Buttons
+        ConfigureScenarioUIButtons (true, "Add Actor", false, "Remove Actor");
     }
 }
 
@@ -813,39 +776,13 @@ void MainWindow::on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetI
     // If "All Scenarios" selected on combobox
     if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
     {
-        // Enable "Add" button
-        if(!ui->add_editScenario_pushButton->isEnabled())
-        { ui->add_editScenario_pushButton->setEnabled(true); }
-
-        // Set "Add" button text
-        if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
-        { ui->add_editScenario_pushButton->setText("Create New Scenario"); }
-
-        // Enable "Delete" button
-        if(!ui->remove_editScenario_pushButton->isEnabled())
-        { ui->remove_editScenario_pushButton->setEnabled(true); }
-
-        // Set "Delete" button text
-        if(ui->remove_editScenario_pushButton->text() != "Delete Scenario")
-        { ui->remove_editScenario_pushButton->setText("Delete Scenario"); }
+        // Configure UI Buttons
+        ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Delete Scenario");
     }
     else // Specific scenario selected
     {
-        // Disable "Add" button
-        if(ui->add_editScenario_pushButton->isEnabled())
-        { ui->add_editScenario_pushButton->setEnabled(false); }
-
-        // Set "Add" button text
-        if(ui->add_editScenario_pushButton->text() != "Add Actor")
-        { ui->add_editScenario_pushButton->setText("Add Actor"); }
-
-        // Enable "Delete" button
-        if(!ui->remove_editScenario_pushButton->isEnabled())
-        { ui->remove_editScenario_pushButton->setEnabled(true); }
-
-        // Set "Delete" button text
-        if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
-        { ui->remove_editScenario_pushButton->setText("Remove Actor"); }
+        // // Configure UI Buttons
+        ConfigureScenarioUIButtons (false, "Add Actor", true, "Remove Actor");
     }
 }
 
@@ -865,9 +802,6 @@ void MainWindow::on_saveChanges_editScenario_pushButton_clicked()
 
         // Load listing into vector
         listings->append(singleListing);
-
-        // DEBUG
-        qDebug() << "| ID: " << singleListing._id << "| Name:  " << singleListing._scenarioName << "| Quantity |" << singleListing._qty;
     }
 
     // Overwrite old scenario listing
@@ -878,9 +812,7 @@ void MainWindow::on_saveChanges_editScenario_pushButton_clicked()
 
     // Set save status
     if(GetSaveStatus() == false)
-    {
-        SetSaveStatus(true);
-    }
+    { SetSaveStatus(true); }
 }
 
 void MainWindow::on_remove_editScenario_pushButton_clicked()
@@ -916,9 +848,7 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
 
             // Set save status
             if(GetSaveStatus() == true)
-            {
-                SetSaveStatus(false);
-            }
+            { SetSaveStatus(false); }
         }
     }
     else // Else, they've chosen a specific scenario, and wish to remove an actor
@@ -934,9 +864,7 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
 
                 // Set save status
                 if(GetSaveStatus() == true)
-                {
-                    SetSaveStatus(false);
-                }
+                { SetSaveStatus(false); }
         }
         else // If user has not selected valid row, inform them
         {
@@ -949,17 +877,9 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
         }
     }
 
-    // Disable delete button
-    if(ui->remove_editScenario_pushButton->isEnabled())
-    {
-        ui->remove_editScenario_pushButton->setEnabled(false);
-    }
-
-    // Enable save button
-    if(!ui->saveChanges_editScenario_pushButton->isEnabled())
-    {
-        ui->saveChanges_editScenario_pushButton->setEnabled(true);
-    }
+    // Configure UI Buttons
+    ui->remove_editScenario_pushButton->setEnabled(false);
+    ui->saveChanges_editScenario_pushButton->setEnabled(true);
 }
 
 // Set status of saved data
@@ -980,8 +900,6 @@ bool MainWindow::GetSaveStatus() const
 // *************************************************************************************
 void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
 {
-
-
     // Inform user they have created an empty scenario and it will not be saved unless populated
     if(GetSaveStatus() == false)
     { 
@@ -1006,22 +924,6 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
         }
     }
 
-
-
-
-    /////////////////////////// UNSAVED CHANGES START
-
-    // DEBUG
-    qDebug() << "---START COMBOBOX INDEX CHANGED---";
-    if(!listings->isEmpty())
-    {
-        qDebug() << "OLD LISTINGS UNDER NAME" << listings->at(0)._scenarioName;
-        for(int index = 0; index < listings->size(); index++)
-        {
-            qDebug() << "| ID: " << listings->at(index)._id << "| Name:  " << listings->at(index)._scenarioName << "| Quantity |" << listings->at(index)._qty;
-        }
-    }
-
     // TODO if user attempts to leave the current scenario and it has unsaved changes, inform them
     if(ui->saveChanges_editScenario_pushButton->isEnabled())
     {
@@ -1032,16 +934,16 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
         unsavedScenarioChanges.setText("WARNING");
         unsavedScenarioChanges.setInformativeText("Unsaved changes will be lost. Would you like to leave without saving?");
         unsavedScenarioChanges.addButton(tr("Leave without saving"), QMessageBox::NoRole);
-
         unsavedScenarioChanges.exec();
 
         // If user selects "Save, please" then do so.
         // TODO If there's a way to force the button to click instead of copy/pasting the code from button below, that'd be nice
         if(unsavedScenarioChanges.clickedButton()==saveButton)
         {
-            // Pull data
+            // Initialize list
             listings->clear();
 
+            // Pull data from table
             for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
             {
                 // Collect data from table
@@ -1061,23 +963,8 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
             // If user has selected "all scenarios"
             if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
             {
-                // Change add button text
-                if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
-                {
-                    ui->add_editScenario_pushButton->setText("Create New Scenario");
-                }
-
-                // Change delete button text
-                if(ui->remove_editScenario_pushButton->text() != "Delete Scenario")
-                {
-                    ui->remove_editScenario_pushButton->setText("Delete Scenario");
-                }
-
-                // Disable delete button
-                if(ui->remove_editScenario_pushButton->isEnabled())
-                {
-                    ui->remove_editScenario_pushButton->setEnabled(false);
-                }
+                // Configure UI buttons
+                ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Delete Scenario");
 
                 // Initialize and populate bottom tableWidget
                 tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
@@ -1086,29 +973,11 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
             }
             else // Specific scenario is selected
             {
-                // Change add button text
-                if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
-                {
-                    ui->add_editScenario_pushButton->setText("Create New Scenario");
-                }
-
-                // Disable delete button
-                if(ui->remove_editScenario_pushButton->isEnabled())
-                {
-                    ui->remove_editScenario_pushButton->setEnabled(false);
-                }
-
-                // Change delete button text
-                if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
-                {
-                    ui->remove_editScenario_pushButton->setText("Remove Actor");
-                }
+                // Configure UI buttons
+                ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Remove Actor");
 
                 // Disable save button
-                if(ui->saveChanges_editScenario_pushButton->isEnabled())
-                {
-                    ui->saveChanges_editScenario_pushButton->setEnabled(false);
-                }
+                ui->saveChanges_editScenario_pushButton->setEnabled(false);
 
                 // Initialize, populate, and format bottom tablewidget
                 tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
@@ -1140,17 +1009,7 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
                 for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
                 {
                     QObject::connect(tableManager->spinBoxes->at(index), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
-
                 }
-            }
-
-            // Disable button
-            ui->saveChanges_editScenario_pushButton->setDisabled(true);
-
-            // Set save status
-            if(GetSaveStatus() == false)
-            {
-                SetSaveStatus(true);
             }
         } // End save changes
         else // Leave without saving
@@ -1158,23 +1017,8 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
             // If user has selected "all scenarios"
             if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
             {
-                // Change add button text
-                if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
-                {
-                    ui->add_editScenario_pushButton->setText("Create New Scenario");
-                }
-
-                // Change delete button text
-                if(ui->remove_editScenario_pushButton->text() != "Delete Scenario")
-                {
-                    ui->remove_editScenario_pushButton->setText("Delete Scenario");
-                }
-
-                // Disable delete button
-                if(ui->remove_editScenario_pushButton->isEnabled())
-                {
-                    ui->remove_editScenario_pushButton->setEnabled(false);
-                }
+                // Configure UI buttons
+                ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Delete Scenario");
 
                 // Initialize and populate bottom tableWidget
                 tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
@@ -1183,29 +1027,32 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
             }
             else // Specific scenario is selected
             {
-                // Change add button text
-                if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
-                {
-                    ui->add_editScenario_pushButton->setText("Create New Scenario");
-                }
+                // TODOCONFIG
+                ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Remove Actor");
 
-                // Disable delete button
-                if(ui->remove_editScenario_pushButton->isEnabled())
-                {
-                    ui->remove_editScenario_pushButton->setEnabled(false);
-                }
+//                // Change add button text
+//                if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
+//                {
+//                    ui->add_editScenario_pushButton->setText("Create New Scenario");
+//                }
 
-                // Change delete button text
-                if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
-                {
-                    ui->remove_editScenario_pushButton->setText("Remove Actor");
-                }
+//                // Disable delete button
+//                if(ui->remove_editScenario_pushButton->isEnabled())
+//                {
+//                    ui->remove_editScenario_pushButton->setEnabled(false);
+//                }
 
-                // Disable save button
-                if(ui->saveChanges_editScenario_pushButton->isEnabled())
-                {
-                    ui->saveChanges_editScenario_pushButton->setEnabled(false);
-                }
+//                // Change delete button text
+//                if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
+//                {
+//                    ui->remove_editScenario_pushButton->setText("Remove Actor");
+//                }
+
+//                // Disable save button
+//                if(ui->saveChanges_editScenario_pushButton->isEnabled())
+//                {
+//                    ui->saveChanges_editScenario_pushButton->setEnabled(false);
+//                }
 
                 // Initialize, populate, and format bottom tablewidget
                 tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
@@ -1241,30 +1088,21 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
                 } // End activate signals in spinbox
             } // End populate specific scenario
         } // End leave without saving
+
+        // Set save status
+        if(GetSaveStatus() == false)
+        { SetSaveStatus(true); }
+
+        ui->saveChanges_editScenario_pushButton->setEnabled(false);
+
     } // End unsaved changes found
-    else // If no unsaved changes
+    else // If no unsaved changes, navigate away
     {
-        // Change listing
         // If user has selected "all scenarios"
         if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
         {
-            // Change add button text
-            if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
-            {
-                ui->add_editScenario_pushButton->setText("Create New Scenario");
-            }
-
-            // Change delete button text
-            if(ui->remove_editScenario_pushButton->text() != "Delete Scenario")
-            {
-                ui->remove_editScenario_pushButton->setText("Delete Scenario");
-            }
-
-            // Disable delete button
-            if(ui->remove_editScenario_pushButton->isEnabled())
-            {
-                ui->remove_editScenario_pushButton->setEnabled(false);
-            }
+            // Configure UI Buttons
+            ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Delete Scenario");
 
             // Initialize and populate bottom tableWidget
             tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
@@ -1273,29 +1111,8 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
         }
         else // Specific scenario is selected
         {
-            // Change add button text
-            if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
-            {
-                ui->add_editScenario_pushButton->setText("Create New Scenario");
-            }
-
-            // Disable delete button
-            if(ui->remove_editScenario_pushButton->isEnabled())
-            {
-                ui->remove_editScenario_pushButton->setEnabled(false);
-            }
-
-            // Change delete button text
-            if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
-            {
-                ui->remove_editScenario_pushButton->setText("Remove Actor");
-            }
-
-            // Disable save button
-            if(ui->saveChanges_editScenario_pushButton->isEnabled())
-            {
-                ui->saveChanges_editScenario_pushButton->setEnabled(false);
-            }
+            // Configure UI Buttons
+            ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Remove Actor");
 
             // Initialize, populate, and format bottom tablewidget
             tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
@@ -1330,10 +1147,25 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
 
             }
         }
-
     }
 
     // Save old index and text
     previousIndex = ui->scenarioView_editScenario_comboBox->currentIndex();
     previousText = ui->scenarioView_editScenario_comboBox->currentText();
+}
+
+
+void MainWindow::ConfigureScenarioUIButtons (const bool &addButtonStatus, const QString &addButtonText, const bool &deleteButtonStatus, const QString &deleteButtonText)
+{
+    // Enable/disable add button
+    ui->add_editScenario_pushButton->setEnabled(addButtonStatus);
+
+    // Set add button text
+    ui->add_editScenario_pushButton->setText(addButtonText);
+
+    // Enable/disable delete button
+    ui->remove_editScenario_pushButton->setEnabled(deleteButtonStatus);
+
+    // Set delete button text
+    ui->remove_editScenario_pushButton->setText(deleteButtonText);
 }
