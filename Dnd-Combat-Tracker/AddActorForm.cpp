@@ -12,6 +12,8 @@ AddActorForm::AddActorForm(QWidget *parent, Database *data, QTableWidget *table)
     combat = table;
 
     ui->stackedWidget->setCurrentIndex(MENU);
+
+    InitializeInitTable();
 }
 
 AddActorForm::~AddActorForm()
@@ -50,8 +52,8 @@ void AddActorForm::on_cancelAddActorMenu_pushButton_clicked()
 // *************************************************************************************
 void AddActorForm::on_ok_addActor_pushButton_clicked()
 {
+    ui->stackedWidget->setCurrentIndex(INIT);
     SubmitCustomActor();
-    close();
 }
 
 // *************************************************************************************
@@ -67,12 +69,13 @@ void AddActorForm::on_back_addActor_pushButton_clicked()
 // *************************************************************************************
 void AddActorForm::InitializeAddCustom()
 {   
-    QStringList scenarioList = db->GetScenarioList();
-
-    // Clear dropdowns
-    ui->selectScenario_comboBox->clear();
-
-    ui->selectScenario_comboBox->addItems(scenarioList);
+    ui->name_custom_label->clear();
+    ui->maxHP_custom_spinBox->setValue(0);
+    ui->ac_custom_spinBox->setValue(0);
+    ui->dc_custom_spinBox->setValue(0);
+    ui->notes_custom_textEdit->clear();
+    ui->qty_custom_spinBox->setValue(1);
+    ui->qty_custom_spinBox->setEnabled(false);
 }
 
 // *************************************************************************************
@@ -85,6 +88,7 @@ void AddActorForm::InitializeAddPremade()
     // Clear dropdowns
     ui->name_premade_comboBox->clear();
     ui->scenario_premade_comboBox->clear();
+    ui->qty_premade_spinBox->setValue(1);
 
     // Create actor list
     actorList = db->GetActorList();
@@ -100,8 +104,8 @@ void AddActorForm::InitializeAddPremade()
 // *************************************************************************************
 void AddActorForm::on_ok_premade_pushButton_clicked()
 {
+    ui->stackedWidget->setCurrentIndex(INIT);
     SubmitPremadeActor();
-    close();
 }
 
 // *************************************************************************************
@@ -132,6 +136,15 @@ void AddActorForm::on_name_premade_comboBox_currentIndexChanged(const QString &a
     Actor displayedActor = db->GetActor(arg1);
 
     SetPremadeFields(displayedActor);
+
+    if(displayedActor.GetType() == "partymember" || displayedActor.GetType() == "companion")
+    {
+        ui->qty_premade_spinBox->setEnabled(false);
+    }
+    else
+    {
+        ui->qty_premade_spinBox->setEnabled(true);
+    }
 }
 
 // *************************************************************************************
@@ -175,9 +188,7 @@ void AddActorForm::on_scenario_premade_comboBox_currentIndexChanged(const QStrin
 // *************************************************************************************
 void AddActorForm::SubmitPremadeActor()
 {
-    CombatManager manager = CombatManager(combat);
     Actor premade;
-    int init;
 
     // Store data from form fields into actor object
     premade.SetName(ui->name_premade_comboBox->currentText());
@@ -186,9 +197,7 @@ void AddActorForm::SubmitPremadeActor()
     premade.SetSpellSaveDC(ui->dc_premade_lineEdit->text().toInt());
     premade.SetNotes(ui->notes_textBrowser->toPlainText());
 
-    init = ui->init_premade_spinBox->value();
-
-    manager.InsertActorToCombat(premade, init);
+    InsertActorToSetInit(premade, ui->qty_premade_spinBox->value());
 }
 
 // *************************************************************************************
@@ -196,20 +205,16 @@ void AddActorForm::SubmitPremadeActor()
 // *************************************************************************************
 void AddActorForm::SubmitCustomActor()
 {
-    CombatManager manager = CombatManager(combat);
     Actor custom;
-    int init;
 
     // Store data from form fields into actor object
-    custom.SetName(ui->name_lineEdit->text());
-    custom.SetHitPoints(ui->maxHP_spinBox->value());
-    custom.SetArmorClass(ui->ac_spinBox->value());
-    custom.SetSpellSaveDC(ui->dc_spinBox->value());
-    custom.SetNotes(ui->notes_textEdit->toPlainText());
+    custom.SetName(ui->name_custom_lineEdit->text());
+    custom.SetHitPoints(ui->maxHP_custom_spinBox->value());
+    custom.SetArmorClass(ui->ac_custom_spinBox->value());
+    custom.SetSpellSaveDC(ui->dc_custom_spinBox->value());
+    custom.SetNotes(ui->notes_custom_textEdit->toPlainText());
 
-    init = ui->init_spinBox->value();
-
-    manager.InsertActorToCombat(custom, init);
+    InsertActorToSetInit(custom, ui->qty_custom_spinBox->value());
 }
 
 // *************************************************************************************
@@ -231,5 +236,87 @@ void AddActorForm::on_stackedWidget_currentChanged(int arg1)
     {
         InitializeAddCustom();
         InitializeAddPremade();
+        DeleteInitRows();
+    }
+}
+
+void AddActorForm::on_addToCombat_pushButton_clicked()
+{
+
+}
+
+void AddActorForm::on_cancel_setInit_pushButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(MENU);
+}
+
+void AddActorForm::InsertActorToSetInit(Actor actor, int qty)
+{
+    for(int i = 0; i < qty; i++)
+    {
+        ui->setInit_tableWidget->insertRow(ui->setInit_tableWidget->rowCount());
+        QTableWidgetItem *name = new QTableWidgetItem("Name");
+
+        if(i == 0)
+        {
+            name->setData(0, actor.GetName());
+        }
+        else
+        {
+            name->setData(0, actor.GetName() +' '+ QString::number(i + 1));
+        }
+
+        QTableWidgetItem *hp = new QTableWidgetItem(QString::number(actor.GetHitPoints()));
+        QTableWidgetItem *ac = new QTableWidgetItem(QString::number(actor.GetArmorClass()));
+        QTableWidgetItem *dc = new QTableWidgetItem(QString::number(actor.GetSpellSaveDC()));
+        QTableWidgetItem *notes = new QTableWidgetItem(actor.GetNotes());
+
+        ui->setInit_tableWidget->setItem(i, NAME, name);
+        ui->setInit_tableWidget->setItem(i, HP, hp);
+        ui->setInit_tableWidget->setItem(i, AC, ac);
+        ui->setInit_tableWidget->setItem(i, DC, dc);
+        ui->setInit_tableWidget->setItem(i, NOTES, notes);
+
+        QSpinBox *initBox = new QSpinBox();
+        initBox->setRange(1, 30);
+
+        ui->setInit_tableWidget->setCellWidget(i, INITIATIVE, initBox);
+    }
+}
+
+void AddActorForm::InitializeInitTable()
+{
+    QStringList headers = {"Name", "HP", "AC", "DC", "Initiative", "Notes"};
+
+    ui->setInit_tableWidget->setColumnCount(headers.size());
+    ui->setInit_tableWidget->setHorizontalHeaderLabels(headers);
+    ui->setInit_tableWidget->setColumnWidth(0, 150);
+    ui->setInit_tableWidget->setEditTriggers(QTableView::NoEditTriggers);
+
+    ui->setInit_tableWidget->setColumnHidden(HP, true);
+    ui->setInit_tableWidget->setColumnHidden(AC, true);
+    ui->setInit_tableWidget->setColumnHidden(DC, true);
+    ui->setInit_tableWidget->setColumnHidden(NOTES, true);
+
+    DeleteInitRows();
+}
+
+void AddActorForm::DeleteInitRows()
+{
+    for(int i = 0; i < ui->setInit_tableWidget->rowCount(); i++)
+    {
+        ui->setInit_tableWidget->removeRow(0);
+    }
+}
+
+void AddActorForm::on_actorType_custom_comboBox_currentIndexChanged(const QString &arg1)
+{
+    if(arg1 == "partymember" || arg1 == "companion")
+    {
+        ui->qty_custom_spinBox->setEnabled(false);
+    }
+    else
+    {
+        ui->qty_custom_spinBox->setEnabled(true);
     }
 }

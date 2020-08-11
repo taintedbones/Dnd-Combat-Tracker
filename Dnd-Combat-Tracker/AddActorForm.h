@@ -10,8 +10,6 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class AddActorForm; }
 QT_END_NAMESPACE
 
-enum Pages { MENU, CUSTOM, PREMADE };
-
 class AddActorForm : public QWidget
 {
     Q_OBJECT
@@ -69,12 +67,26 @@ private slots:
      // Reinitializes the add pages each time the user goes back to the menu
      void on_stackedWidget_currentChanged(int arg1);
 
+     void on_addToCombat_pushButton_clicked();
+
+     void on_cancel_setInit_pushButton_clicked();
+
+     void InsertActorToSetInit(Actor actor, int qty);
+
+     void InitializeInitTable();
+
+     void DeleteInitRows();
+
+     void on_actorType_custom_comboBox_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::AddActorForm *ui;
     Database *db;
     QVector<Actor> *actorList;
     Actor createdActor;
     QTableWidget *combat;
-};
 
+    enum Pages { MENU, CUSTOM, PREMADE, INIT };
+    enum Cols { NAME, HP, AC, DC, INITIATIVE, NOTES };
+};
 #endif // ADDACTORFORM_H
