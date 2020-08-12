@@ -345,36 +345,6 @@ void MainWindow::EnableSaveButton()
 }
 
 // *************************************************************************************
-//  Formats and sets table model for scenario tableview
-// *************************************************************************************
-void MainWindow::FormatScenarioTableView(QString scenarioName)
-{
-    editScenarioModel = new DbEditTableModel(this, db);
-
-    // TODO - Fix deadcode
-
-    if(scenarioName == "All Scenarios")
-    {
-//        editScenarioModel->InitializeScenarios();
-
-//        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
-//        ui->scenarios_editScenario_tableView->setColumnHidden(0, false);
-    }
-    else
-    {
-//        editScenarioModel->InitializeScenarioByName(scenarioName);
-
-//        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
-//        ui->scenarios_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
-//        ui->scenarios_editScenario_tableView->setColumnHidden(7, true);
-//        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
-//        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
-    }
-
-//    ui->scenarios_editScenario_tableView->update();
-}
-
-// *************************************************************************************
 //  Formats and sets table model for scenario actors table view
 // *************************************************************************************
 void MainWindow::FormatEditScenarioActorsTableView()
@@ -413,7 +383,6 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
         }
 
         FormatEditScenarioActorsTableView();
-        FormatScenarioTableView(ui->scenarioView_editScenario_comboBox->currentText());
     }
 }
 
@@ -1029,30 +998,6 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
             {
                 // TODOCONFIG
                 ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Remove Actor");
-
-//                // Change add button text
-//                if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
-//                {
-//                    ui->add_editScenario_pushButton->setText("Create New Scenario");
-//                }
-
-//                // Disable delete button
-//                if(ui->remove_editScenario_pushButton->isEnabled())
-//                {
-//                    ui->remove_editScenario_pushButton->setEnabled(false);
-//                }
-
-//                // Change delete button text
-//                if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
-//                {
-//                    ui->remove_editScenario_pushButton->setText("Remove Actor");
-//                }
-
-//                // Disable save button
-//                if(ui->saveChanges_editScenario_pushButton->isEnabled())
-//                {
-//                    ui->saveChanges_editScenario_pushButton->setEnabled(false);
-//                }
 
                 // Initialize, populate, and format bottom tablewidget
                 tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
