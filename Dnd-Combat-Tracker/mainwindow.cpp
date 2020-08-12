@@ -1184,3 +1184,38 @@ void MainWindow::on_actors_editScenario_tableView_doubleClicked(const QModelInde
         }
     }
 }
+
+// User can double-click actor from scenario to remove them or double-click scenario name to navigate to scenario
+void MainWindow::on_scenarios_editScenario_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
+{
+    // Get row
+    int row = item->row();
+    // If user has selected scenario name, navigate to scenario listing
+    if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
+    {
+        // Get name of scenario to find
+        QString scenarioName = ui->scenarios_editScenario_tableWidget->model()->index(item->row(),tableManager->SC_ID).data().toString();
+
+        // Find index of scenario in combobox
+        int indexFound = ui->scenarioView_editScenario_comboBox->findText(scenarioName);
+
+        // Navigate to index of listing
+        ui->scenarioView_editScenario_comboBox->setCurrentIndex(indexFound);
+
+        // Initialize, populate, and format bottom tablewidget
+        tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
+        tableManager->PopulateSelectedScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
+        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->SC_QTY, false, true);
+
+
+    }
+    else // If user has selected an actor, remove them from scenario
+    {
+        // remove actor from bottom table widget
+        ui->scenarios_editScenario_tableWidget->removeRow(row);
+
+        // Set save status
+        if(_saved == true)
+        { _saved = false; }
+    }
+}
