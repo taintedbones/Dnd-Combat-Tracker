@@ -8,6 +8,7 @@
 #include <QtSql>
 #include <QString>
 #include "Actor.h"
+#include "ScenarioListing.h"
 
 class Database : public QSqlDatabase
 {
@@ -51,11 +52,11 @@ public:
     // Get quantities of given scenario table
     QVector<int>* GetScenarioQtys(const QString &scenarioName);
 
-    // Add scenario to DB
+    // Save scenario changes to DB
+    void SaveChangesToScenario(QVector<ScenarioListing>* scenarioListings);
 
-    // Edit scenario in DB
-
-    // Delete scenario from DB
+    // Delete scenario from db
+    void DeleteScenario(const QString &scenarioName);
 
     // Constructor
     Database(QString path, QString driver);
@@ -67,10 +68,9 @@ private:
     QVector<Actor>* actorList = nullptr; // list of actor profiles
     QVector<Actor>* combatList = nullptr; // list of actor profiles added to combat
     QVector<Actor>* actorsInScenario = nullptr; // list of actors in specific scenario
-    QVector<int> *scenarioQtysList;
-    QStringList scenarioList;
+    QVector<int> *scenarioQtysList = nullptr; // list of quantities held in specific scenario
+    QStringList scenarioList; // List of scenario names
     QSqlQuery query; // Reusable query for all class methods
-
     enum ActorProfile { ID, NAME , HP, AC, DC, NOTES, TYPE };
 
 };

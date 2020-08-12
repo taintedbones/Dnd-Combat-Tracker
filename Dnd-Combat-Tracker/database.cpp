@@ -197,7 +197,7 @@ Actor Database::GetActor(QString name)
             foundActor.SetArmorClass(query.value(AC).toInt());
             foundActor.SetSpellSaveDC(query.value(DC).toInt());
             foundActor.SetNotes(query.value(NOTES).toString());
-            foundActor.SetScenario(GetScenarioByID(foundActor.GetID()));
+            foundActor.SetType(query.value(TYPE).toString());
         }
     }
     else
@@ -229,7 +229,9 @@ void Database::AddActor(Actor* toAdd)
     if(!query.exec()) { qDebug() << query.lastError().text(); }
 }
 
-// Edit actor in DB
+// *************************************************************************************
+// Edit actor listing in database
+// *************************************************************************************
 void Database::EditActor(Actor *toEdit)
 {
         query.prepare("UPDATE actors "
@@ -254,7 +256,9 @@ void Database::EditActor(Actor *toEdit)
         if(!query.exec()) { qDebug() << query.lastError().text(); }
 }
 
-// Delete actor from DB
+// *************************************************************************************
+// Delete actor from database
+// *************************************************************************************
 void Database::DeleteActor(const int &actorID)
 {
     query.prepare("DELETE FROM actors WHERE actorID = :actorID");
@@ -265,7 +269,9 @@ void Database::DeleteActor(const int &actorID)
     if(!query.exec()) { qDebug() << query.lastError().text(); }
 }
 
-// Get actor list by scenario name
+// *************************************************************************************
+// Get list of actors by scenario name
+// *************************************************************************************
 QVector<Actor>* Database::GetActorsByScenario(const QString &scenarioName)
 {
     Actor actor; // actor to add
@@ -302,8 +308,40 @@ QVector<Actor>* Database::GetActorsByScenario(const QString &scenarioName)
     return actorsInScenario;
 }
 
-// TODO Add scenario to DB
+// *************************************************************************************
+// Save scenario listing changes to db
+// *************************************************************************************
+void Database::SaveChangesToScenario(QVector<ScenarioListing>* scenarioListings)
+{
+    // Delete old listings
+    query.prepare("DELETE FROM scenarios WHERE scenarioName = :scenarioName");
+    query.bindValue(":scenarioName", scenarioListings->at(0)._scenarioName);
 
-// TODO Edit scenario in DB
+    // Print error if unsuccessful
+    if(!query.exec()) { qDebug() << "Delete Error" << query.lastError().text(); }
 
-// TODO Delete scenario from DB
+    // Add new listing data to scenarios table
+    for(int index = 0; index < scenarioListings->size(); index++)
+    {
+        query.prepare( "INSERT INTO scenarios VALUES (:actorID, :scenarioName, :qty)" );
+        query.bindValue(":actorID", scenarioListings->at(index)._id);
+        query.bindValue(":scenarioName", scenarioListings->at(index)._scenarioName);
+        query.bindValue(":qty", scenarioListings->at(index)._qty);
+
+        // Print error if unsuccessful
+        if(!query.exec()) { qDebug() << "Write Error" << query.lastError().text(); }
+    }
+}
+
+// *************************************************************************************
+// Delete scenario from db
+// *************************************************************************************
+void Database::DeleteScenario(const QString &scenarioName)
+{
+    // Delete old listings
+    query.prepare("DELETE FROM scenarios WHERE scenarioName = :scenarioName");
+    query.bindValue(":scenarioName", scenarioName);
+
+    // Print error if unsuccessful
+    if(!query.exec()) { qDebug() << query.lastError().text(); }
+}

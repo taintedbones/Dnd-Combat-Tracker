@@ -9,6 +9,7 @@
 #include "TableModel.h"
 #include "AddActorForm.h"
 #include "CombatManager.h"
+#include "ScenarioListing.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -30,8 +31,6 @@ public:
 
     // Database Options - Actors - Combobox
     enum DbEditComboBoxPositions { DB_PARTY, DB_CREATURE, DB_COMPANION, DB_EFFECT };
-
-
 
     QStringList addActorsComboBoxLabels = { "All Actors", "Partymembers", "Creatures", "Companions", "Effects" };
 
@@ -124,10 +123,6 @@ private slots:
     //  Formats and sets table model for scenario actors table view
     void FormatEditScenarioActorsTableView();
 
-    //  Reformats scenario tableview to display scenario listing or actors for selected
-    //      scenario
-    void on_scenarioView_editScenario_comboBox_currentIndexChanged(const QString &arg1);
-
     void on_addActor_dbEdit_pushButton_clicked();
 
     void on_save_editActors_pushButton_clicked();
@@ -150,9 +145,18 @@ private slots:
 
     void on_saveChanges_editScenario_pushButton_clicked();
 
+    void on_remove_editScenario_pushButton_clicked();
+
+    void on_scenarioView_editScenario_comboBox_activated(int index);
+
     // Helper Functions
     void ClearDBFields();
     void EnableSaveButton();
+    void SetSaveStatus(const bool saved);
+    bool GetSaveStatus() const;
+    void ConfigureScenarioUIButtons (const bool &addButtonStatus, const QString &addButtonText, const bool &deleteButtonStatus, const QString &deleteButtonText);
+
+
 
 
 private:
@@ -174,5 +178,14 @@ private:
     DbEditTableModel *editActorsModel = nullptr;
     DbEditTableModel *editScenarioModel = nullptr;
     DbEditTableModel *editScenarioActorsModel = nullptr;
+
+    // DEBUG: Previous index checking
+    QVector<ScenarioListing> *listings = nullptr;
+    ScenarioListing singleListing;
+    int previousIndex = 0;
+    QString previousText = "";
+
+    // Flag to determine if data has been saved or not
+    bool _saved;
 };
 #endif // MAINWINDOW_H
