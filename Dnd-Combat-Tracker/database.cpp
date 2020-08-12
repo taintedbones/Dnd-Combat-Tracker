@@ -345,3 +345,25 @@ void Database::DeleteScenario(const QString &scenarioName)
     // Print error if unsuccessful
     if(!query.exec()) { qDebug() << query.lastError().text(); }
 }
+
+bool Database::IsInDatabase(QString name)
+{
+    bool found = false;
+
+    query.prepare("SELECT name FROM actors WHERE name = :name");
+    query.bindValue(":name", name);
+
+    if(query.exec())
+    {
+        if(query.next())
+        {
+            found = true;
+        }
+    }
+    else
+    {
+        qDebug() << query.lastError().text();
+    }
+
+    return found;
+}

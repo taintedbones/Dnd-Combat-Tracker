@@ -28,7 +28,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="selectAddType_page">
     <widget class="QWidget" name="verticalLayoutWidget_2">
@@ -294,7 +294,7 @@
          <number>10</number>
         </property>
         <item>
-         <widget class="QPushButton" name="ok_addActor_pushButton">
+         <widget class="QPushButton" name="back_addActor_pushButton">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -302,7 +302,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Ok</string>
+           <string>Back</string>
           </property>
          </widget>
         </item>
@@ -320,7 +320,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="back_addActor_pushButton">
+         <widget class="QPushButton" name="ok_addActor_pushButton">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -328,7 +328,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Back</string>
+           <string>Ok</string>
           </property>
          </widget>
         </item>
@@ -390,19 +390,6 @@
          <number>8</number>
         </property>
         <item row="0" column="0">
-         <widget class="QLabel" name="scenario_premade_label">
-          <property name="text">
-           <string>Scenario:</string>
-          </property>
-          <property name="buddy">
-           <cstring>scenario_premade_comboBox</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="scenario_premade_comboBox"/>
-        </item>
-        <item row="1" column="0">
          <widget class="QLabel" name="name_premade_label">
           <property name="text">
            <string>Actor:</string>
@@ -412,34 +399,10 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
+        <item row="0" column="1">
          <widget class="QComboBox" name="name_premade_comboBox"/>
         </item>
-        <item row="5" column="1">
-         <widget class="QTextBrowser" name="notes_textBrowser">
-          <property name="documentTitle">
-           <string>Notes</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="notes_premade_label">
-          <property name="text">
-           <string>Notes:</string>
-          </property>
-          <property name="buddy">
-           <cstring>notes_textBrowser</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="maxHP_premade_lineEdit">
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
+        <item row="1" column="0">
          <widget class="QLabel" name="maxHP_premade_label">
           <property name="text">
            <string>Max HP:</string>
@@ -449,7 +412,14 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="maxHP_premade_lineEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
          <widget class="QLabel" name="ac_premade_label">
           <property name="text">
            <string>AC:</string>
@@ -459,14 +429,14 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="2" column="1">
          <widget class="QLineEdit" name="ac_premade_lineEdit">
           <property name="readOnly">
            <bool>true</bool>
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="dc_premade_label">
           <property name="text">
            <string>DC:</string>
@@ -476,14 +446,31 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
+        <item row="3" column="1">
          <widget class="QLineEdit" name="dc_premade_lineEdit">
           <property name="readOnly">
            <bool>true</bool>
           </property>
          </widget>
         </item>
-        <item row="6" column="0">
+        <item row="4" column="0">
+         <widget class="QLabel" name="notes_premade_label">
+          <property name="text">
+           <string>Notes:</string>
+          </property>
+          <property name="buddy">
+           <cstring>notes_textBrowser</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QTextBrowser" name="notes_textBrowser">
+          <property name="documentTitle">
+           <string>Notes</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
          <widget class="QLabel" name="qty_premade_label">
           <property name="text">
            <string>Quantity:</string>
@@ -493,7 +480,7 @@
           </property>
          </widget>
         </item>
-        <item row="6" column="1">
+        <item row="5" column="1">
          <widget class="QSpinBox" name="qty_premade_spinBox"/>
         </item>
        </layout>
@@ -517,9 +504,9 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QPushButton" name="ok_premade_pushButton">
+         <widget class="QPushButton" name="back_premade_pushButton">
           <property name="text">
-           <string>Ok</string>
+           <string>Back</string>
           </property>
          </widget>
         </item>
@@ -537,9 +524,9 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="back_premade_pushButton">
+         <widget class="QPushButton" name="ok_premade_pushButton">
           <property name="text">
-           <string>Back</string>
+           <string>Ok</string>
           </property>
          </widget>
         </item>
@@ -591,9 +578,9 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QPushButton" name="addToCombat_pushButton">
+         <widget class="QPushButton" name="cancel_setInit_pushButton">
           <property name="text">
-           <string>Add To Combat</string>
+           <string>Cancel</string>
           </property>
          </widget>
         </item>
@@ -611,9 +598,9 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="cancel_setInit_pushButton">
+         <widget class="QPushButton" name="addToCombat_pushButton">
           <property name="text">
-           <string>Cancel</string>
+           <string>Add To Combat</string>
           </property>
          </widget>
         </item>

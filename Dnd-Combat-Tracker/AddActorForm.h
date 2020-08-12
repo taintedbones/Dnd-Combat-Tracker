@@ -37,22 +37,22 @@ private slots:
      // Closes modal window
      void on_cancelAddActorMenu_pushButton_clicked();
 
-     // Adds custom actor to combat
+     // Adds custom actor in specified quantity to setInit table
      void on_ok_addActor_pushButton_clicked();
 
      // Navigates user to Menu from Add Custom Actor Page
      void on_back_addActor_pushButton_clicked();
 
      // Initializes all forms in Add Custom Actor Page
-     void InitializeAddCustom();
+     void ResetAddCustomFields();
 
      // Initializes all forms in Add Premade Actor Page
-     void InitializeAddPremade();
+     void ResetAddPremadeFields();
 
      // Navigates user to Menu from Premade Actor Page
      void on_back_premade_pushButton_clicked();
 
-     // Adds selected actor to combat table
+     // Adds selected actor in specified quantity to setInit table
      void on_ok_premade_pushButton_clicked();
 
      // Sets all the fields on premade page to data of passed in actor
@@ -61,23 +61,33 @@ private slots:
      // Auto fills the premade actor data fields for the current actor
      void on_name_premade_comboBox_currentIndexChanged(const QString &arg1);
 
-     // Changes displayed names in premade actor combo box to match the current scenario
-     void on_scenario_premade_comboBox_currentIndexChanged(const QString &arg1);
-
      // Reinitializes the add pages each time the user goes back to the menu
      void on_stackedWidget_currentChanged(int arg1);
 
+     // Adds the actors from setInit to the combat and closes the modal window
      void on_addToCombat_pushButton_clicked();
 
+     // Navigates user from setInit page to whichever Add Actor page they were previously on
      void on_cancel_setInit_pushButton_clicked();
 
+     // Inserts the passed in actor, with the passed in quantity, to the setInit table widget
      void InsertActorToSetInit(Actor actor, int qty);
 
+     // Initializes formatting for setInit table widget
      void InitializeInitTable();
 
+     //  Deletes all rows in setInit table widget
      void DeleteInitRows();
 
+     // Enables or disables qty spinbox depending on custom actor type
      void on_actorType_custom_comboBox_currentIndexChanged(const QString &arg1);
+
+     // Inserts each actor from the setInit table into the combat table on mainwindow
+     void AddToCombat();
+
+     void on_name_custom_lineEdit_textChanged(const QString &arg1);
+
+     void UpdatePremadeActors();
 
 private:
     Ui::AddActorForm *ui;
@@ -85,6 +95,7 @@ private:
     QVector<Actor> *actorList;
     Actor createdActor;
     QTableWidget *combat;
+    int initCancelButtonIndex;
 
     enum Pages { MENU, CUSTOM, PREMADE, INIT };
     enum Cols { NAME, HP, AC, DC, INITIATIVE, NOTES };
