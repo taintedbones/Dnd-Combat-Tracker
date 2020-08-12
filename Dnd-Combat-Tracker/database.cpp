@@ -8,7 +8,7 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
 
     if(open())
     {
-        qDebug() << "Database opened sucessfully";
+        qDebug() << "Database opened successfully";
     }
     else {
         qDebug() << this->lastError().text();
@@ -17,9 +17,16 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
     // Create Actor List
     actorList = new QVector<Actor>;
 
-    // Create party list
+    // Create Party List
     combatList = new QVector<Actor>;
+
+    // Create Scenario List
+    actorsInScenario = new QVector<Actor>;
+
+    //TODO what does this do?
     scenarioList.clear();
+
+    scenarioQtysList = new QVector<int>;
 }
 
 // *************************************************************************************
@@ -27,18 +34,6 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
 // *************************************************************************************
 void Database::CreateActorList()
 {
-    // These temp variables are here because the compiler isnt letting me assign the
-    // values of object Actor directly using the values of object query. Also,
-    // I could just use two variables, but I created more for readability.
-    QString name;
-    int id;
-    int hitpoints;
-    int armorClass;
-    int spellDC;
-    QString notes;
-    QString type;
-    QString scenario;
-
     Actor actor; // temp object for loading actorList
 
     query.prepare("SELECT * FROM actors");
@@ -48,29 +43,13 @@ void Database::CreateActorList()
         while(query.next())
         {
             // Populate attributes
-            id = query.value(ID).toInt();
-            actor.SetID(id);
-
-                // Name
-            name = query.value(NAME).toString();
-            actor.SetName(name);
-                // HP
-            hitpoints = query.value(HP).toInt();
-            actor.SetHitPoints(hitpoints);
-                // AC
-            armorClass = query.value(AC).toInt();
-            actor.SetArmorClass(armorClass);
-                // DC
-            spellDC = query.value(DC).toInt();
-            actor.SetSpellSaveDC(spellDC);
-                // Notes
-            notes = query.value(NOTES).toString();
-            actor.SetNotes(notes);
-
-                // Type
-            type = query.value(TYPE).toString();
-            actor.SetType(type);
-
+            actor.SetID((query.value(ID).toInt()));
+            actor.SetName(query.value(NAME).toString());
+            actor.SetHitPoints(query.value(HP).toInt());
+            actor.SetArmorClass(query.value(AC).toInt());
+            actor.SetSpellSaveDC(query.value(DC).toInt());
+            actor.SetNotes(query.value(NOTES).toString());
+            actor.SetType(query.value(TYPE).toString());
             // Add Actor to List
             actorList->push_back(actor);
         }
@@ -107,19 +86,20 @@ void Database::CreatePartyList()
 // *************************************************************************************
 void Database::CreateScenarioList()
 {
-     query.prepare("SELECT DISTINCT scenarioName FROM scenarios");
+    scenarioList.clear();
+    query.prepare("SELECT DISTINCT scenarioName FROM scenarios");
 
-     if(query.exec())
-     {
-         while(query.next())
-         {
-            scenarioList.append(query.value(0).toString());
-         }
-     }
-     else // Print error if query is unsuccessful
-     {
-         qDebug() << query.lastError().text();
-     }
+    if(query.exec())
+    {
+        while(query.next())
+        {
+           scenarioList.append(query.value(0).toString());
+        }
+    }
+    else // Print error if query is unsuccessful
+    {
+        qDebug() << query.lastError().text();
+    }
 }
 
 // *************************************************************************************
@@ -172,6 +152,32 @@ QStringList Database::GetScenarioList() const
 }
 
 // *************************************************************************************
+// Generate and return list of quantities of actors in given scenario name
+// *************************************************************************************
+QVector<int>* Database::GetScenarioQtys(const QString &scenarioName)
+{
+    scenarioQtysList->clear();
+
+    query.prepare("SELECT quantity FROM scenarios WHERE scenarioName =:scenarioName");
+    query.bindValue(":scenarioName", scenarioName);
+
+    // If successful, assign values to vector and return
+    if(query.exec())
+    {
+        while(query.next())
+        {
+            scenarioQtysList->append(query.value(0).toInt());
+        }
+    }
+    else // Print error
+    {
+        qDebug() << query.lastError().text();
+    }
+
+    return scenarioQtysList;
+}
+
+// *************************************************************************************
 // Access data of passed in actor name
 // *************************************************************************************
 Actor Database::GetActor(QString name)
@@ -191,7 +197,7 @@ Actor Database::GetActor(QString name)
             foundActor.SetArmorClass(query.value(AC).toInt());
             foundActor.SetSpellSaveDC(query.value(DC).toInt());
             foundActor.SetNotes(query.value(NOTES).toString());
-            foundActor.SetScenario(GetScenarioByID(foundActor.GetID()));
+            foundActor.SetType(query.value(TYPE).toString());
         }
     }
     else
@@ -207,8 +213,6 @@ Actor Database::GetActor(QString name)
 // *************************************************************************************
 void Database::AddActor(Actor* toAdd)
 {
-    QSqlQuery query;
-
     // Prepare query
     query.prepare("INSERT INTO actors (name,health,armorClass,spellSaveDC,notes,type)"
                   "VALUES (:name,:health,:armorClass,:spellSaveDC,:notes,:type)");
@@ -225,11 +229,11 @@ void Database::AddActor(Actor* toAdd)
     if(!query.exec()) { qDebug() << query.lastError().text(); }
 }
 
-// Edit actor in DB
+// *************************************************************************************
+// Edit actor listing in database
+// *************************************************************************************
 void Database::EditActor(Actor *toEdit)
 {
-        QSqlQuery query;
-
         query.prepare("UPDATE actors "
                       "SET name = :name, "
                       "health = :health, "
@@ -252,11 +256,11 @@ void Database::EditActor(Actor *toEdit)
         if(!query.exec()) { qDebug() << query.lastError().text(); }
 }
 
-// Delete actor from DB
+// *************************************************************************************
+// Delete actor from database
+// *************************************************************************************
 void Database::DeleteActor(const int &actorID)
 {
-    QSqlQuery query;
-
     query.prepare("DELETE FROM actors WHERE actorID = :actorID");
 
     query.bindValue(":actorID", actorID);
@@ -265,8 +269,79 @@ void Database::DeleteActor(const int &actorID)
     if(!query.exec()) { qDebug() << query.lastError().text(); }
 }
 
-// Add scenario to DB
+// *************************************************************************************
+// Get list of actors by scenario name
+// *************************************************************************************
+QVector<Actor>* Database::GetActorsByScenario(const QString &scenarioName)
+{
+    Actor actor; // actor to add
 
-// Edit scenario in DB
+    actorsInScenario->clear();
 
-// Delete scenario from DB
+    query.prepare("SELECT actors.actorID, actors.name, actors.health, "
+                  "actors.armorClass, actors.spellSaveDC, actors.notes, actors.type "
+                  "FROM actors, scenarios "
+                  "WHERE scenarios.scenarioName = :scenarioName "
+                  "AND scenarios.actorID = actors.actorID");
+
+    query.bindValue(":scenarioName", scenarioName);
+
+    // Print error if unsuccessful
+    if(!query.exec()) { qDebug() << query.lastError().text(); }
+
+    // Add names to list
+    while(query.next())
+    {
+        // Load data into object
+        actor.SetID(query.value(0).toInt());
+        actor.SetName(query.value(1).toString());
+        actor.SetHitPoints(query.value(2).toInt());
+        actor.SetArmorClass(query.value(3).toInt());
+        actor.SetSpellSaveDC(query.value(4).toInt());
+        actor.SetNotes(query.value(5).toString());
+        actor.SetType(query.value(6).toString());
+
+        // Insert object
+        actorsInScenario->push_back(actor);
+    }
+
+    return actorsInScenario;
+}
+
+// *************************************************************************************
+// Save scenario listing changes to db
+// *************************************************************************************
+void Database::SaveChangesToScenario(QVector<ScenarioListing>* scenarioListings)
+{
+    // Delete old listings
+    query.prepare("DELETE FROM scenarios WHERE scenarioName = :scenarioName");
+    query.bindValue(":scenarioName", scenarioListings->at(0)._scenarioName);
+
+    // Print error if unsuccessful
+    if(!query.exec()) { qDebug() << "Delete Error" << query.lastError().text(); }
+
+    // Add new listing data to scenarios table
+    for(int index = 0; index < scenarioListings->size(); index++)
+    {
+        query.prepare( "INSERT INTO scenarios VALUES (:actorID, :scenarioName, :qty)" );
+        query.bindValue(":actorID", scenarioListings->at(index)._id);
+        query.bindValue(":scenarioName", scenarioListings->at(index)._scenarioName);
+        query.bindValue(":qty", scenarioListings->at(index)._qty);
+
+        // Print error if unsuccessful
+        if(!query.exec()) { qDebug() << "Write Error" << query.lastError().text(); }
+    }
+}
+
+// *************************************************************************************
+// Delete scenario from db
+// *************************************************************************************
+void Database::DeleteScenario(const QString &scenarioName)
+{
+    // Delete old listings
+    query.prepare("DELETE FROM scenarios WHERE scenarioName = :scenarioName");
+    query.bindValue(":scenarioName", scenarioName);
+
+    // Print error if unsuccessful
+    if(!query.exec()) { qDebug() << query.lastError().text(); }
+}

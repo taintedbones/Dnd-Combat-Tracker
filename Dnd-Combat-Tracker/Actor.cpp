@@ -25,9 +25,6 @@ void Actor::SetNotes(QString notes) { _notes = notes; }
 // Set type of actor
 void Actor::SetType(QString type) { _type = type; }
 
-// Set scenario of actor
-void Actor::SetScenario(QString scenario) { _scenario = scenario; }
-
     // Getters //
 
 // Get actor ID
@@ -54,8 +51,6 @@ QString Actor::GetNotes() const { return _notes; }
 // Get type of actor
 QString Actor::GetType() const { return _type; }
 
-//Get scenario of actor
-QString Actor::GetScenario() const { return _scenario; }
 
     // Constructors
 
@@ -68,11 +63,11 @@ Actor::Actor()
     _spellSaveDC = 0;
     _initiative = 0;
     _notes = "";
-    _scenario = "";
+    _type = "";
 }
 
 // Parameterized Constructor
-Actor::Actor(int id, QString name, int hitpoints, int armorClass, int spellSaveDC, int initiative, QString notes, QString scenario)
+Actor::Actor(int id, QString name, int hitpoints, int armorClass, int spellSaveDC, int initiative, QString notes, QString type)
 {
     _id = id;
     _name = name;
@@ -81,5 +76,5 @@ Actor::Actor(int id, QString name, int hitpoints, int armorClass, int spellSaveD
     _spellSaveDC = spellSaveDC;
     _initiative = initiative;
     _notes = notes;
-    _scenario = scenario;
+    _type = type;
 }

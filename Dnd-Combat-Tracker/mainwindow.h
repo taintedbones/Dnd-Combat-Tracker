@@ -3,11 +3,13 @@
 
 #include <QMainWindow>
 #include <QObject>
+#include <QInputDialog>
 #include "Database.h"
 #include "DbEditTableModel.h"
 #include "TableModel.h"
 #include "AddActorForm.h"
 #include "CombatManager.h"
+#include "ScenarioListing.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,12 +20,16 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    enum  pages {WELCOME, EDIT, ASSIGN, COMBAT, DB_EDIT };
+    // Program Main Pages
+    enum  pages { WELCOME, EDIT, ASSIGN, COMBAT, DB_EDIT };
+
+    // Database Options Tabs
+    enum dbOptions { EDIT_ACTORS, EDIT_SCENARIOS };
 
     // Add Actors Page ComboBox
     enum  addActorsComboBox { ALL, PARTY, CREATURES, COMPANIONS, EFFECTS };
 
-    // Database Options Combobox
+    // Database Options - Actors - Combobox
     enum DbEditComboBoxPositions { DB_PARTY, DB_CREATURE, DB_COMPANION, DB_EFFECT };
 
     QStringList addActorsComboBoxLabels = { "All Actors", "Partymembers", "Creatures", "Companions", "Effects" };
@@ -117,10 +123,6 @@ private slots:
     //  Formats and sets table model for scenario actors table view
     void FormatEditScenarioActorsTableView();
 
-    //  Reformats scenario tableview to display scenario listing or actors for selected
-    //      scenario
-    void on_scenarioView_editScenario_comboBox_currentIndexChanged(const QString &arg1);
-
     void on_addActor_dbEdit_pushButton_clicked();
 
     void on_save_editActors_pushButton_clicked();
@@ -131,10 +133,31 @@ private slots:
 
     void on_dbEdit_tableView_clicked();
 
+    void on_clear_editActors_pushButton_clicked();
+
+    void on_dbEdit_tabWidget_currentChanged(int index);
+
+    void on_add_editScenario_pushButton_clicked();
+
+    void on_actors_editScenario_tableView_clicked(const QModelIndex &index);
+
+    void on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetItem *item);
+
+    void on_saveChanges_editScenario_pushButton_clicked();
+
+    void on_remove_editScenario_pushButton_clicked();
+
+    void on_scenarioView_editScenario_comboBox_activated(int index);
+
     // Helper Functions
     void ClearDBFields();
+    void EnableSaveButton();
+    void SetSaveStatus(const bool saved);
+    bool GetSaveStatus() const;
+    void ConfigureScenarioUIButtons (const bool &addButtonStatus, const QString &addButtonText, const bool &deleteButtonStatus, const QString &deleteButtonText);
 
-    void on_clear_editActors_pushButton_clicked();
+
+
 
 private:
     Ui::MainWindow *ui;
@@ -153,5 +176,16 @@ private:
 
     // Models
     DbEditTableModel *editActorsModel = nullptr;
+    DbEditTableModel *editScenarioModel = nullptr;
+    DbEditTableModel *editScenarioActorsModel = nullptr;
+
+    // DEBUG: Previous index checking
+    QVector<ScenarioListing> *listings = nullptr;
+    ScenarioListing singleListing;
+    int previousIndex = 0;
+    QString previousText = "";
+
+    // Flag to determine if data has been saved or not
+    bool _saved;
 };
 #endif // MAINWINDOW_H

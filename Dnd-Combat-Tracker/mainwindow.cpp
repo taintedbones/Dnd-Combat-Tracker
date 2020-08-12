@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
+#include <QtGlobal>
+#include <QObject>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -27,13 +29,17 @@ MainWindow::MainWindow(QWidget *parent)
     // Populate list of partymembers
     db->CreatePartyList();
 
-    // START COMBOBOX INITIALIZATION
-
     // Populate Combobox
     ui->showActors_comboBox->addItems(addActorsComboBoxLabels);
 
-    // END COMBOBOX INITIALIZATION
+    // Set save status
+    SetSaveStatus(true);
+
     addActorForm = new AddActorForm(nullptr, db, ui->activeCombatTable_tableWidget);
+
+    // DEBUG
+    // Create scenario listings
+    listings = new QVector<ScenarioListing>;
 }
 
 MainWindow::~MainWindow()
@@ -60,7 +66,7 @@ void MainWindow::on_welcomeStart_pushButton_clicked()
         // Initialize & populate "combatList" TableWidget
     tableManager->InitializeAddActorTable(ui->combatTable_tableWidget, tableManager->SelectedListColCount, tableManager->SelectedListColNames);
     tableManager->PopulateAddActorTable(ui->combatTable_tableWidget, db->GetPartyList());
-    tableManager->InsertSpinBoxCol(ui->combatTable_tableWidget, 1, 1, tableManager->S_QTY);
+    tableManager->InsertSpinBoxCol(ui->combatTable_tableWidget, 1, 1, tableManager->S_QTY, true, false);
 }
 
 // *************************************************************************************
@@ -101,7 +107,7 @@ void MainWindow::on_next_editPage_pushButton_clicked()
 
         // Copy combat table to assignInit table
         tableManager->CopyTableToInitPage(ui->combatTable_tableWidget, ui->assignInit_tableWidget);
-        tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 30, tableManager->I_INIT);
+        tableManager->InsertSpinBoxCol(ui->assignInit_tableWidget, 1, 30, tableManager->I_INIT, false, false);
     }
 }
 
@@ -150,6 +156,7 @@ void MainWindow::on_endCombat_pushButton_clicked()
 
     ui->activeCombatTable_tableWidget->clear();
 
+    // TODO
     // This needs to call CreateActorList from db class because the
     // existing one has been altered.
 
@@ -330,12 +337,11 @@ void MainWindow::on_actorTable_tableWidget_itemDoubleClicked(QTableWidgetItem *i
 }
 
 // *************************************************************************************
-//  Reformats scenario tableview to display scenario listing or actors for selected
-//      scenario
+//  Enables save button
 // *************************************************************************************
-void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const QString &arg1)
+void MainWindow::EnableSaveButton()
 {
-    FormatScenarioTableView(arg1);
+    ui->saveChanges_editScenario_pushButton->setEnabled(true);
 }
 
 // *************************************************************************************
@@ -343,27 +349,29 @@ void MainWindow::on_scenarioView_editScenario_comboBox_currentIndexChanged(const
 // *************************************************************************************
 void MainWindow::FormatScenarioTableView(QString scenarioName)
 {
-    DbEditTableModel *editScenarioModel = new DbEditTableModel(this, db);
+    editScenarioModel = new DbEditTableModel(this, db);
+
+    // TODO - Fix deadcode
 
     if(scenarioName == "All Scenarios")
     {
-        editScenarioModel->InitializeScenarios();
+//        editScenarioModel->InitializeScenarios();
 
-        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
-        ui->scenarios_editScenario_tableView->setColumnHidden(0, false);
+//        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
+//        ui->scenarios_editScenario_tableView->setColumnHidden(0, false);
     }
     else
     {
-        editScenarioModel->InitializeScenarioByName(scenarioName);
+//        editScenarioModel->InitializeScenarioByName(scenarioName);
 
-        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
-        ui->scenarios_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
-        ui->scenarios_editScenario_tableView->setColumnHidden(7, true);
-        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
-        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
+//        ui->scenarios_editScenario_tableView->setModel(editScenarioModel);
+//        ui->scenarios_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
+//        ui->scenarios_editScenario_tableView->setColumnHidden(7, true);
+//        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
+//        ui->scenarios_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
     }
 
-    ui->scenarios_editScenario_tableView->update();
+//    ui->scenarios_editScenario_tableView->update();
 }
 
 // *************************************************************************************
@@ -371,12 +379,13 @@ void MainWindow::FormatScenarioTableView(QString scenarioName)
 // *************************************************************************************
 void MainWindow::FormatEditScenarioActorsTableView()
 {
-    DbEditTableModel *editScenarioActorsModel = new DbEditTableModel(this, db);
+    editScenarioActorsModel = new DbEditTableModel(this, db);
 
     ui->actors_editScenario_tableView->setModel(editScenarioActorsModel);
     ui->actors_editScenario_tableView->setColumnHidden(tableManager->D_ID, true);
     ui->actors_editScenario_tableView->setColumnWidth(tableManager->D_NOTES, 400);
     ui->actors_editScenario_tableView->setColumnWidth(tableManager->D_NAME, 200);
+    ui->actors_editScenario_tableView->verticalHeader()->hide();
 }
 
 // *************************************************************************************
@@ -398,7 +407,10 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
         scenarios = db->GetScenarioList();
         scenarios.prepend("All Scenarios");
 
-        ui->scenarioView_editScenario_comboBox->addItems(scenarios);
+        if(ui->scenarioView_editScenario_comboBox->count()==0)
+        {
+            ui->scenarioView_editScenario_comboBox->addItems(scenarios);
+        }
 
         FormatEditScenarioActorsTableView();
         FormatScenarioTableView(ui->scenarioView_editScenario_comboBox->currentText());
@@ -552,7 +564,7 @@ void MainWindow::on_save_editActors_pushButton_clicked()
 // *************************************************************************************
 void MainWindow::on_help_dbEdit__pushButton_clicked()
 {
-
+    //TODO Create popup warning window with instructions for database options
 }
 
 // *************************************************************************************
@@ -562,9 +574,7 @@ void MainWindow::on_dbEdit_tableView_clicked()
 {
     // If not in edit mode, enter edit mode
     if(ui->save_editActors_pushButton->text() != "Save Changes")
-    {
-        ui->save_editActors_pushButton->setText("Save Changes");
-    }
+    { ui->save_editActors_pushButton->setText("Save Changes"); }
 
     // Enable use of save button
     ui->save_editActors_pushButton->setEnabled(true);
@@ -594,6 +604,25 @@ void MainWindow::on_dbEdit_tableView_clicked()
     else { qDebug() << "Makeshift switch failed"; }
 }
 
+void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
+{
+    if(index == EDIT_SCENARIOS)
+    {
+        // Reset buttons
+        ui->add_editScenario_pushButton->setText("Create New Scenario");
+        ui->remove_editScenario_pushButton->setEnabled(false);
+        ui->saveChanges_editScenario_pushButton->setEnabled(false);
+
+        // Reset dropdown
+        tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
+        tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+        ui->scenarioView_editScenario_comboBox->setCurrentIndex(0);
+
+        // Show table data
+        ui->scenarios_editScenario_tableWidget->setColumnHidden(0, false);
+    }
+}
+
 
 // *************************************************************************************
 //  PushButton for user to clear fields on DB edit page
@@ -615,4 +644,528 @@ void MainWindow::ClearDBFields()
 
 }
 
+// *************************************************************************************
+//  Edit-Scenario - PushButton "Add" for user to create scenarios or add actors to existing scenario
+// *************************************************************************************
+void MainWindow::on_add_editScenario_pushButton_clicked()
+{
+    // New Scenario Creation
+    if(ui->scenarioView_editScenario_comboBox->currentIndex() == 0)
+    {
+        bool ok = false;
+        QInputDialog scenarioDialogue;
 
+        // Get scenario name from user
+        QString scenarioName = scenarioDialogue.getText(this, "Create New Scenario", "Scenario Name: ", QLineEdit::Normal, "", &ok);
+
+        // While scenario name is empty, reprompt
+        while (ok && scenarioName.isEmpty())
+        {
+            scenarioName = scenarioDialogue.getText(this, "Create New Scenario", "Invalid Input. Please Enter Scenario name: ", QLineEdit::Normal, "", &ok);
+        }
+
+        if(scenarioName != "")
+        {
+            // Add scenario name to combobox list
+            ui->scenarioView_editScenario_comboBox->addItem(scenarioName);
+
+            // Select new scenario
+            ui->scenarioView_editScenario_comboBox->setCurrentIndex(ui->scenarioView_editScenario_comboBox->count() -1);
+
+            // Initialize tablewidget
+            tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
+
+            // Deactivate "add button"
+            if(ui->add_editScenario_pushButton->isEnabled())
+            { ui->add_editScenario_pushButton->setEnabled(false); }
+
+            // Set save status
+            if(GetSaveStatus() == true)
+            { SetSaveStatus(false); }
+        }
+    }
+    else // Add actor to existing scenario
+    {
+        // Enable save button
+        if(!ui->saveChanges_editScenario_pushButton->isEnabled())
+        { ui->saveChanges_editScenario_pushButton->setEnabled(true); }
+
+        // Set save status
+        if(GetSaveStatus() == true)
+        { SetSaveStatus(false); }
+
+        // If user has selected a valid row
+        if(ui->actors_editScenario_tableView->currentIndex().row() != -1)
+        {
+            int row = ui->actors_editScenario_tableView->currentIndex().row(); // Row of table
+            int IDtoAdd; // Actor's ID to add
+            bool presentOnList = false;
+            int index;
+
+            // Get actor's name from selected row
+            IDtoAdd = ui->actors_editScenario_tableView->model()->index(row,0).data().toInt();
+
+            // Check to see if actor is already on tablewidget
+            index = 0;
+            presentOnList = IDtoAdd == ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_ID).data().toInt();
+
+            while(!presentOnList && index < ui->scenarios_editScenario_tableWidget->rowCount())
+            {
+                index++;
+                presentOnList = IDtoAdd == ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_ID).data().toInt();
+            }// End if present on list and still in row
+
+            if(presentOnList)
+            {
+                // Pop up window informing user that listing is already present
+                QMessageBox warnPrompt;
+
+                QString warningMsg = ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_NAME).data().toString() + " is already present in this scenario. Please select a new actor.";
+
+                warnPrompt.setIcon(QMessageBox::Warning);
+                warnPrompt.setText("WARNING");
+                warnPrompt.setInformativeText(warningMsg);
+                warnPrompt.setStandardButtons(QMessageBox::Ok);
+                warnPrompt.exec();
+            }
+            else
+            {
+                // Collect data from tableview
+                Actor* toAdd = new Actor;
+                toAdd->SetID(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_ID).data().toInt());
+                toAdd->SetName(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_NAME).data().toString());
+                toAdd->SetHitPoints(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_HP).data().toInt());
+                toAdd->SetArmorClass(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_AC).data().toInt());
+                toAdd->SetSpellSaveDC(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_DC).data().toInt());
+                toAdd->SetNotes(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_NOTES).data().toString());
+                toAdd->SetType(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_TYPE).data().toString());
+
+                // Add listing to tablewidget
+                tableManager->AddActorToScenarioTable(ui->scenarios_editScenario_tableWidget, toAdd);
+
+                // Connect combobox to signal
+                QObject::connect(tableManager->spinBoxes->at(tableManager->spinBoxes->size()-1), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
+            }
+        }
+    }
+}
+
+// *************************************************************************************
+//  DB - Edit Scenario - Top Tableview Clicked
+// *************************************************************************************
+void MainWindow::on_actors_editScenario_tableView_clicked(const QModelIndex &index)
+{
+    // If "All Scenarios" selected on combobox
+    if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
+    {
+        // Configure UI Buttons
+        ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Delete Scenario");
+    }
+    else // Specific scenario selected
+    {
+        // Configure UI Buttons
+        ConfigureScenarioUIButtons (true, "Add Actor", false, "Remove Actor");
+    }
+}
+
+// *************************************************************************************
+//  DB - Edit Scenario - Bottom TableWidget Clicked
+// *************************************************************************************
+void MainWindow::on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetItem *item)
+{
+    // If "All Scenarios" selected on combobox
+    if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
+    {
+        // Configure UI Buttons
+        ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Delete Scenario");
+    }
+    else // Specific scenario selected
+    {
+        // // Configure UI Buttons
+        ConfigureScenarioUIButtons (false, "Add Actor", true, "Remove Actor");
+    }
+}
+
+void MainWindow::on_saveChanges_editScenario_pushButton_clicked()
+{
+    QVector<ScenarioListing> *listings;
+    listings = new QVector<ScenarioListing>;
+    ScenarioListing singleListing;
+
+    for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+    {
+        // Collect data from table
+        singleListing._id = ui->scenarios_editScenario_tableWidget->model()->index(index, tableManager->SC_ID).data().toInt();
+        singleListing._scenarioName = ui->scenarioView_editScenario_comboBox->currentText();
+        QSpinBox* sBox = qobject_cast<QSpinBox*>(ui->scenarios_editScenario_tableWidget->cellWidget(index, tableManager->SC_QTY));
+        singleListing._qty = sBox->value();
+
+        // Load listing into vector
+        listings->append(singleListing);
+    }
+
+    // Overwrite old scenario listing
+    db->SaveChangesToScenario(listings);
+
+    // Disable button
+    ui->saveChanges_editScenario_pushButton->setDisabled(true);
+
+    // Set save status
+    if(GetSaveStatus() == false)
+    { SetSaveStatus(true); }
+}
+
+void MainWindow::on_remove_editScenario_pushButton_clicked()
+{
+    // Get Row
+    int row = ui->scenarios_editScenario_tableWidget->currentRow();
+    bool rowSelected = row != -1;
+
+    // User selected "All Scenarios" their intention is to remove an entire scenario
+    if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
+    {
+        // Pop warning to user
+        QMessageBox warnPrompt;
+        QString scenarioToDelete = ui->scenarios_editScenario_tableWidget->model()->index(row, 0).data().toString();
+        QString warnMsg = "This will delete scenario: " + scenarioToDelete + ". Do you wish to continue?";
+        warnPrompt.setIcon(QMessageBox::Warning);
+        warnPrompt.setText("WARNING");
+        warnPrompt.setInformativeText(warnMsg);
+        warnPrompt.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+
+        if(warnPrompt.exec() == QMessageBox::Ok)
+        {
+            // Delete scenario from db
+            db->DeleteScenario(scenarioToDelete);
+
+            // Create new scenario list and reset table
+            db->CreateScenarioList();
+            tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
+            tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+
+            // Remove scenario from combobox
+            ui->scenarioView_editScenario_comboBox->removeItem(ui->scenarioView_editScenario_comboBox->findText(scenarioToDelete));
+
+            // Set save status
+            if(GetSaveStatus() == true)
+            { SetSaveStatus(false); }
+        }
+    }
+    else // Else, they've chosen a specific scenario, and wish to remove an actor
+    {
+        // Get actor's name to remove
+        QString name = ui->scenarios_editScenario_tableWidget->model()->index(row,tableManager->SC_NAME).data().toString();
+
+        // If user has selected valid row, pop warning
+        if(rowSelected)
+        {
+                // remove actor from bottom table widget
+                ui->scenarios_editScenario_tableWidget->removeRow(row);
+
+                // Set save status
+                if(GetSaveStatus() == true)
+                { SetSaveStatus(false); }
+        }
+        else // If user has not selected valid row, inform them
+        {
+            QMessageBox warnPrompt;
+            warnPrompt.setIcon(QMessageBox::Warning);
+            warnPrompt.setText("WARNING");
+            warnPrompt.setInformativeText("Please select an Actor to remove first!");
+            warnPrompt.setStandardButtons(QMessageBox::Ok);
+            warnPrompt.exec();
+        }
+    }
+
+    // Configure UI Buttons
+    ui->remove_editScenario_pushButton->setEnabled(false);
+    ui->saveChanges_editScenario_pushButton->setEnabled(true);
+}
+
+// Set status of saved data
+void MainWindow::SetSaveStatus(const bool saved)
+{
+    _saved = saved;
+}
+
+// Get status of saved data
+bool MainWindow::GetSaveStatus() const
+{
+    return _saved;
+}
+
+// *************************************************************************************
+//  Reformats scenario tableview to display scenario listing or actors for selected
+//  scenario
+// *************************************************************************************
+void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
+{
+    // Inform user they have created an empty scenario and it will not be saved unless populated
+    if(GetSaveStatus() == false)
+    { 
+        QMessageBox emptyScenario;
+        emptyScenario.setIcon(QMessageBox::Warning);
+        emptyScenario.setText("WARNING");
+        emptyScenario.setInformativeText("You haven't added any actors to your new scenario. Would you like to leave without saving?");
+        emptyScenario.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+
+        // "I want to leave without saving changes"
+        if(emptyScenario.exec() == QMessageBox::Ok)
+        {
+            // Remove newly-created listing from combobox
+            ui->scenarioView_editScenario_comboBox->removeItem(ui->scenarioView_editScenario_comboBox->count() - 1);
+
+            // Set saved since user is fine with leaving
+            SetSaveStatus(true);
+        }
+        else // "I want to stay and populate the scenario"
+        {
+            ui->scenarioView_editScenario_comboBox->setCurrentIndex(ui->scenarioView_editScenario_comboBox->count() - 1);
+        }
+    }
+
+    // TODO if user attempts to leave the current scenario and it has unsaved changes, inform them
+    if(ui->saveChanges_editScenario_pushButton->isEnabled())
+    {
+        // Inform user they have not saved changes
+        QMessageBox unsavedScenarioChanges;
+        QAbstractButton* saveButton = unsavedScenarioChanges.addButton(tr("Save Changes"), QMessageBox::YesRole);
+        unsavedScenarioChanges.setIcon(QMessageBox::Warning);
+        unsavedScenarioChanges.setText("WARNING");
+        unsavedScenarioChanges.setInformativeText("Unsaved changes will be lost. Would you like to leave without saving?");
+        unsavedScenarioChanges.addButton(tr("Leave without saving"), QMessageBox::NoRole);
+        unsavedScenarioChanges.exec();
+
+        // If user selects "Save, please" then do so.
+        // TODO If there's a way to force the button to click instead of copy/pasting the code from button below, that'd be nice
+        if(unsavedScenarioChanges.clickedButton()==saveButton)
+        {
+            // Initialize list
+            listings->clear();
+
+            // Pull data from table
+            for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+            {
+                // Collect data from table
+                singleListing._id = ui->scenarios_editScenario_tableWidget->model()->index(index, tableManager->SC_ID).data().toInt();
+                singleListing._scenarioName = previousText;
+                QSpinBox* sBox = qobject_cast<QSpinBox*>(ui->scenarios_editScenario_tableWidget->cellWidget(index, tableManager->SC_QTY));
+                singleListing._qty = sBox->value();
+
+                // Load listing into vector
+                listings->append(singleListing);
+            }
+
+            // Write to db
+            db->SaveChangesToScenario(listings);
+
+            // Change listing
+            // If user has selected "all scenarios"
+            if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
+            {
+                // Configure UI buttons
+                ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Delete Scenario");
+
+                // Initialize and populate bottom tableWidget
+                tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
+                tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+                ui->scenarios_editScenario_tableWidget->setColumnHidden(0, false);
+            }
+            else // Specific scenario is selected
+            {
+                // Configure UI buttons
+                ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Remove Actor");
+
+                // Disable save button
+                ui->saveChanges_editScenario_pushButton->setEnabled(false);
+
+                // Initialize, populate, and format bottom tablewidget
+                tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
+                tableManager->PopulateSelectedScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
+                tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->SC_QTY, false, true);
+
+                // Disable spinboxes for partymembers
+                for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+                {
+                    if(ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_TYPE).data().toString() == "partymember")
+                    {
+                        if(tableManager->spinBoxes->at(index)->isEnabled())
+                        { tableManager->spinBoxes->at(index)->setDisabled(true); }
+                    }
+                }
+
+                //Populate Spinboxes with quantities from database
+                QVector<int>* scenarioQtys = new QVector<int>;
+                scenarioQtys = db->GetScenarioQtys(ui->scenarioView_editScenario_comboBox->currentText());
+
+                // Assign quantities to spinboxes
+                for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+                {
+                    // Insert quantity into spinbox
+                    tableManager->spinBoxes->at(index)->setValue(scenarioQtys->at(index));
+                }
+
+                // Activate signals in spinbox
+                for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
+                {
+                    QObject::connect(tableManager->spinBoxes->at(index), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
+                }
+            }
+        } // End save changes
+        else // Leave without saving
+        {
+            // If user has selected "all scenarios"
+            if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
+            {
+                // Configure UI buttons
+                ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Delete Scenario");
+
+                // Initialize and populate bottom tableWidget
+                tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
+                tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+                ui->scenarios_editScenario_tableWidget->setColumnHidden(0, false);
+            }
+            else // Specific scenario is selected
+            {
+                // TODOCONFIG
+                ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Remove Actor");
+
+//                // Change add button text
+//                if(ui->add_editScenario_pushButton->text() != "Create New Scenario")
+//                {
+//                    ui->add_editScenario_pushButton->setText("Create New Scenario");
+//                }
+
+//                // Disable delete button
+//                if(ui->remove_editScenario_pushButton->isEnabled())
+//                {
+//                    ui->remove_editScenario_pushButton->setEnabled(false);
+//                }
+
+//                // Change delete button text
+//                if(ui->remove_editScenario_pushButton->text() != "Remove Actor")
+//                {
+//                    ui->remove_editScenario_pushButton->setText("Remove Actor");
+//                }
+
+//                // Disable save button
+//                if(ui->saveChanges_editScenario_pushButton->isEnabled())
+//                {
+//                    ui->saveChanges_editScenario_pushButton->setEnabled(false);
+//                }
+
+                // Initialize, populate, and format bottom tablewidget
+                tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
+                tableManager->PopulateSelectedScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
+                tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->SC_QTY, false, true);
+
+                // Disable spinboxes for partymembers
+                for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+                {
+                    if(ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_TYPE).data().toString() == "partymember")
+                    {
+                        if(tableManager->spinBoxes->at(index)->isEnabled())
+                        { tableManager->spinBoxes->at(index)->setDisabled(true); }
+                    }
+                }
+
+                //Populate Spinboxes with quantities from database
+                QVector<int>* scenarioQtys = new QVector<int>;
+                scenarioQtys = db->GetScenarioQtys(ui->scenarioView_editScenario_comboBox->currentText());
+
+                // Assign quantities to spinboxes
+                for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+                {
+                    // Insert quantity into spinbox
+                    tableManager->spinBoxes->at(index)->setValue(scenarioQtys->at(index));
+                }
+
+                // Activate signals in spinbox
+                for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
+                {
+                    QObject::connect(tableManager->spinBoxes->at(index), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
+
+                } // End activate signals in spinbox
+            } // End populate specific scenario
+        } // End leave without saving
+
+        // Set save status
+        if(GetSaveStatus() == false)
+        { SetSaveStatus(true); }
+
+        ui->saveChanges_editScenario_pushButton->setEnabled(false);
+
+    } // End unsaved changes found
+    else // If no unsaved changes, navigate away
+    {
+        // If user has selected "all scenarios"
+        if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
+        {
+            // Configure UI Buttons
+            ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Delete Scenario");
+
+            // Initialize and populate bottom tableWidget
+            tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
+            tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
+            ui->scenarios_editScenario_tableWidget->setColumnHidden(0, false);
+        }
+        else // Specific scenario is selected
+        {
+            // Configure UI Buttons
+            ConfigureScenarioUIButtons (true, "Create New Scenario", false, "Remove Actor");
+
+            // Initialize, populate, and format bottom tablewidget
+            tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
+            tableManager->PopulateSelectedScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
+            tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->SC_QTY, false, true);
+
+            // Disable spinboxes for partymembers
+            for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+            {
+                if(ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_TYPE).data().toString() == "partymember")
+                {
+                    if(tableManager->spinBoxes->at(index)->isEnabled())
+                    { tableManager->spinBoxes->at(index)->setDisabled(true); }
+                }
+            }
+
+            //Populate Spinboxes with quantities from database
+            QVector<int>* scenarioQtys = new QVector<int>;
+            scenarioQtys = db->GetScenarioQtys(ui->scenarioView_editScenario_comboBox->currentText());
+
+            // Assign quantities to spinboxes
+            for(int index = 0; index < ui->scenarios_editScenario_tableWidget->rowCount(); index++)
+            {
+                // Insert quantity into spinbox
+                tableManager->spinBoxes->at(index)->setValue(scenarioQtys->at(index));
+            }
+
+            // Activate signals in spinbox
+            for(int index = 0; index < tableManager->spinBoxes->size(); index ++)
+            {
+                QObject::connect(tableManager->spinBoxes->at(index), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
+
+            }
+        }
+    }
+
+    // Save old index and text
+    previousIndex = ui->scenarioView_editScenario_comboBox->currentIndex();
+    previousText = ui->scenarioView_editScenario_comboBox->currentText();
+}
+
+
+void MainWindow::ConfigureScenarioUIButtons (const bool &addButtonStatus, const QString &addButtonText, const bool &deleteButtonStatus, const QString &deleteButtonText)
+{
+    // Enable/disable add button
+    ui->add_editScenario_pushButton->setEnabled(addButtonStatus);
+
+    // Set add button text
+    ui->add_editScenario_pushButton->setText(addButtonText);
+
+    // Enable/disable delete button
+    ui->remove_editScenario_pushButton->setEnabled(deleteButtonStatus);
+
+    // Set delete button text
+    ui->remove_editScenario_pushButton->setText(deleteButtonText);
+}

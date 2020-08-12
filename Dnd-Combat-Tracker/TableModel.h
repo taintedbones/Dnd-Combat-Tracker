@@ -23,14 +23,14 @@ public:
 
     enum ActorListColPositions { A_NAME, A_HP, A_AC, A_DC, A_NOTES, A_TYPE };
 
-    QStringList ActorListColNames = { "Name", "HP", "AC", "DC", "Notes", "Type"};
+    QStringList ActorListColNames = { "Name", "HP", "AC", "DC", "Notes", "Type" };
 
     // **********************************  Selected Actor Model **********************************
     const int SelectedListColCount = 7;
 
-    enum SelectedListColPositions {S_NAME, S_HP, S_AC, S_DC, S_NOTES, S_TYPE, S_QTY};
+    enum SelectedListColPositions {S_NAME, S_HP, S_AC, S_DC, S_NOTES, S_TYPE, S_QTY };
 
-    QStringList SelectedListColNames = {"Name", "HP", "AC", "DC", "Notes", "Type", "Quantity"};
+    QStringList SelectedListColNames = {"Name", "HP", "AC", "DC", "Notes", "Type", "Quantity" };
 
      // ********************************** Assign Initiative Model **********************************
     const int AssignInitColCount = 6;
@@ -41,20 +41,34 @@ public:
 
     // ********************************** Database Edit Model ***********************************
 
-    enum DbEditColPositions { D_ID, D_NAME, D_HP, D_AC, D_DC, D_NOTES, D_TYPE};
+    enum DbEditColPositions { D_ID, D_NAME, D_HP, D_AC, D_DC, D_NOTES, D_TYPE };
 
     enum DbEditComboBoxPositions { PARTY, COMPANION, CREATURE, EFFECT };
 
-    // ************************************************************************************************
+    // *********************************** Database Options - Edit Scenario "All Scenarios" ************************
+    const int AllScenarioColCount = 1;
+    QStringList AllScenarioColNames = { "Scenario Name" };
 
-    const int QtyMax = 10;
-    const int QtyMin = 1;
+    // *********************************** Database Options - Edit Scenario "Specific Scenario" ************************
+
+    const int SpecificScenarioColCount = 8;
+    QStringList SpecificScenarioColNames = { "ID", "Name", "HP", "AC", "DC", "Notes", "Type", "Quantity" };
+    enum SpecificScenarioColPositions { SC_ID, SC_NAME, SC_HP, SC_AC, SC_DC, SC_NOTES, SC_TYPE, SC_QTY };
+
+    const int qtyMax = 10;
+    const int qtyMin = 1;
+
+    // Scenario spinboxes
+    QVector<QSpinBox*>* spinBoxes;
 
     // Model used for 'combat_page' (Conduct Combat) Page
     void InitializeCombatModel(QTableWidget *combatTable);
 
     // Model used for 'edit_page' (Add Actors) Page
     void InitializeAddActorTable(QTableWidget *addActors, int cols, QStringList headers);
+
+    // Model used for 'scenario_db page' (Scenario Database) Page
+    void InitializeScenarioTable(QTableWidget *addActors, int cols, QStringList headers);
 
     // Fills Add Actor Table with actors in database
     void PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* actorList);
@@ -72,7 +86,7 @@ public:
     void CopyTableToCombatPage(QTableWidget *origin, QTableWidget *destination);
 
     // Inserts initiative column to the passed in table
-    void InsertSpinBoxCol(QTableWidget *table, int min, int max, int col);
+    void InsertSpinBoxCol(QTableWidget *table, int min, int max, int col, bool disablebool, bool addToVector);
 
     // Add Actors - Show selected actor type in actor list
     void ShowActorType(QTableWidget* addActors, const QString &type);
@@ -87,6 +101,13 @@ public:
     void SetupCombatStatsCol(QTableWidget *table, int overflow, int col);
 
     void InsertCombatStatsBox(QTableWidget *table, int value, int overflow, int row, int col);
+
+    // Populate Scenario Table with Scenario Names
+    void PopulateScenarioNameTable(QTableWidget *scenarioTable, QStringList scenarioNames);
+
+    void PopulateSelectedScenarioTable(QTableWidget *addActors, QVector<Actor>* actorList);
+
+    void AddActorToScenarioTable(QTableWidget *scenarioTable, Actor* toAdd);
 
     // Constructor
     TableModel();
