@@ -92,7 +92,7 @@ private slots:
 private:
     Ui::AddActorForm *ui;
     Database *db;
-    QVector<Actor> *actorList;
+//    QVector<Actor>* actorList;
     Actor createdActor;
     QTableWidget *combat;
     int initCancelButtonIndex;

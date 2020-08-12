@@ -63,6 +63,8 @@ void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* 
 
     for(int index = 0; index < actorList->length(); index++)
     {
+        qDebug() << actorList->at(index).GetName();
+
         // Create new row
         addActors->insertRow(index);
 

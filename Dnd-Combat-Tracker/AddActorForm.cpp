@@ -15,8 +15,6 @@ AddActorForm::AddActorForm(QWidget *parent, Database *data, QTableWidget *table)
 
     ui->stackedWidget->setCurrentIndex(MENU);
 
-    actorList->clear();
-
     Initialize();
     InitializeInitTable();
 }
@@ -192,8 +190,9 @@ void AddActorForm::UpdatePremadeActors()
     bool inCombat = false;
     QString currentActor;
 
-    actorList = db->GetActorList();
+    QVector<Actor>* actorList = db->GetActorList();
 
+    ui->name_premade_comboBox->clear();
 
     for(int i = 0; i < actorList->size(); i++)
     {
@@ -252,13 +251,13 @@ void AddActorForm::Initialize()
 {
     ui->stackedWidget->setCurrentIndex(MENU);
 
-    ResetAddCustomFields();
+//    ResetAddCustomFields();
     ui->maxHP_custom_spinBox->setRange(1, 99);
     ui->ac_custom_spinBox->setRange(1, 99);
     ui->dc_custom_spinBox->setRange(1, 99);
     ui->qty_custom_spinBox->setRange(1, 10);
 
-    ResetAddPremadeFields();
+//    ResetAddPremadeFields();
     ui->qty_premade_spinBox->setRange(1, 10);
 }
 
@@ -267,13 +266,7 @@ void AddActorForm::Initialize()
 // *************************************************************************************
 void AddActorForm::on_stackedWidget_currentChanged(int arg1)
 {
-    if(arg1 == MENU)
-    {
-        ResetAddCustomFields();
-        ResetAddPremadeFields();
-        DeleteInitRows();
-    }
-    else if(arg1 == INIT)
+ if(arg1 == INIT)
     {
         DeleteInitRows();
     }
