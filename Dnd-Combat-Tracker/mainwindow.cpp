@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->main_stackedWidget->setCurrentIndex(MENU);
+    ui->main_stackedWidget->setCurrentIndex(WELCOME);
 
     db = new Database("../itdb.db", "QSQLITE");
 
