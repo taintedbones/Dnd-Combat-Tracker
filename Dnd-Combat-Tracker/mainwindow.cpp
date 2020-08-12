@@ -171,8 +171,8 @@ void MainWindow::on_dbOpt_welcome_pushButton_clicked()
     // Navigate to Database Options Page
     ui->main_stackedWidget->setCurrentIndex(DB_EDIT);
 
-    // Disable use of save button until appropriate option clicked
-    ui->save_editActors_pushButton->setEnabled(false);
+    // Disable combobox until appropriate option clicked
+    ui->editActors_groupBox->setDisabled(true);
     ui->save_editActors_pushButton->setText("Save");
 }
 
@@ -391,6 +391,9 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
 // *************************************************************************************
 void MainWindow::on_addActor_dbEdit_pushButton_clicked()
 {
+    // Enable groupbox
+    ui->editActors_groupBox->setEnabled(true);
+
     // Label save button as 'add'
     ui->save_editActors_pushButton->setText("Add Actor");
 
@@ -418,7 +421,7 @@ void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
 
     // Popup window asking if they want to delete that person
     QMessageBox warnPrompt;
-    QString warnMsg = "Are you sure to want to delete " + name.toUpper() + " from the database?";
+    QString warnMsg = "Are you sure to want to delete '" + name + "' from the database?";
 
     if(rowSelected)
     {
@@ -592,6 +595,10 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
 
         // Show table data
         ui->scenarios_editScenario_tableWidget->setColumnHidden(0, false);
+    }
+    else // If user navigates to 'actor db'
+    {
+        ui->editActors_groupBox->setDisabled(true);
     }
 }
 

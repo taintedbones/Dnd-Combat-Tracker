@@ -30,7 +30,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="welcome_page">
      <widget class="QPushButton" name="welcomeStart_pushButton">
@@ -946,7 +946,7 @@
        <bool>false</bool>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="editActors_tab">
        <attribute name="title">
@@ -965,14 +965,14 @@
          <item>
           <widget class="QPushButton" name="addActor_dbEdit_pushButton">
            <property name="text">
-            <string>Add</string>
+            <string>Create Actor</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="deleteActor_dbEdit_pushButton">
            <property name="text">
-            <string>Delete</string>
+            <string>Delete Actor</string>
            </property>
           </widget>
          </item>
@@ -1085,7 +1085,7 @@
          </rect>
         </property>
         <property name="title">
-         <string>Actor Tools</string>
+         <string>Actor Info</string>
         </property>
         <widget class="QWidget" name="verticalLayoutWidget_6">
          <property name="geometry">
