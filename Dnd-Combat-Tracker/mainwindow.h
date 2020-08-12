@@ -117,47 +117,57 @@ private slots:
     // Formats db edit table view
     void FormatEditActorsTableView();
 
-    //  Formats and sets table model for scenario tableview
-    void FormatScenarioTableView(QString scenarioName);
-
     //  Formats and sets table model for scenario actors table view
     void FormatEditScenarioActorsTableView();
 
+    //  Shows actor statistics fields, allowing user to add actor to database
     void on_addActor_dbEdit_pushButton_clicked();
 
+    //  Saves changes (add/edit) to database
     void on_save_editActors_pushButton_clicked();
 
+    //  Deletes actor from database
     void on_deleteActor_dbEdit_pushButton_clicked();
 
+    //  Displays QMessageBox with instructions on how to use the database options
     void on_help_dbEdit__pushButton_clicked();
 
+    //  Pulls data from tableview into text fields upon clicking any table entry
     void on_dbEdit_tableView_clicked();
 
+    //  PushButton for user to clear fields on DB edit page
     void on_clear_editActors_pushButton_clicked();
 
+    // Resets all objects on the edit scenarios tab
     void on_dbEdit_tabWidget_currentChanged(int index);
 
+    //  PushButton "Add" for user to create scenarios or add actors to existing scenario
     void on_add_editScenario_pushButton_clicked();
 
+    // Configures scenario ui buttons for when top actors tableview clicked
     void on_actors_editScenario_tableView_clicked(const QModelIndex &index);
 
+    // Configures scenario ui buttons for when bottom scenarios tablewidget clicked
     void on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetItem *item);
 
+    //  Saves changes made to edit scenarios table widget when 'save changes' button is clicked
     void on_saveChanges_editScenario_pushButton_clicked();
 
+    //  Removes scenario or actor in scenario depending on table widget view
     void on_remove_editScenario_pushButton_clicked();
 
+    //  Reformats scenario tableview to display scenario listing or actors for selected
+    //  scenario
     void on_scenarioView_editScenario_comboBox_activated(int index);
 
     // Helper Functions
     void ClearDBFields();
+
+    //  Enables save button
     void EnableSaveButton();
-    void SetSaveStatus(const bool saved);
-    bool GetSaveStatus() const;
+
+    // Configures the add/remove buttons text and enable status with the passed in values
     void ConfigureScenarioUIButtons (const bool &addButtonStatus, const QString &addButtonText, const bool &deleteButtonStatus, const QString &deleteButtonText);
-
-
-
 
 private:
     Ui::MainWindow *ui;
