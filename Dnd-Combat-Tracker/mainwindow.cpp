@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->showActors_comboBox->addItems(addActorsComboBoxLabels);
 
     // Set save status
-    SetSaveStatus(true);
+    _saved = true;
 
     addActorForm = new AddActorForm(nullptr, db, ui->activeCombatTable_tableWidget);
 
@@ -529,7 +529,7 @@ void MainWindow::on_save_editActors_pushButton_clicked()
 }
 
 // *************************************************************************************
-//  Help: Displays QMessageBox with instructions on how to use the database options
+//  Displays QMessageBox with instructions on how to use the database options
 // *************************************************************************************
 void MainWindow::on_help_dbEdit__pushButton_clicked()
 {
@@ -573,6 +573,9 @@ void MainWindow::on_dbEdit_tableView_clicked()
     else { qDebug() << "Makeshift switch failed"; }
 }
 
+// *************************************************************************************
+// Resets all objects on the edit scenarios tab
+// *************************************************************************************
 void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
 {
     if(index == EDIT_SCENARIOS)
@@ -649,8 +652,8 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
             { ui->add_editScenario_pushButton->setEnabled(false); }
 
             // Set save status
-            if(GetSaveStatus() == true)
-            { SetSaveStatus(false); }
+            if(_saved == true)
+            { _saved = false; }
         }
     }
     else // Add actor to existing scenario
@@ -660,8 +663,8 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
         { ui->saveChanges_editScenario_pushButton->setEnabled(true); }
 
         // Set save status
-        if(GetSaveStatus() == true)
-        { SetSaveStatus(false); }
+        if(_saved == true)
+        { _saved = false; }
 
         // If user has selected a valid row
         if(ui->actors_editScenario_tableView->currentIndex().row() != -1)
@@ -720,7 +723,7 @@ void MainWindow::on_add_editScenario_pushButton_clicked()
 }
 
 // *************************************************************************************
-//  DB - Edit Scenario - Top Tableview Clicked
+//  Edit Scenario - Configures scenario ui buttons for when top actors tableview clicked
 // *************************************************************************************
 void MainWindow::on_actors_editScenario_tableView_clicked(const QModelIndex &index)
 {
@@ -738,7 +741,7 @@ void MainWindow::on_actors_editScenario_tableView_clicked(const QModelIndex &ind
 }
 
 // *************************************************************************************
-//  DB - Edit Scenario - Bottom TableWidget Clicked
+//  DB - Edit Scenario - Configures scenario ui buttons for when bottom scenarios tablewidget clicked
 // *************************************************************************************
 void MainWindow::on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetItem *item)
 {
@@ -755,6 +758,9 @@ void MainWindow::on_scenarios_editScenario_tableWidget_itemClicked(QTableWidgetI
     }
 }
 
+// *************************************************************************************
+//  Saves changes made to edit scenarios table widget when 'save changes' button is clicked
+// *************************************************************************************
 void MainWindow::on_saveChanges_editScenario_pushButton_clicked()
 {
     QVector<ScenarioListing> *listings;
@@ -780,10 +786,13 @@ void MainWindow::on_saveChanges_editScenario_pushButton_clicked()
     ui->saveChanges_editScenario_pushButton->setDisabled(true);
 
     // Set save status
-    if(GetSaveStatus() == false)
-    { SetSaveStatus(true); }
+    if(_saved == false)
+    { _saved = true; }
 }
 
+// *************************************************************************************
+//  Removes scenario or actor in scenario depending on table widget view
+// *************************************************************************************
 void MainWindow::on_remove_editScenario_pushButton_clicked()
 {
     // Get Row
@@ -816,8 +825,8 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
             ui->scenarioView_editScenario_comboBox->removeItem(ui->scenarioView_editScenario_comboBox->findText(scenarioToDelete));
 
             // Set save status
-            if(GetSaveStatus() == true)
-            { SetSaveStatus(false); }
+            if(_saved == true)
+            { _saved = false; }
         }
     }
     else // Else, they've chosen a specific scenario, and wish to remove an actor
@@ -832,8 +841,8 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
                 ui->scenarios_editScenario_tableWidget->removeRow(row);
 
                 // Set save status
-                if(GetSaveStatus() == true)
-                { SetSaveStatus(false); }
+                if(_saved == true)
+                { _saved = false; }
         }
         else // If user has not selected valid row, inform them
         {
@@ -851,18 +860,6 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
     ui->saveChanges_editScenario_pushButton->setEnabled(true);
 }
 
-// Set status of saved data
-void MainWindow::SetSaveStatus(const bool saved)
-{
-    _saved = saved;
-}
-
-// Get status of saved data
-bool MainWindow::GetSaveStatus() const
-{
-    return _saved;
-}
-
 // *************************************************************************************
 //  Reformats scenario tableview to display scenario listing or actors for selected
 //  scenario
@@ -870,7 +867,7 @@ bool MainWindow::GetSaveStatus() const
 void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
 {
     // Inform user they have created an empty scenario and it will not be saved unless populated
-    if(GetSaveStatus() == false)
+    if(_saved == false)
     { 
         QMessageBox emptyScenario;
         emptyScenario.setIcon(QMessageBox::Warning);
@@ -885,7 +882,7 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
             ui->scenarioView_editScenario_comboBox->removeItem(ui->scenarioView_editScenario_comboBox->count() - 1);
 
             // Set saved since user is fine with leaving
-            SetSaveStatus(true);
+            _saved = true;
         }
         else // "I want to stay and populate the scenario"
         {
@@ -1035,8 +1032,8 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
         } // End leave without saving
 
         // Set save status
-        if(GetSaveStatus() == false)
-        { SetSaveStatus(true); }
+        if(_saved == false)
+        { _saved = true; }
 
         ui->saveChanges_editScenario_pushButton->setEnabled(false);
 
@@ -1099,7 +1096,9 @@ void MainWindow::on_scenarioView_editScenario_comboBox_activated(int index)
     previousText = ui->scenarioView_editScenario_comboBox->currentText();
 }
 
-
+// *************************************************************************************
+// Configures the add/remove buttons text and enable status with the passed in values
+// *************************************************************************************
 void MainWindow::ConfigureScenarioUIButtons (const bool &addButtonStatus, const QString &addButtonText, const bool &deleteButtonStatus, const QString &deleteButtonText)
 {
     // Enable/disable add button
