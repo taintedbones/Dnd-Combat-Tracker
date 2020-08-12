@@ -544,6 +544,9 @@ void MainWindow::on_help_dbEdit__pushButton_clicked()
 // *************************************************************************************
 void MainWindow::on_dbEdit_tableView_clicked()
 {
+    // Activate groupbox
+    ui->editActors_groupBox->setEnabled(true);
+
     // If not in edit mode, enter edit mode
     if(ui->save_editActors_pushButton->text() != "Save Changes")
     { ui->save_editActors_pushButton->setText("Save Changes"); }
