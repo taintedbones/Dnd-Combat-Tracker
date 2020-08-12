@@ -40,8 +40,6 @@ MainWindow::MainWindow(QWidget *parent)
     // DEBUG
     // Create scenario listings
     listings = new QVector<ScenarioListing>;
-
-    addActorForm->show();
 }
 
 MainWindow::~MainWindow()
