@@ -100,13 +100,16 @@ public:
     // Converts all items in a column into a stats spinbox
     void SetupCombatStatsCol(QTableWidget *table, int overflow, int col);
 
+    //  Turns specified table cell into a combat stats formatted spinbox
     void InsertCombatStatsBox(QTableWidget *table, int value, int overflow, int row, int col);
 
     // Populate Scenario Table with Scenario Names
     void PopulateScenarioNameTable(QTableWidget *scenarioTable, QStringList scenarioNames);
 
+    // Fills Add Actor Table with actors in database
     void PopulateSelectedScenarioTable(QTableWidget *addActors, QVector<Actor>* actorList);
 
+    // Add selected actor from DB Scenario tableview to selected scenario tablewidget
     void AddActorToScenarioTable(QTableWidget *scenarioTable, Actor* toAdd);
 
     // Constructor

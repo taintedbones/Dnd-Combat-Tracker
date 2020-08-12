@@ -2,8 +2,11 @@
 #include "Actor.h"
 #include "CombatManager.h"
 #include <QtDebug>
+#include <QString>
 
+// *************************************************************************************
 // Model used for 'combat_page' (Conduct Combat) Page
+// *************************************************************************************
 void TableModel::InitializeCombatModel(QTableWidget *combatTable)
 {
     combatTable->setColumnCount(CombatColCount);
@@ -17,7 +20,9 @@ void TableModel::InitializeCombatModel(QTableWidget *combatTable)
     DeleteAllTableRows(combatTable);
 }
 
+// *************************************************************************************
 // Model used for 'edit_page' (Add Actors) Page
+// *************************************************************************************
 void TableModel::InitializeAddActorTable(QTableWidget *addActors, int cols, QStringList headers)
 {
     addActors->clearContents();
@@ -31,7 +36,9 @@ void TableModel::InitializeAddActorTable(QTableWidget *addActors, int cols, QStr
     DeleteAllTableRows(addActors);
 }
 
+// *************************************************************************************
 // Model used for 'edit_page' (Add Actors) Page
+// *************************************************************************************
 void TableModel::InitializeScenarioTable(QTableWidget *scenarioActors, int cols, QStringList headers)
 {
     scenarioActors->clearContents();
@@ -45,106 +52,70 @@ void TableModel::InitializeScenarioTable(QTableWidget *scenarioActors, int cols,
     DeleteAllTableRows(scenarioActors);
 }
 
-
+// *************************************************************************************
 // Fills Add Actor Table with actors in database
+// *************************************************************************************
 void TableModel::PopulateAddActorTable(QTableWidget *addActors, QVector<Actor>* actorList)
 {
-    // Prep hp list
-    QVector<QTableWidgetItem*> hpItemList;
     QTableWidgetItem* hpItem;
-
-    // Prep ac list
-    QVector<QTableWidgetItem*> acItemList;
     QTableWidgetItem* acItem;
-
-    // Prep dc list
-    QVector<QTableWidgetItem*> dcItemList;
     QTableWidgetItem* dcItem;
 
     for(int index = 0; index < actorList->length(); index++)
     {
         // Create new row
         addActors->insertRow(index);
-        // Insert attributes
-            // Name
+
+        // Convert int values to QString & store into QTableWidgetItems
+        hpItem = new QTableWidgetItem(QString::number(actorList->at(index).GetHitPoints()));
+        acItem = new QTableWidgetItem(QString::number(actorList->at(index).GetArmorClass()));
+        dcItem = new QTableWidgetItem(QString::number(actorList->at(index).GetSpellSaveDC()));
+
+        // Place items and actor string values into scenarioActorsTable
         addActors->setItem(index, A_NAME, new QTableWidgetItem(actorList->at(index).GetName()));
-            // HP
-        hpItem = new QTableWidgetItem;
-        hpItem->setData(0,actorList->at(index).GetHitPoints());
-        hpItemList.push_back(hpItem);
-        addActors->setItem(index, A_HP, hpItemList.at(index));
-            // AC
-        acItem = new QTableWidgetItem;
-        acItem->setData(0,actorList->at(index).GetArmorClass());
-        acItemList.push_back(acItem);
-        addActors->setItem(index, A_AC, acItemList.at(index));
-            // DC
-        dcItem = new QTableWidgetItem;
-        dcItem->setData(0,actorList->at(index).GetSpellSaveDC());
-        dcItemList.push_back(dcItem);
-        addActors->setItem(index, A_DC, dcItemList.at(index));
-            // Notes
+        addActors->setItem(index, A_HP, hpItem);
+        addActors->setItem(index, A_AC, acItem);
+        addActors->setItem(index, A_DC, dcItem);
         addActors->setItem(index, A_NOTES, new QTableWidgetItem(actorList->at(index).GetNotes()));
-            // Type
         addActors->setItem(index, A_TYPE, new QTableWidgetItem(actorList->at(index).GetType()));
     } // END for
 }
 
+// *************************************************************************************
 // Fills Add Actor Table with actors in database
+// *************************************************************************************
 void TableModel::PopulateSelectedScenarioTable(QTableWidget *scenarioActorsTable, QVector<Actor>* scenarioActorList)
 {
-    // Prep ID list
-    QVector<QTableWidgetItem*> idItemList;
     QTableWidgetItem* idItem;
-
-    // Prep hp list
-    QVector<QTableWidgetItem*> hpItemList;
     QTableWidgetItem* hpItem;
-
-    // Prep ac list
-    QVector<QTableWidgetItem*> acItemList;
     QTableWidgetItem* acItem;
-
-    // Prep dc list
-    QVector<QTableWidgetItem*> dcItemList;
     QTableWidgetItem* dcItem;
 
     for(int index = 0; index < scenarioActorList->length(); index++)
     {
         // Create new row
         scenarioActorsTable->insertRow(index);
-        // Insert attributes
-        // ID
-        idItem = new QTableWidgetItem;
-        idItem->setData(0, scenarioActorList->at(index).GetID());
-        idItemList.push_back(idItem);
-        scenarioActorsTable->setItem(index, SC_ID, idItemList.at(index));
 
-        // Name
+        // Convert int values to QString & store into QTableWidgetItems
+        idItem = new QTableWidgetItem(QString::number(scenarioActorList->at(index).GetID()));
+        hpItem = new QTableWidgetItem(QString::number(scenarioActorList->at(index).GetHitPoints()));
+        acItem = new QTableWidgetItem(QString::number(scenarioActorList->at(index).GetArmorClass()));
+        dcItem = new QTableWidgetItem(QString::number(scenarioActorList->at(index).GetSpellSaveDC()));
+
+        // Place items and actor string values into scenarioActorsTable
+        scenarioActorsTable->setItem(index, SC_ID, idItem);
         scenarioActorsTable->setItem(index, SC_NAME, new QTableWidgetItem(scenarioActorList->at(index).GetName()));
-        // HP
-        hpItem = new QTableWidgetItem;
-        hpItem->setData(0,scenarioActorList->at(index).GetHitPoints());
-        hpItemList.push_back(hpItem);
-        scenarioActorsTable->setItem(index, SC_HP, hpItemList.at(index));
-        // AC
-        acItem = new QTableWidgetItem;
-        acItem->setData(0,scenarioActorList->at(index).GetArmorClass());
-        acItemList.push_back(acItem);
-        scenarioActorsTable->setItem(index, SC_AC, acItemList.at(index));
-        // DC
-        dcItem = new QTableWidgetItem;
-        dcItem->setData(0,scenarioActorList->at(index).GetSpellSaveDC());
-        dcItemList.push_back(dcItem);
-        scenarioActorsTable->setItem(index, SC_DC, dcItemList.at(index));
-        // Notes
+        scenarioActorsTable->setItem(index, SC_HP, hpItem);
+        scenarioActorsTable->setItem(index, SC_AC, acItem);
+        scenarioActorsTable->setItem(index, SC_DC, dcItem);
         scenarioActorsTable->setItem(index, SC_NOTES, new QTableWidgetItem(scenarioActorList->at(index).GetNotes()));
-        // Type
         scenarioActorsTable->setItem(index, SC_TYPE, new QTableWidgetItem(scenarioActorList->at(index).GetType()));
     } // END for
 }
 
+// *************************************************************************************
 // Add selected actor from DB Scenario tableview to selected scenario tablewidget
+// *************************************************************************************
 void TableModel::AddActorToScenarioTable(QTableWidget *scenarioTable, Actor* toAdd)
 {
     QTableWidgetItem* ID = new QTableWidgetItem;
@@ -194,7 +165,9 @@ void TableModel::InitializeInitiativeModel(QTableWidget *assignInit)
     DeleteAllTableRows(assignInit);
 }
 
+// *************************************************************************************
 // Remove actor from one table and back to its origin
+// *************************************************************************************
 void TableModel::RemoveActorFromTable(QTableWidget* origin, QTableWidget* destination)
 {
     bool empty = origin->rowCount() == 0;
@@ -220,7 +193,9 @@ void TableModel::RemoveActorFromTable(QTableWidget* origin, QTableWidget* destin
     } // END if(!empty)
 }
 
+// *************************************************************************************
 // Add Actors - Show selected actor type in actor list
+// *************************************************************************************
 void TableModel::ShowActorType(QTableWidget* addActors, const QString &type)
 {
     bool match = false;
@@ -245,7 +220,9 @@ void TableModel::ShowActorType(QTableWidget* addActors, const QString &type)
     }
 }
 
+// *************************************************************************************
 // Copies entire contents of one tablewidget to another
+// *************************************************************************************
 void TableModel::CopyTableToInitPage(QTableWidget *origin, QTableWidget *destination)
 { 
     QTableWidgetItem *newCell;
@@ -325,7 +302,9 @@ void TableModel::CopyTableToInitPage(QTableWidget *origin, QTableWidget *destina
     } // END - for (originRow)
 }
 
+// *************************************************************************************
 // Copies contents of  assign init table widget's contents to combat page
+// *************************************************************************************
 void TableModel::CopyTableToCombatPage(QTableWidget *origin, QTableWidget *destination)
 {
     QSpinBox *initBox;
@@ -354,7 +333,9 @@ void TableModel::CopyTableToCombatPage(QTableWidget *origin, QTableWidget *desti
     } // END - for (row)
 }
 
+// *************************************************************************************
 // Inserts spinbox column to the passed in table
+// *************************************************************************************
 void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col, bool disable, bool addToVector)
 {
     QSpinBox *sBox;
@@ -375,7 +356,9 @@ void TableModel::InsertSpinBoxCol(QTableWidget *table, int min, int max, int col
     }
 }
 
+// *************************************************************************************
 // Deletes entire contents of passed in table
+// *************************************************************************************
 void TableModel::DeleteAllTableRows(QTableWidget *table)
 {
     const int ROW_COUNT = table->rowCount();
@@ -386,7 +369,9 @@ void TableModel::DeleteAllTableRows(QTableWidget *table)
     }
 }
 
+// *************************************************************************************
 // Adds actor to new table from origin with quantity spin boxes
+// *************************************************************************************
 void TableModel::AddActorToTable(QTableWidget *origin, QTableWidget *destination)
 {
     QSpinBox *qtyBox = new QSpinBox(destination);
@@ -434,7 +419,9 @@ void TableModel::AddActorToTable(QTableWidget *origin, QTableWidget *destination
     } // END if(!empty)
 }
 
+// *************************************************************************************
 // Converts all items in a column into a stats spinbox
+// *************************************************************************************
 void TableModel::SetupCombatStatsCol(QTableWidget *table, int overflow, int col)
 {
     QSpinBox *sBox;
@@ -453,6 +440,9 @@ void TableModel::SetupCombatStatsCol(QTableWidget *table, int overflow, int col)
     }
 }
 
+// *************************************************************************************
+//  Turns specified table cell into a combat stats formatted spinbox
+// *************************************************************************************
 void TableModel::InsertCombatStatsBox(QTableWidget *table, int value, int overflow, int row, int col)
 {
     QSpinBox *sBox;
@@ -471,7 +461,9 @@ void TableModel::InsertCombatStatsBox(QTableWidget *table, int value, int overfl
     table->setCellWidget(row, col, sBox);
 }
 
+// *************************************************************************************
 // Populate Scenario Table with Scenario Names
+// *************************************************************************************
 void TableModel::PopulateScenarioNameTable(QTableWidget *scenarioTable, QStringList scenarioNames)
 {
     QTableWidgetItem* scenarioItem;
@@ -492,7 +484,9 @@ void TableModel::PopulateScenarioNameTable(QTableWidget *scenarioTable, QStringL
     } // END for
 }
 
+// *************************************************************************************
 // Constructor
+// *************************************************************************************
 TableModel::TableModel()
 {
     spinBoxes = new QVector<QSpinBox*>;
