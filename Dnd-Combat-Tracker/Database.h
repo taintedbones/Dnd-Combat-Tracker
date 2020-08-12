@@ -58,6 +58,8 @@ public:
     // Delete scenario from db
     void DeleteScenario(const QString &scenarioName);
 
+    bool IsInDatabase(QString name);
+
     // Constructor
     Database(QString path, QString driver);
 
