@@ -487,7 +487,6 @@ void MainWindow::on_save_editActors_pushButton_clicked()
     {
         // Get selected row
         int row = ui->dbEdit_tableView->currentIndex().row();
-        qDebug() << "Row Selected: " << row;
 
         // Determine if row is selected
         bool rowSelected = row != -1;
@@ -506,9 +505,6 @@ void MainWindow::on_save_editActors_pushButton_clicked()
             toEdit->SetSpellSaveDC(ui->dc_editActors_spinBox->text().toInt());
             toEdit->SetNotes(ui->notes_editActors_textEdit->toPlainText());
             toEdit->SetType(ui->type_editActors_comboBox->currentText());
-
-            // Debug: See if ID is selected
-            qDebug() << "Actor ID Selected: " << row;
 
             db->EditActor(toEdit);
 
@@ -556,11 +552,9 @@ void MainWindow::on_dbEdit_tableView_clicked()
 
     // Get selected row
     int row = ui->dbEdit_tableView->currentIndex().row();
-    qDebug() << "Row Selected: " << row;
 
     // Pull name from row for popup window
     QString name = ui->dbEdit_tableView->model()->index(row,1).data().toString();
-    qDebug() << "Actor Name Selected: " << name;
 
     QString actorType = ui->dbEdit_tableView->model()->index(row, tableManager->D_TYPE).data().toString();
 
@@ -586,6 +580,10 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
 {
     if(index == EDIT_SCENARIOS)
     {
+        // Initialize top tableview with current data
+        editScenarioActorsModel->select();
+
+
         // Reset buttons
         ui->add_editScenario_pushButton->setText("Create New Scenario");
         ui->remove_editScenario_pushButton->setEnabled(false);
