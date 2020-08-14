@@ -1113,3 +1113,109 @@ void MainWindow::ConfigureScenarioUIButtons (const bool &addButtonStatus, const 
     // Set delete button text
     ui->remove_editScenario_pushButton->setText(deleteButtonText);
 }
+
+// Adding actor to scenario through doubleclick
+void MainWindow::on_actors_editScenario_tableView_doubleClicked(const QModelIndex &index)
+{
+    // If user has selected specific scenario
+    if(ui->scenarioView_editScenario_comboBox->currentText() != "All Scenarios")
+    {
+        // "Add Actor" code from add_editScenario_pushbutton_clicked()
+        // Enable save button
+        if(!ui->saveChanges_editScenario_pushButton->isEnabled())
+        { ui->saveChanges_editScenario_pushButton->setEnabled(true); }
+
+        // Set save status
+        if(_saved == true)
+        { _saved = false; }
+
+        // If user has selected a valid row
+        if(ui->actors_editScenario_tableView->currentIndex().row() != -1)
+        {
+            int row = ui->actors_editScenario_tableView->currentIndex().row(); // Row of table
+            int IDtoAdd; // Actor's ID to add
+            bool presentOnList = false;
+            int index;
+
+            // Get actor's name from selected row
+            IDtoAdd = ui->actors_editScenario_tableView->model()->index(row,0).data().toInt();
+
+            // Check to see if actor is already on tablewidget
+            index = 0;
+            presentOnList = IDtoAdd == ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_ID).data().toInt();
+
+            while(!presentOnList && index < ui->scenarios_editScenario_tableWidget->rowCount())
+            {
+                index++;
+                presentOnList = IDtoAdd == ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_ID).data().toInt();
+            }// End if present on list and still in row
+
+            if(presentOnList)
+            {
+                // Pop up window informing user that listing is already present
+                QMessageBox warnPrompt;
+
+                QString warningMsg = ui->scenarios_editScenario_tableWidget->model()->index(index,tableManager->SC_NAME).data().toString() + " is already present in this scenario. Please select a new actor.";
+
+                warnPrompt.setIcon(QMessageBox::Warning);
+                warnPrompt.setText("WARNING");
+                warnPrompt.setInformativeText(warningMsg);
+                warnPrompt.setStandardButtons(QMessageBox::Ok);
+                warnPrompt.exec();
+            }
+            else
+            {
+                // Collect data from tableview
+                Actor* toAdd = new Actor;
+                toAdd->SetID(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_ID).data().toInt());
+                toAdd->SetName(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_NAME).data().toString());
+                toAdd->SetHitPoints(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_HP).data().toInt());
+                toAdd->SetArmorClass(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_AC).data().toInt());
+                toAdd->SetSpellSaveDC(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_DC).data().toInt());
+                toAdd->SetNotes(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_NOTES).data().toString());
+                toAdd->SetType(ui->actors_editScenario_tableView->model()->index(row,tableManager->SC_TYPE).data().toString());
+
+                // Add listing to tablewidget
+                tableManager->AddActorToScenarioTable(ui->scenarios_editScenario_tableWidget, toAdd);
+
+                // Connect combobox to signal
+                QObject::connect(tableManager->spinBoxes->at(tableManager->spinBoxes->size()-1), SIGNAL(valueChanged(int)), this, SLOT(EnableSaveButton()));
+            }
+        }
+    }
+}
+
+// User can double-click actor from scenario to remove them or double-click scenario name to navigate to scenario
+void MainWindow::on_scenarios_editScenario_tableWidget_itemDoubleClicked(QTableWidgetItem *item)
+{
+    // Get row
+    int row = item->row();
+    // If user has selected scenario name, navigate to scenario listing
+    if(ui->scenarioView_editScenario_comboBox->currentText() == "All Scenarios")
+    {
+        // Get name of scenario to find
+        QString scenarioName = ui->scenarios_editScenario_tableWidget->model()->index(item->row(),tableManager->SC_ID).data().toString();
+
+        // Find index of scenario in combobox
+        int indexFound = ui->scenarioView_editScenario_comboBox->findText(scenarioName);
+
+        // Navigate to index of listing
+        ui->scenarioView_editScenario_comboBox->setCurrentIndex(indexFound);
+
+        // Initialize, populate, and format bottom tablewidget
+        tableManager->InitializeScenarioTable(ui->scenarios_editScenario_tableWidget, tableManager->SpecificScenarioColCount, tableManager->SpecificScenarioColNames);
+        tableManager->PopulateSelectedScenarioTable(ui->scenarios_editScenario_tableWidget, db->GetActorsByScenario(ui->scenarioView_editScenario_comboBox->currentText()));
+        tableManager->InsertSpinBoxCol(ui->scenarios_editScenario_tableWidget, tableManager->qtyMin, tableManager->qtyMax, tableManager->SC_QTY, false, true);
+
+
+    }
+    else // If user has selected an actor, remove them from scenario
+    {
+        // remove actor from bottom table widget
+        ui->scenarios_editScenario_tableWidget->removeRow(row);
+
+        // Set save status
+        if(_saved == true)
+        { _saved = false; }
+    }
+}

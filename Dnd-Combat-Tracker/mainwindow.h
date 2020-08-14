@@ -169,6 +169,10 @@ private slots:
     // Configures the add/remove buttons text and enable status with the passed in values
     void ConfigureScenarioUIButtons (const bool &addButtonStatus, const QString &addButtonText, const bool &deleteButtonStatus, const QString &deleteButtonText);
 
+    void on_actors_editScenario_tableView_doubleClicked(const QModelIndex &index);
+
+    void on_scenarios_editScenario_tableWidget_itemDoubleClicked(QTableWidgetItem *item);
+
 private:
     Ui::MainWindow *ui;
     Database *db;
