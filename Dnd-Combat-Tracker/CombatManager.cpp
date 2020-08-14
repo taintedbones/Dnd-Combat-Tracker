@@ -256,8 +256,16 @@ int CombatManager::FindInsertRow(int initiative)
     // Divider is in last row
     if(divIsLast)
     {
-        first = 0;
-        last = divRow - 1;
+        if(firstGreater)
+        {
+            first = divRow + 1;
+            last = combat->rowCount() - 1;
+        }
+        else // New actor init greater than current turn init
+        {
+            first = 0;
+            last = divRow - 1;
+        }
     }
     else // Divider anywhere else in table
     {

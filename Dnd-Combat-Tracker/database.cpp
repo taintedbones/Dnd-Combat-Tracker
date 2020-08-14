@@ -10,95 +10,9 @@ Database::Database(QString path, QString driver) : QSqlDatabase(addDatabase(driv
     {
         qDebug() << "Database opened successfully";
     }
-    else {
+    else
+    {
         qDebug() << this->lastError().text();
-    }
-
-    // Create Actor List
-    actorList = new QVector<Actor>;
-
-    // Create Party List
-    combatList = new QVector<Actor>;
-
-    // Create Scenario List
-    actorsInScenario = new QVector<Actor>;
-
-    //TODO what does this do?
-    scenarioList.clear();
-
-    scenarioQtysList = new QVector<int>;
-}
-
-// *************************************************************************************
-// Load database of actors into program
-// *************************************************************************************
-void Database::CreateActorList()
-{
-    Actor actor; // temp object for loading actorList
-
-    query.prepare("SELECT * FROM actors");
-
-    if(query.exec())
-    {
-        while(query.next())
-        {
-            // Populate attributes
-            actor.SetID((query.value(ID).toInt()));
-            actor.SetName(query.value(NAME).toString());
-            actor.SetHitPoints(query.value(HP).toInt());
-            actor.SetArmorClass(query.value(AC).toInt());
-            actor.SetSpellSaveDC(query.value(DC).toInt());
-            actor.SetNotes(query.value(NOTES).toString());
-            actor.SetType(query.value(TYPE).toString());
-            // Add Actor to List
-            actorList->push_back(actor);
-        }
-    }
-    else // Print error if query is unsuccessful
-    {
-        qDebug() << query.lastError().text();
-    }
-}
-
-// *************************************************************************************
-// Pull party from actor list
-// *************************************************************************************
-void Database::CreatePartyList()
-{
-    // Cycle actorlist, pulling partymembers onto partylist
-    for(int index = 0; index < actorList->length(); index++)
-    {
-        // If type 'partymember' found, place on partylist
-        if(actorList->at(index).GetType() == "partymember")
-        {
-            // Add actor to partyList
-            combatList->push_back(actorList->at(index));
-            // Remove actor from actorList
-            actorList->remove(index);
-            // Go back a space since there's a gap now
-            index--;
-        }
-    }
-}
-
-// *************************************************************************************
-// Load scenarios from database into program memory
-// *************************************************************************************
-void Database::CreateScenarioList()
-{
-    scenarioList.clear();
-    query.prepare("SELECT DISTINCT scenarioName FROM scenarios");
-
-    if(query.exec())
-    {
-        while(query.next())
-        {
-           scenarioList.append(query.value(0).toString());
-        }
-    }
-    else // Print error if query is unsuccessful
-    {
-        qDebug() << query.lastError().text();
     }
 }
 
@@ -130,24 +44,92 @@ QString Database::GetScenarioByID(int id)
 // *************************************************************************************
 // Accessor to return list of all actors currently on list
 // *************************************************************************************
-QVector<Actor>* Database::GetActorList() const
+QVector<Actor>* Database::GetActorList()
 {   
+    QVector<Actor>* actorList = new QVector<Actor>();
+    Actor actor; // temp object for loading actorList
+
+    query.prepare("SELECT * FROM actors");
+
+    if(query.exec())
+    {
+        while(query.next())
+        {
+            // Populate attributes
+            actor.SetID((query.value(ID).toInt()));
+            actor.SetName(query.value(NAME).toString());
+            actor.SetHitPoints(query.value(HP).toInt());
+            actor.SetArmorClass(query.value(AC).toInt());
+            actor.SetSpellSaveDC(query.value(DC).toInt());
+            actor.SetNotes(query.value(NOTES).toString());
+            actor.SetType(query.value(TYPE).toString());
+            // Add Actor to List
+            actorList->append(actor);
+        }
+    }
+    else // Print error if query is unsuccessful
+    {
+        qDebug() << query.lastError().text();
+    }
+
     return actorList;
 }
 
 // *************************************************************************************
 // Accessor to return list of partymembers
 // *************************************************************************************
-QVector<Actor>* Database::GetPartyList() const
+QVector<Actor>* Database::GetPartyList()
 {
-    return combatList;
+    QVector<Actor>* partyList = new QVector<Actor>();
+    Actor actor;
+
+    query.prepare("SELECT * FROM actors WHERE type = 'partymember' ");
+
+    if(query.exec())
+    {
+        while(query.next())
+        {
+            actor.SetID((query.value(ID).toInt()));
+            actor.SetName(query.value(NAME).toString());
+            actor.SetHitPoints(query.value(HP).toInt());
+            actor.SetArmorClass(query.value(AC).toInt());
+            actor.SetSpellSaveDC(query.value(DC).toInt());
+            actor.SetNotes(query.value(NOTES).toString());
+            actor.SetType(query.value(TYPE).toString());
+
+            partyList->push_back(actor);
+        }
+    }
+    else // Print error if query is unsuccessful
+    {
+        qDebug() << query.lastError().text();
+    }
+
+    return partyList;
 }
 
 // *************************************************************************************
 // Access list of scenarios
 // *************************************************************************************
-QStringList Database::GetScenarioList() const
+QStringList Database::GetScenarioList()
 {
+    QStringList scenarioList;
+
+    scenarioList.clear();
+    query.prepare("SELECT DISTINCT scenarioName FROM scenarios");
+
+    if(query.exec())
+    {
+        while(query.next())
+        {
+           scenarioList.append(query.value(0).toString());
+        }
+    }
+    else // Print error if query is unsuccessful
+    {
+        qDebug() << query.lastError().text();
+    }
+
     return scenarioList;
 }
 
@@ -156,6 +138,8 @@ QStringList Database::GetScenarioList() const
 // *************************************************************************************
 QVector<int>* Database::GetScenarioQtys(const QString &scenarioName)
 {
+    QVector<int> *scenarioQtysList = new QVector<int>();
+
     scenarioQtysList->clear();
 
     query.prepare("SELECT quantity FROM scenarios WHERE scenarioName =:scenarioName");
@@ -274,6 +258,7 @@ void Database::DeleteActor(const int &actorID)
 // *************************************************************************************
 QVector<Actor>* Database::GetActorsByScenario(const QString &scenarioName)
 {
+    QVector<Actor>* actorsInScenario = new QVector<Actor>();
     Actor actor; // actor to add
 
     actorsInScenario->clear();
@@ -344,4 +329,61 @@ void Database::DeleteScenario(const QString &scenarioName)
 
     // Print error if unsuccessful
     if(!query.exec()) { qDebug() << query.lastError().text(); }
+}
+
+// *************************************************************************************
+//  Checks if passed in actor name is in database
+// *************************************************************************************
+bool Database::IsInDatabase(QString name)
+{
+    bool found = false;
+
+    query.prepare("SELECT name FROM actors WHERE name = :name");
+    query.bindValue(":name", name);
+
+    if(query.exec())
+    {
+        if(query.next())
+        {
+            found = true;
+        }
+    }
+    else
+    {
+        qDebug() << query.lastError().text();
+    }
+
+    return found;
+}
+
+
+QVector<Actor>* Database::GetNonPartyActors()
+{
+    QVector<Actor>* nonActorList = new QVector<Actor>();
+    Actor actor; // temp object for loading actorList
+
+    query.prepare("SELECT * FROM actors WHERE NOT type = 'partymember'");
+
+    if(query.exec())
+    {
+        while(query.next())
+        {
+            // Populate attributes
+            actor.SetID((query.value(ID).toInt()));
+            actor.SetName(query.value(NAME).toString());
+            actor.SetHitPoints(query.value(HP).toInt());
+            actor.SetArmorClass(query.value(AC).toInt());
+            actor.SetSpellSaveDC(query.value(DC).toInt());
+            actor.SetNotes(query.value(NOTES).toString());
+            actor.SetType(query.value(TYPE).toString());
+            // Add Actor to List
+            nonActorList->append(actor);
+        }
+    }
+    else // Print error if query is unsuccessful
+    {
+        qDebug() << query.lastError().text();
+    }
+
+    return nonActorList;
 }

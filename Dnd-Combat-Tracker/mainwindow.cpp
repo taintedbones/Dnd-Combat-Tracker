@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->main_stackedWidget->setCurrentIndex(MENU);
+    ui->main_stackedWidget->setCurrentIndex(WELCOME);
 
     db = new Database("../itdb.db", "QSQLITE");
 
@@ -22,12 +22,6 @@ MainWindow::MainWindow(QWidget *parent)
     combatTable = new QTableWidget;
     assignInit = new QTableWidget;
     combatManager = new CombatManager(ui->activeCombatTable_tableWidget);
-
-    // Pull actor list from database
-    db->CreateActorList();
-
-    // Populate list of partymembers
-    db->CreatePartyList();
 
     // Populate Combobox
     ui->showActors_comboBox->addItems(addActorsComboBoxLabels);
@@ -60,7 +54,7 @@ void MainWindow::on_welcomeStart_pushButton_clicked()
     // Populate "Actors" TableWidget
         // Initialize/Clear & populate TableWidget
     tableManager->InitializeAddActorTable(ui->actorTable_tableWidget, tableManager->ActorListColCount, tableManager->ActorListColNames);
-    tableManager->PopulateAddActorTable(ui->actorTable_tableWidget, db->GetActorList());
+    tableManager->PopulateAddActorTable(ui->actorTable_tableWidget, db->GetNonPartyActors());
 
     // Populate "Combat" TableWidget
         // Initialize & populate "combatList" TableWidget
@@ -373,7 +367,6 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
         FormatEditActorsTableView();
 
         // Load scenario list into view dropdown
-        db->CreateScenarioList();
         scenarios = db->GetScenarioList();
         scenarios.prepend("All Scenarios");
 
@@ -816,8 +809,6 @@ void MainWindow::on_remove_editScenario_pushButton_clicked()
             // Delete scenario from db
             db->DeleteScenario(scenarioToDelete);
 
-            // Create new scenario list and reset table
-            db->CreateScenarioList();
             tableManager->InitializeAddActorTable(ui->scenarios_editScenario_tableWidget, tableManager->AllScenarioColCount, tableManager->AllScenarioColNames);
             tableManager->PopulateScenarioNameTable(ui->scenarios_editScenario_tableWidget, db->GetScenarioList());
 
