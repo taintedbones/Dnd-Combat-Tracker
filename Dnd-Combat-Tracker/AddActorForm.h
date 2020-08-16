@@ -19,10 +19,10 @@ public:
     ~AddActorForm();
 
      // Inserts actor to combat table
-     void SubmitPremadeActor();
+     Actor* GetPremadeActor();
 
      // Stores data from add custom fields in an actor & inserts actor to combat table
-     void SubmitCustomActor();
+     Actor* GetCustomActor();
 
      // Initializes modal window pages & sets current index to the menu
      void Initialize();
@@ -71,7 +71,7 @@ private slots:
      void on_cancel_setInit_pushButton_clicked();
 
      // Inserts the passed in actor, with the passed in quantity, to the setInit table widget
-     void InsertActorToSetInit(Actor actor, int qty);
+     void InsertActorToSetInit(Actor* actor, int qty);
 
      // Initializes formatting for setInit table widget
      void InitializeInitTable();
@@ -85,14 +85,18 @@ private slots:
      // Inserts each actor from the setInit table into the combat table on mainwindow
      void AddToCombat();
 
+     // Checks if typed in actor name is already in the user base as user is typing
      void on_name_custom_lineEdit_textChanged(const QString &arg1);
 
+     // Changes displayed names in premade actor combo box to match the current scenario
      void UpdatePremadeActors();
+
+     //  Adds custom actor to database
+     void AddCustomActorToDB();
 
 private:
     Ui::AddActorForm *ui;
     Database *db;
-//    QVector<Actor>* actorList;
     Actor createdActor;
     QTableWidget *combat;
     int initCancelButtonIndex;
