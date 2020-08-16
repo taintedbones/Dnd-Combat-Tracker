@@ -31,6 +31,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     addActorForm = new AddActorForm(nullptr, db, ui->activeCombatTable_tableWidget);
 
+    ui->welcomeStart_pushButton->click();
+    ui->next_editPage_pushButton->click();
+    ui->fight_assignInit_pushButton->click();
+
     // DEBUG
     // Create scenario listings
     listings = new QVector<ScenarioListing>;

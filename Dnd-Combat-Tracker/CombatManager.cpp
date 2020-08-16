@@ -69,6 +69,8 @@ void CombatManager::InsertActorToCombat(Actor actor, int init)
 
     row = FindInsertRow(init);
 
+    qDebug() << row;
+
     combat->insertRow(row);
 
     // Handles which data will be placed on the table depending on the column
@@ -256,15 +258,15 @@ int CombatManager::FindInsertRow(int initiative)
     // Divider is in last row
     if(divIsLast)
     {
-        if(firstGreater)
-        {
-            first = divRow + 1;
-            last = combat->rowCount() - 1;
-        }
-        else // New actor init greater than current turn init
+        if(firstGreater) // Actor gets inserted into current round
         {
             first = 0;
             last = divRow - 1;
+        }
+        else // New actor init greater than current turn init
+        {
+            first = divRow + 1;
+            last = first;
         }
     }
     else // Divider anywhere else in table
@@ -284,7 +286,7 @@ int CombatManager::FindInsertRow(int initiative)
     // Init will be placed above/below divider on side where only one row exists
     if(first == last)
     {
-        insertAtRow = last + 1;
+        insertAtRow = last;
     }
     // Divider is anywhere else in combat table
     else
