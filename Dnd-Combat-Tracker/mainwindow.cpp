@@ -16,11 +16,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     FormatEditActorsTableView();
 
-    tableManager = new TableModel;
+    tableManager = new TableModel();
 
     // Create tablewidgets
-    combatTable = new QTableWidget;
-    assignInit = new QTableWidget;
+    combatTable = new QTableWidget();
+    assignInit = new QTableWidget();
     combatManager = new CombatManager(ui->activeCombatTable_tableWidget);
 
     // Populate Combobox
@@ -30,10 +30,6 @@ MainWindow::MainWindow(QWidget *parent)
     _saved = true;
 
     addActorForm = new AddActorForm(nullptr, db, ui->activeCombatTable_tableWidget);
-
-    ui->welcomeStart_pushButton->click();
-    ui->next_editPage_pushButton->click();
-    ui->fight_assignInit_pushButton->click();
 
     // DEBUG
     // Create scenario listings

@@ -69,8 +69,6 @@ void CombatManager::InsertActorToCombat(Actor actor, int init)
 
     row = FindInsertRow(init);
 
-    qDebug() << row;
-
     combat->insertRow(row);
 
     // Handles which data will be placed on the table depending on the column
@@ -382,7 +380,7 @@ void CombatManager::CheckForTie()
         tiePrompt.resize(400, 200);
 
         // Display input dialog modal window with combobox of actors to select from
-        selectedTurn = tiePrompt.getItem(combat, "TIE!", "Please select which actor will go this turn:", names);
+        selectedTurn = tiePrompt.getItem(combat, "TIE!", "Please select which actor will go this turn:", names, 0, false);
 
         // Moves the selected actor to the first position in the list
         if(selectedTurn != combat->item(0, NAME)->text())
