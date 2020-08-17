@@ -301,7 +301,7 @@ int CombatManager::FindInsertRow(int initiative)
             }
             else // Add to end of list
             {
-                insertAtRow = row + 1;
+                insertAtRow = row;
             }
 
             row++;
