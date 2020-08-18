@@ -76,8 +76,8 @@ void AddActorForm::on_ok_addActor_pushButton_clicked()
     else
     {
         ui->stackedWidget->setCurrentIndex(INIT);
-        DeleteInitRows();
-        SubmitCustomActor();
+        DeleteInitRows();       
+        InsertActorToSetInit(GetCustomActor(), ui->qty_custom_spinBox->value());
     }
 }
 
@@ -139,7 +139,7 @@ void AddActorForm::on_ok_premade_pushButton_clicked()
 {
     ui->stackedWidget->setCurrentIndex(INIT);
     DeleteInitRows();
-    SubmitPremadeActor();
+    InsertActorToSetInit(GetPremadeActor(), ui->qty_premade_spinBox->value());
 }
 
 // *************************************************************************************
@@ -213,35 +213,36 @@ void AddActorForm::UpdatePremadeActors()
 // *************************************************************************************
 // Inserts actor to combat table
 // *************************************************************************************
-void AddActorForm::SubmitPremadeActor()
+Actor* AddActorForm::GetPremadeActor()
 {
-    Actor premade;
+    Actor* premade = new Actor();
 
     // Store data from form fields into actor object
-    premade.SetName(ui->name_premade_comboBox->currentText());
-    premade.SetHitPoints(ui->maxHP_premade_lineEdit->text().toInt());
-    premade.SetArmorClass(ui->ac_premade_lineEdit->text().toInt());
-    premade.SetSpellSaveDC(ui->dc_premade_lineEdit->text().toInt());
-    premade.SetNotes(ui->notes_textBrowser->toPlainText());
+    premade->SetName(ui->name_premade_comboBox->currentText());
+    premade->SetHitPoints(ui->maxHP_premade_lineEdit->text().toInt());
+    premade->SetArmorClass(ui->ac_premade_lineEdit->text().toInt());
+    premade->SetSpellSaveDC(ui->dc_premade_lineEdit->text().toInt());
+    premade->SetNotes(ui->notes_textBrowser->toPlainText());
 
-    InsertActorToSetInit(premade, ui->qty_premade_spinBox->value());
+    return premade;
 }
 
 // *************************************************************************************
 // Stores data from add custom fields in an actor & inserts actor to combat table
 // *************************************************************************************
-void AddActorForm::SubmitCustomActor()
+Actor* AddActorForm::GetCustomActor()
 {
-    Actor custom;
+    Actor* custom = new Actor();
 
     // Store data from form fields into actor object
-    custom.SetName(ui->name_custom_lineEdit->text());
-    custom.SetHitPoints(ui->maxHP_custom_spinBox->value());
-    custom.SetArmorClass(ui->ac_custom_spinBox->value());
-    custom.SetSpellSaveDC(ui->dc_custom_spinBox->value());
-    custom.SetNotes(ui->notes_custom_textEdit->toPlainText());
+    custom->SetName(ui->name_custom_lineEdit->text());
+    custom->SetHitPoints(ui->maxHP_custom_spinBox->value());
+    custom->SetArmorClass(ui->ac_custom_spinBox->value());
+    custom->SetSpellSaveDC(ui->dc_custom_spinBox->value());
+    custom->SetNotes(ui->notes_custom_textEdit->toPlainText());
+    custom->SetType(ui->actorType_custom_comboBox->currentText());
 
-    InsertActorToSetInit(custom, ui->qty_custom_spinBox->value());
+    return custom;
 }
 
 // *************************************************************************************
@@ -279,6 +280,11 @@ void AddActorForm::on_addToCombat_pushButton_clicked()
 {
     AddToCombat();
 
+    if(initCancelButtonIndex == CUSTOM && ui->addToDB_custom_checkBox->isChecked())
+    {
+        AddCustomActorToDB();
+    }
+
     close();
 }
 
@@ -293,7 +299,7 @@ void AddActorForm::on_cancel_setInit_pushButton_clicked()
 // *************************************************************************************
 // Inserts the passed in actor, with the passed in quantity, to the setInit table widget
 // *************************************************************************************
-void AddActorForm::InsertActorToSetInit(Actor actor, int qty)
+void AddActorForm::InsertActorToSetInit(Actor* actor, int qty)
 {
     for(int i = 0; i < qty; i++)
     {
@@ -302,18 +308,18 @@ void AddActorForm::InsertActorToSetInit(Actor actor, int qty)
 
         if(i == 0)
         {
-            name->setData(0, actor.GetName());
+            name->setData(0, actor->GetName());
         }
         else
         {
-            name->setData(0, actor.GetName() +' '+ QString::number(i + 1));
+            name->setData(0, actor->GetName() +' '+ QString::number(i + 1));
         }
 
         // Save actor data into widget items for inserting into table widget
-        QTableWidgetItem *hp = new QTableWidgetItem(QString::number(actor.GetHitPoints()));
-        QTableWidgetItem *ac = new QTableWidgetItem(QString::number(actor.GetArmorClass()));
-        QTableWidgetItem *dc = new QTableWidgetItem(QString::number(actor.GetSpellSaveDC()));
-        QTableWidgetItem *notes = new QTableWidgetItem(actor.GetNotes());
+        QTableWidgetItem *hp = new QTableWidgetItem(QString::number(actor->GetHitPoints()));
+        QTableWidgetItem *ac = new QTableWidgetItem(QString::number(actor->GetArmorClass()));
+        QTableWidgetItem *dc = new QTableWidgetItem(QString::number(actor->GetSpellSaveDC()));
+        QTableWidgetItem *notes = new QTableWidgetItem(actor->GetNotes());
 
         ui->setInit_tableWidget->setItem(i, NAME, name);
         ui->setInit_tableWidget->setItem(i, HP, hp);
@@ -403,6 +409,9 @@ void AddActorForm::AddToCombat()
     }
 }
 
+// *************************************************************************************
+// Checks if typed in actor name is already in the user base as user is typing
+// *************************************************************************************
 void AddActorForm::on_name_custom_lineEdit_textChanged(const QString &arg1)
 {
     bool inDB = db->IsInDatabase(arg1);
@@ -423,4 +432,12 @@ void AddActorForm::on_name_custom_lineEdit_textChanged(const QString &arg1)
             ui->ok_addActor_pushButton->setEnabled(true);
         }
     }
+}
+
+// *************************************************************************************
+//  Adds custom actor to database
+// *************************************************************************************
+void AddActorForm::AddCustomActorToDB()
+{
+    db->AddActor(GetCustomActor());
 }

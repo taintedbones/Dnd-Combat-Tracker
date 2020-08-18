@@ -45,8 +45,11 @@ public:
     // Searches combat for divider row location
     int GetDividerLocation();
 
+    // Checks the combat table for a tied initiative and prompts the user to select which
+    //      actor will take the current turn
     void CheckForTie();
 
+    // Searches the combat table for the passed in actor and returns their row number
     int FindActorByName(QString name);
 private:
     QTableWidget *combat;

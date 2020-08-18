@@ -189,9 +189,9 @@ private:
     CombatManager *combatManager;
 
     // Models
-    DbEditTableModel *editActorsModel = nullptr;
-    DbEditTableModel *editScenarioModel = nullptr;
-    DbEditTableModel *editScenarioActorsModel = nullptr;
+    DbEditTableModel *editActorsModel;
+    DbEditTableModel *editScenarioModel;
+    DbEditTableModel *editScenarioActorsModel;
 
     // DEBUG: Previous index checking
     QVector<ScenarioListing> *listings = nullptr;

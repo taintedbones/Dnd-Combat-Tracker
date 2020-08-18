@@ -16,11 +16,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     FormatEditActorsTableView();
 
-    tableManager = new TableModel;
+    tableManager = new TableModel();
 
     // Create tablewidgets
-    combatTable = new QTableWidget;
-    assignInit = new QTableWidget;
+    combatTable = new QTableWidget();
+    assignInit = new QTableWidget();
     combatManager = new CombatManager(ui->activeCombatTable_tableWidget);
 
     // Populate Combobox
