@@ -165,8 +165,8 @@ void MainWindow::on_dbOpt_welcome_pushButton_clicked()
     // Navigate to Database Options Page
     ui->main_stackedWidget->setCurrentIndex(DB_EDIT);
 
-    // Disable use of save button until appropriate option clicked
-    ui->save_editActors_pushButton->setEnabled(false);
+    // Disable combobox until appropriate option clicked
+    ui->editActors_groupBox->setDisabled(true);
     ui->save_editActors_pushButton->setText("Save");
 }
 
@@ -384,6 +384,9 @@ void MainWindow::on_main_stackedWidget_currentChanged(int arg1)
 // *************************************************************************************
 void MainWindow::on_addActor_dbEdit_pushButton_clicked()
 {
+    // Enable groupbox
+    ui->editActors_groupBox->setEnabled(true);
+
     // Label save button as 'add'
     ui->save_editActors_pushButton->setText("Add Actor");
 
@@ -411,7 +414,7 @@ void MainWindow::on_deleteActor_dbEdit_pushButton_clicked()
 
     // Popup window asking if they want to delete that person
     QMessageBox warnPrompt;
-    QString warnMsg = "Are you sure to want to delete " + name.toUpper() + " from the database?";
+    QString warnMsg = "Are you sure to want to delete '" + name + "' from the database?";
 
     if(rowSelected)
     {
@@ -477,7 +480,6 @@ void MainWindow::on_save_editActors_pushButton_clicked()
     {
         // Get selected row
         int row = ui->dbEdit_tableView->currentIndex().row();
-        qDebug() << "Row Selected: " << row;
 
         // Determine if row is selected
         bool rowSelected = row != -1;
@@ -496,9 +498,6 @@ void MainWindow::on_save_editActors_pushButton_clicked()
             toEdit->SetSpellSaveDC(ui->dc_editActors_spinBox->text().toInt());
             toEdit->SetNotes(ui->notes_editActors_textEdit->toPlainText());
             toEdit->SetType(ui->type_editActors_comboBox->currentText());
-
-            // Debug: See if ID is selected
-            qDebug() << "Actor ID Selected: " << row;
 
             db->EditActor(toEdit);
 
@@ -534,6 +533,9 @@ void MainWindow::on_help_dbEdit__pushButton_clicked()
 // *************************************************************************************
 void MainWindow::on_dbEdit_tableView_clicked()
 {
+    // Activate groupbox
+    ui->editActors_groupBox->setEnabled(true);
+
     // If not in edit mode, enter edit mode
     if(ui->save_editActors_pushButton->text() != "Save Changes")
     { ui->save_editActors_pushButton->setText("Save Changes"); }
@@ -543,11 +545,9 @@ void MainWindow::on_dbEdit_tableView_clicked()
 
     // Get selected row
     int row = ui->dbEdit_tableView->currentIndex().row();
-    qDebug() << "Row Selected: " << row;
 
     // Pull name from row for popup window
     QString name = ui->dbEdit_tableView->model()->index(row,1).data().toString();
-    qDebug() << "Actor Name Selected: " << name;
 
     QString actorType = ui->dbEdit_tableView->model()->index(row, tableManager->D_TYPE).data().toString();
 
@@ -573,6 +573,10 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
 {
     if(index == EDIT_SCENARIOS)
     {
+        // Initialize top tableview with current data
+        editScenarioActorsModel->select();
+
+
         // Reset buttons
         ui->add_editScenario_pushButton->setText("Create New Scenario");
         ui->remove_editScenario_pushButton->setEnabled(false);
@@ -585,6 +589,10 @@ void MainWindow::on_dbEdit_tabWidget_currentChanged(int index)
 
         // Show table data
         ui->scenarios_editScenario_tableWidget->setColumnHidden(0, false);
+    }
+    else // If user navigates to 'actor db'
+    {
+        ui->editActors_groupBox->setDisabled(true);
     }
 }
 
